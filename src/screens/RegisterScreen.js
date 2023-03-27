@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import { Text } from 'react-native-paper'
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { Text,Checkbox } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
-import Header from '../components/Header'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import BackButton from '../components/BackButton'
@@ -16,6 +15,8 @@ export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const [passwordValid, setPasswordVD] = useState({ value: '', error: '' })
+  const [checked, setChecked] = useState(false);
 
   const onSignUpPressed = () => {
     const nameError = nameValidator(name.value)
@@ -37,17 +38,37 @@ export default function RegisterScreen({ navigation }) {
     <Background>
       <BackButton goBack={navigation.goBack} />
       <Logo />
-      <Header>Create Account</Header>
       <TextInput
-        label="Name"
+        label="이름"
         returnKeyType="next"
         value={name.value}
         onChangeText={(text) => setName({ value: text, error: '' })}
         error={!!name.error}
         errorText={name.error}
       />
+
       <TextInput
-        label="Email"
+        label="비밀번호"
+        returnKeyType="done"
+        value={password.value}
+        onChangeText={(text) => setPassword({ value: text, error: '' })}
+        error={!!password.error}
+        errorText={password.error}
+        secureTextEntry
+      />
+
+      <TextInput
+        label="비밀번호 확인"
+        returnKeyType="done"
+        value={passwordValid.value}
+        onChangeText={(text) => setPasswordVD({ value: text, error: '' })}
+        error={!!passwordValid.error}
+        errorText={passwordValid.error}
+        secureTextEntry
+      />
+
+      <TextInput
+        label="이메일"
         returnKeyType="next"
         value={email.value}
         onChangeText={(text) => setEmail({ value: text, error: '' })}
@@ -58,21 +79,33 @@ export default function RegisterScreen({ navigation }) {
         textContentType="emailAddress"
         keyboardType="email-address"
       />
+
       <TextInput
-        label="Password"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
+        label="전화번호"
+        returnKeyType="next"
+        value={email.value}
+        onChangeText={(text) => setEmail({ value: text, error: '' })}
+        error={!!email.error}
+        errorText={email.error}
+        autoCapitalize="none"
+        autoCompleteType="email"
+        textContentType="emailAddress"
+        keyboardType="email-address"
       />
+
+      <Checkbox
+        status={checked ? 'checked' : 'unchecked'}
+        onPress={() => {
+          setChecked(!checked);
+        }}
+      />
+      
       <Button
         mode="contained"
         onPress={onSignUpPressed}
         style={{ marginTop: 24 }}
       >
-        Sign Up
+        회원가입
       </Button>
       <View style={styles.row}>
         <Text>Already have an account? </Text>
@@ -94,3 +127,4 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
   },
 })
+
