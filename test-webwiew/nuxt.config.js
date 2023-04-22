@@ -1,6 +1,12 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
+    script:[
+      {
+        src:'093f44ff0baa195ab8c672ddce75f0fd'
+      }
+    ]
+  },
     title: 'PLOGGING-HELPING-SYSTEM',
     htmlAttrs: {
       lang: 'en'
