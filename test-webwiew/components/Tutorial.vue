@@ -1,5 +1,5 @@
 <!-- Please remove this file from your project -->
-<template>
+<!--<template>
   <div class="relative flex items-top justify-center min-h-screen bg-gray-100 sm:items-center sm:pt-0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
@@ -50,3 +50,28 @@ export default {
   name: 'NuxtTutorial'
 }
 </script>
+-->
+
+<template>
+  <div class="container">
+    <div id="map" style="width:100vw;height:100vh;"></div>"
+  </div>
+</template>
+
+<script>
+import { KakaoMapView } from '@jiggag/react-native-kakao-maps';
+
+export default{
+  mounted(){
+    const container = document.getElementById('map'); //지도 담을 영역의 DOM 레퍼런스
+    const options={
+      center:new KakaoMapView.maps.LatLng(33.450701,126.57.667), //지도 중심좌표
+      level:3
+    };
+
+    const map = new KakaoMapView.maps.Map(container, options);//지도 생성 및 객체 리턴
+  }
+}
+</script>
+<style>
+</style>
