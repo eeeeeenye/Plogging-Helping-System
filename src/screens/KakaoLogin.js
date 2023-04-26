@@ -2,7 +2,7 @@ import {WebView,View} from 'react-native-webview';
 import React from 'react'
 import { axios } from 'axios';
 
-const REST_API_KEY = "da1baa7c5a3f2a4a5d87f1941f330d1c"
+const REST_API_KEY = process.env.KakaoLoginKey
 const REDIRECT_URI = "http://localhost:3000/oauth/callback/kakao"
 
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
@@ -27,12 +27,12 @@ function KakaoLoginScreen(){
           };
           const response = await axios.post(REDIRECT_URI,body);
           const value = response.data;
-          const result = await storeUser(value);
-          if(result === 'stored'){
-            const user = await storeUser('user');
-            dispatchEvent(read_S(user));
-            await NavigationContainer.navigate('Main');
-          }
+          // const result = await storeUser(value);
+          // if(result === 'stored'){
+          //   const user = await storeUser('user');
+          //   dispatchEvent(read_S(user));
+          //   await NavigationContainer.navigate('Main');
+          // }
         }catch(e){
           console.log(e);
         }
