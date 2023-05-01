@@ -1,9 +1,21 @@
 import {WebView,View} from 'react-native-webview';
 import React from 'react'
+<<<<<<< Updated upstream:src/screens/KakaoLogin.js
 import { axios } from 'axios';
 
 const REST_API_KEY = process.env.KakaoLoginKey
 const REDIRECT_URI = "http://localhost:3000/oauth/callback/kakao"
+=======
+import {WebView} from 'react-native-Webview';
+import { View } from 'react-native';
+import axios from 'axios';
+import qs from 'qs';
+
+// const path = require('path')
+// const dotenv = require('dotenv')
+// dotenv.config({path: path.resolve(__dirname,"../../config.env")})
+
+>>>>>>> Stashed changes:src/screens/KakaoLoginScreen.js
 
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
