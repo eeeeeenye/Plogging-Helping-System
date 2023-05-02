@@ -40,6 +40,7 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
+    console.log('[##] loggedIn', client.success)
     navigation.reset({
       index: 0,
       routes: [{ name: 'Dashboard' }],
