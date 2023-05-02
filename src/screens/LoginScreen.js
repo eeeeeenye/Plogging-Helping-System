@@ -27,7 +27,7 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-    axios.post('http://192.168.35.2:3000/login', {email: email.value, password: password.value})
+    axios.post('http://192.168.35.2:3000/api/login', {email: email.value, password: password.value})
     .then((response) => {
       // MySQL 서버에서 받은 데이터를 클라이언트에 저장
       const client = response.data;
@@ -43,6 +43,9 @@ export default function LoginScreen({ navigation }) {
     navigation.reset({
       index: 0,
       routes: [{ name: 'Dashboard' }],
+      params: {                                   // 다른페이지로 사용자 이메일을 넘겨줌
+        email: email
+      }
     })
   }
 
