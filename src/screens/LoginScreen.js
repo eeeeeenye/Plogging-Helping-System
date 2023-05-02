@@ -15,29 +15,28 @@ import axios from 'axios'
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
-  const [client,getClient] = useState({
-    Client_name: '',
-    Client_pwd:'',
-    Client_email:'',
-    Client_phone: ''
-  })
-
-  const checkClient = async()=>{
-    await axios.get('http://192.168.219.178:3000/plogging')
-    .then(
-      res => getClient(res.data))
-    .catch((error)=>{
-      console.log(error);
-    })
-  }
-
+  const [client, setClient] = useState(null);
 
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
+
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
+      return
+    }
+
+    axios.post('http://192.168.35.2:3000/login', {email: email.value, password: password.value})
+    .then((response) => {
+      // MySQL 서버에서 받은 데이터를 클라이언트에 저장
+      const client = response.data;
+      setClient(client);}
+      )
+
+    if(client.success !== true){
+      setEmail({...email,error: client.message})
+      setPassword({...password,error:client.message})
       return
     }
 

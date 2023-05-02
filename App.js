@@ -10,36 +10,35 @@ import {
   ResetPasswordScreen,
   Dashboard,
 } from './src/screens'
-import KakaoMapScreen from './src/screens/HomeMain'
+import KakaoLoginScreen from './src/screens/KakaoLoginScreen'
 
 const Stack = createStackNavigator()
 
 export default function App() {
 
   return (
-    <KakaoMapScreen/>
-    // <Provider theme={theme}>
-    //   <NavigationContainer>
-    //     <Stack.Navigator
-    //       initialRouteName="StartScreen"
-    //       screenOptions={{
-    //         headerShown: false,
-    //       }}
-    //     >
-    //       <Stack.Screen name="StartScreen" component={StartScreen} />
-    //       <Stack.Screen name="LoginScreen" component={LoginScreen} />
-    //       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-    //       <Stack.Screen name="Dashboard" component={Dashboard} />
-    //       <Stack.Screen
-    //         name="ResetPasswordScreen"
-    //         component={ResetPasswordScreen}
-    //       />
-    //       <Stack.Screen
-    //         name="KakaoLoginScreen"
-    //         component={KakaoLoginScreen}
-    //       />
-    //     </Stack.Navigator>
-    //   </NavigationContainer>
-    // </Provider>
+     <Provider theme={theme}>
+       <NavigationContainer>
+         <Stack.Navigator
+           initialRouteName="StartScreen"
+           screenOptions={{
+             headerShown: false,
+           }}
+         >
+           <Stack.Screen name="StartScreen" component={StartScreen} />
+           <Stack.Screen name="LoginScreen" component={LoginScreen} />
+           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+           <Stack.Screen name="Dashboard" component={Dashboard} />
+           <Stack.Screen
+             name="ResetPasswordScreen"
+             component={ResetPasswordScreen}
+           />
+           <Stack.Screen
+             name="KakaoLoginScreen"
+             component={KakaoLoginScreen}
+           />
+         </Stack.Navigator>
+       </NavigationContainer>
+     </Provider>
   )
 }

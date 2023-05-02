@@ -23,17 +23,17 @@ export default function RegisterScreen({ navigation }) {
   const [checked1, setChecked1] = useState(false);
   const [checked2, setChecked2] = useState(false);
   const [phone, setPhone] = useState({ value: '', error: '' })
+
   const [client, setClient] = useState({
     Client_name : '',
     Client_pwd : '',
     Client_email : '',
     Client_phone : ''
   })
+
   const [clientDB, getClient] = useState({
     Client_name: '',
-    Client_pwd:'',
-    Client_email:'',
-    Client_phone: ''
+    Client_email:''
   })
 
   useEffect(() => {
@@ -41,12 +41,21 @@ export default function RegisterScreen({ navigation }) {
       ...prevClient,
       Client_name: name.value,
       Client_pwd: password.value,
-      Client_email: email.value
+      Client_email: email.value,
+      Client_phone: phone.value
     }));
-  }, [name.value, password.value, email.value]);
+  }, [name.value, password.value, email.value, phone.value]);
+
+  useEffect(() => {
+    getClient(prevClient => ({
+      ...prevClient,
+      Client_name: name.value,
+      Client_email: email.value,
+    }));
+  }, [name.value, email.value]);
 
   const addClient = async()=>{             // 사용자 DB 구축
-    await axios.post(`http://192.168.35.217:3000/create`,client)
+    await axios.post(`http://192.168.35.2:3000/create`,client)
     .then(res => {
       console.log(res.data);
     })
@@ -54,8 +63,28 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const pullClient = async () =>{            // 사용자 DB 조회
-    await axios.get('http://192.168.35.217:3000/plogging')
-    .then(res => getClient(res.data))
+    await axios.post(`http://192.168.35.2:3000/plogging`,clientDB)
+    .then(res => {
+      console.log(res.data)
+      if(res.data[0].EMAIL === email.value){
+        getClient(
+          prevClient => ({
+            ...prevClient,
+            Client_email: res.data[0].EMAIL
+            }
+          )
+        )
+      }
+        else if(res.data[0].CNAME === name.value){
+          getClient(
+            prevClient => ({
+              ...prevClient,
+              Client_name: res.data[0].CNAME
+            })
+          )
+        }
+      }
+      )
     .catch((error)=>{
       console.log(error);
     })
@@ -67,28 +96,29 @@ export default function RegisterScreen({ navigation }) {
     const passwordError = passwordValidator(password.value)
     const passwordCFError = passwordConfirmer(passwordConfirm.value,password.value)
 
+    pullClient()
+
+    if (clientDB.Client_name === name.value) {                    // client 중복 확인, 이메일, 이름 중복체크
+      setName({ ...name, error: "already exist!!" })
+      return
+    }else if(clientDB.Client_email === email.value){
+      setEmail({ ...email, error: "already exist!!" })
+      return
+    }   
+    
     if (emailError || passwordError || nameError || passwordCFError) {              // TextInput이 비어있거나 정해진 글자수를 초과했을 때 오류
       setName({ ...name, error: nameError })
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       setPasswordCF({...passwordConfirm,error: passwordCFError})
       return
-    }else{
-      pullClient()
-
-      if (clientDB.Client_name !== '') {                    // client 중복 확인, 이메일, 이름 중복체크
-        setName({ ...name, error: "already exist!!" })
-      }else if(clientDB.Client_email !== ''){
-        setEmail({ ...email, error: "already exist!!" })
-      }else{
-        addClient()
-      }      
     }
-    
-    
+
+    addClient()
+
     navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
+    index: 0,
+    routes: [{ name: 'Dashboard' }],
     })
   }
 
