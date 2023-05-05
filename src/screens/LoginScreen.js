@@ -10,12 +10,14 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
+import Constants from 'expo-constants';
 import axios from 'axios'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
   const [client, setClient] = useState(null);
+  const ip = Constants.expoConfig.extra.Local_ip;
 
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value)
@@ -27,7 +29,7 @@ export default function LoginScreen({ navigation }) {
       return
     }
 
-    axios.post('http://192.168.35.2:3000/api/login', {email: email.value, password: password.value})
+    axios.post(`http://${ip}:3000/api/login`, {email: email.value, password: password.value})
     .then((response) => {
       // MySQL 서버에서 받은 데이터를 클라이언트에 저장
       const client = response.data;

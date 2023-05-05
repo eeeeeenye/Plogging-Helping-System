@@ -12,6 +12,8 @@ import { nameValidator } from '../helpers/nameValidator'
 import { passwordConfirmer } from '../helpers/passwordConfirm'
 import image from '../assets/logo.png'
 import axios from 'axios'
+import Constants from 'expo-constants';
+
 
 // phone 설정, id 자동 설정 해야함, phone validation 코드작성
 
@@ -23,7 +25,10 @@ export default function RegisterScreen({ navigation }) {
   const [checked1, setChecked1] = useState(false);
   const [checked2, setChecked2] = useState(false);
   const [phone, setPhone] = useState({ value: '', error: '' })
+  const ip = Constants.manifest.extra.Local_ip;
+  const [check,clientCheck] = useState(false)
 
+  //console.log(ip)
   const [client, setClient] = useState({
     Client_name : '',
     Client_pwd : '',
@@ -33,7 +38,8 @@ export default function RegisterScreen({ navigation }) {
 
   const [clientDB, getClient] = useState({
     Client_name: '',
-    Client_email:''
+    Client_email:'',
+    dupCheck: false
   })
 
   useEffect(() => {
@@ -47,43 +53,63 @@ export default function RegisterScreen({ navigation }) {
   }, [name.value, password.value, email.value, phone.value]);
 
   useEffect(() => {
-    getClient(prevClient => ({
-      ...prevClient,
-      Client_name: name.value,
-      Client_email: email.value,
-    }));
-  }, [name.value, email.value]);
+    if(check === true){                   // dup, valid check
+      console.log(clientDB.Client_name === client.Client_name)
+      if(clientDB.Client_name === client.Client_name){
+        setName({ ...name, error: "already exist!!" })
+        return
+      }else if(clientDB.Client_email === client.Client_email){
+        setEmail({ ...email, error: "already exist!!" })
+      }else if(check === true && clientDB.dupCheck === true){
+        addClient()
+
+        navigation.reset({
+        index: 0,
+        routes: [{ name: 'Dashboard' }],
+      })
+      }
+    }
+    console.log(clientDB.Client_name === client.Client_name,'useeffect')
+  }, [clientDB]);
 
   const addClient = async()=>{             // 사용자 DB 구축
-    await axios.post(`http://192.168.35.2:3000/create`,client)
+    await axios.post(`http://${ip}:3000/create`,client)
     .then(res => {
       console.log(res.data);
     })
     .catch(error => console.log(error));
   };
 
-  const pullClient = async () =>{            // 사용자 DB 조회
-    await axios.post(`http://192.168.35.2:3000/plogging`,clientDB)
+  const pullClient =  async() =>{            // 사용자 DB 조회
+    await axios.post(`http://${ip}:3000/plogging`,{Client_email:client.Client_email,Client_name:client.Client_name})
     .then(res => {
-      console.log(res.data)
-      if(res.data[0].EMAIL === email.value){
-        getClient(
-          prevClient => ({
-            ...prevClient,
-            Client_email: res.data[0].EMAIL
+      console.log(res.data,"kkkkkkkkkkkkk")
+      if(res.data.length !== 0){
+        if(res.data[0].EMAIL === email.value){
+          getClient((prevState)=>{
+            return{
+              ...prevState,
+              Client_email: res.data[0].EMAIL
             }
-          )
-        )
-      }
-        else if(res.data[0].CNAME === name.value){
-          getClient(
-            prevClient => ({
-              ...prevClient,
-              Client_name: res.data[0].CNAME
-            })
-          )
+          })
         }
-      }
+
+         if(res.data[0].CNAME === name.value){
+              getClient((prevState)=>{
+                return{
+                  ...prevState,
+                  Client_name: res.data[0].CNAME
+                }
+              }) 
+        }}else{
+          getClient((prevState)=>{
+            return{
+              ...prevState,
+              dupCheck: true
+            }
+          })
+        }
+    }
       )
     .catch((error)=>{
       console.log(error);
@@ -97,14 +123,6 @@ export default function RegisterScreen({ navigation }) {
     const passwordCFError = passwordConfirmer(passwordConfirm.value,password.value)
 
     pullClient()
-
-    if (clientDB.Client_name === name.value) {                    // client 중복 확인, 이메일, 이름 중복체크
-      setName({ ...name, error: "already exist!!" })
-      return
-    }else if(clientDB.Client_email === email.value){
-      setEmail({ ...email, error: "already exist!!" })
-      return
-    }   
     
     if (emailError || passwordError || nameError || passwordCFError) {              // TextInput이 비어있거나 정해진 글자수를 초과했을 때 오류
       setName({ ...name, error: nameError })
@@ -112,14 +130,10 @@ export default function RegisterScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       setPasswordCF({...passwordConfirm,error: passwordCFError})
       return
+    }else{
+      clientCheck(true)
+      return
     }
-
-    addClient()
-
-    navigation.reset({
-    index: 0,
-    routes: [{ name: 'Dashboard' }],
-    })
   }
 
   return (
