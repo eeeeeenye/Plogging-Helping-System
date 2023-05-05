@@ -6,7 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "extra": {
-      "API_KEY": "c8dff4fd970eba9659e64c906bcfd678",
+      "KAKAO_RESTAPI_KEY": "c8dff4fd970eba9659e64c906bcfd678",
+      "KAKAO_JAVASCRIPT_KEY" : "093f44ff0baa195ab8c672ddce75f0fd",
       "Local_ip": "192.168.35.180"
     },
     "splash": {
