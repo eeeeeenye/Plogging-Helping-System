@@ -1,7 +1,7 @@
 import React from 'react'
 import {WebView} from 'react-native-webview';
 import { View } from 'react-native';
-import watch from '../addons/Watch'
+import Watch from '../addons/Watch'
 import Pedometer from '../addons/Pedometer'
 
 
