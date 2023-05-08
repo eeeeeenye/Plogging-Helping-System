@@ -11,14 +11,14 @@ import {
   Dashboard,
 } from './src/screens'
 import KakaoLoginScreen from './src/screens/KakaoLoginScreen'
-import HomeMain from './src/screens/HomeMain'
+import KakaoMapScreen from './src/screens/HomeMain'
 
 const Stack = createStackNavigator()
 
 export default function App() {
 
   return (
-    <HomeMain></HomeMain>
+    <KakaoMapScreen></KakaoMapScreen>
     //  <Provider theme={theme}>
     //    <NavigationContainer>
     //      <Stack.Navigator

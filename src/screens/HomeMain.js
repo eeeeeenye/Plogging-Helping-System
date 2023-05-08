@@ -6,10 +6,11 @@ import * as Location from 'expo-location';
 
 const KakaoMapScreen = () => {
   const [position, setPosition] = useState(null);
+  const [city, setCity] = useState(null);
 
   const getLocation = async () => {
     try {
-      await Location.requestPermissionsAsync();
+      await Location.requestForegroundPermissionsAsync();
 
       //현재 위치 정보 얻기 -> 시스템 location
       const locationData = await Location.getCurrentPositionAsync();
@@ -21,6 +22,7 @@ const KakaoMapScreen = () => {
         { useGoogleMaps: false }
       );
       setPosition({ lat: latitude, lng: longitude });
+      setCity(location);
 
     } catch {
       Alert.alert('위치 사용을 허용해주세요.');
@@ -32,6 +34,7 @@ const KakaoMapScreen = () => {
   }, []);
 
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY;
+  console.log(apiKey);
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`;
   const html = `
     <html>
@@ -58,7 +61,7 @@ const KakaoMapScreen = () => {
           </body>
         </html>
       `
-      
+
   return (
     <View style={{ flex: 1 }}>
       <WebView
