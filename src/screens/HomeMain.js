@@ -33,11 +33,14 @@ const KakaoMapScreen = (props) => {
     getLocation();
   }, []);
 
+  // position이 존재하지 않으면 렌더링하지 않는다.
   if (!position) {
-    return null; // position이 null인 경우 WebView를 렌더링하지 않음
+    return null;
   }
-  
+
+  // 카카오 맵 API를 사용하기 위한 설정값
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY;
+  console.log(apiKey);
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`;
   const html = `
     <html>
@@ -57,12 +60,12 @@ const KakaoMapScreen = (props) => {
           const markerPosition = new kakao.maps.LatLng(${position?.lat}, ${position?.lng});
           const marker = new kakao.maps.Marker({
             position: markerPosition,
-          });          
-              marker.setMap(map); // 현재 위치에 마커를 찍는다.
-            </script>
-          </body>
-        </html>
-      `
+          });
+          marker.setMap(map); // 현재 위치에 마커를 찍는다.
+        </script>
+      </body>
+    </html>
+  `;
 
   return (
     <View style={{ flex: 1 }}>
