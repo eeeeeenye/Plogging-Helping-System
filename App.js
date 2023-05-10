@@ -11,34 +11,37 @@ import {
   Dashboard,
 } from './src/screens'
 import KakaoLoginScreen from './src/screens/KakaoLoginScreen'
+import KakaoMapScreen from './src/screens/HomeMain'
+import LocationSettings from './src/screens/Location_setting'
 
 const Stack = createStackNavigator()
 
 export default function App() {
 
   return (
-     <Provider theme={theme}>
-       <NavigationContainer>
-         <Stack.Navigator
-           initialRouteName="StartScreen"
-           screenOptions={{
-             headerShown: false,
-           }}
-         >
-           <Stack.Screen name="StartScreen" component={StartScreen} />
-           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-           <Stack.Screen name="Dashboard" component={Dashboard} />
-           <Stack.Screen
-             name="ResetPasswordScreen"
-             component={ResetPasswordScreen}
-           />
-           <Stack.Screen
-             name="KakaoLoginScreen"
-             component={KakaoLoginScreen}
-           />
-         </Stack.Navigator>
-       </NavigationContainer>
-     </Provider>
+    <LocationSettings></LocationSettings>
+    //  <Provider theme={theme}>
+    //    <NavigationContainer>
+    //      <Stack.Navigator
+    //        initialRouteName="StartScreen"
+    //        screenOptions={{
+    //          headerShown: false,
+    //        }}
+    //      >
+    //        <Stack.Screen name="StartScreen" component={StartScreen} />
+    //        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+    //        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+    //        <Stack.Screen name="Dashboard" component={Dashboard} />
+    //        <Stack.Screen
+    //          name="ResetPasswordScreen"
+    //          component={ResetPasswordScreen}
+    //        />
+    //        <Stack.Screen
+    //          name="KakaoLoginScreen"
+    //          component={KakaoLoginScreen}
+    //        />
+    //      </Stack.Navigator>
+    //    </NavigationContainer>
+    //  </Provider>
   )
 }
