@@ -51,8 +51,30 @@ app.post("/create",(req,res)=>{
     })
 })
 
+//기록물 DB 저장코드
+app.post("/writeRecord",(req,res)=>{
+    const Client_name = req.body.Client_name;
+    const latitude = req.body.latitude;
+    const longitude = req.body.longitude;
+    const walking = req.body.walking;
+    const distance = req.body.distance;
+    const stopwatch = req.body.stopwatch;
+    const image = req.body.imageURI;
+    const record_time = req.body.time;
+
+    db.query(`INSERT INTO Plogging.record (CNAME,PASSWORD,EMAIL,PHONE) VALUES ( ?, ?, ?, ?)`,
+    [ Client_name, Client_pwd, Client_email,Client_phone],
+    (err, result)=>{
+        if(err){
+            console.log(err);
+        }else{
+            res.send("Insert values successfully!");
+        }
+    })
+})
+
 /* read */
-app.post("/plogging", (req,res)=>{
+app.post("/plogging/client", (req,res)=>{
     const email = req.body.Client_email;
     const name =req.body.Client_name;
 
@@ -69,38 +91,61 @@ app.post("/plogging", (req,res)=>{
     )
 });
 
-app.post('/api/login', async (req, res) => {
+app.post("/plogging/record", (req,res)=>{
+    const email = req.body.Client_email;
+    const name =req.body.Client_name;
+
+    db.query(
+        `SELECT EMAIL,CNAME FROM plogging.client WHERE EMAIL = ? OR CNAME = ?;`,
+        [email,name],
+        (err, result) => {
+            if(err){
+                console.log(err);
+            }else{
+                res.send(result);
+            }
+        }
+    )
+});
+
+app.post('/api/login', (req, res) => {
     try {
       // 클라이언트에서 전달받은 로그인 정보
       const { email, password } = req.body;
-      
+
       // MySQL에서 해당 유저 정보를 가져옴
-      const [rows, fields] = await db.execute('SELECT * FROM users WHERE email = ? AND password = ?', [email, password]);
-  
-      if (rows.length > 0) {
-        // 유저 정보가 일치하는 경우, 세션에 저장하여 유지
-        req.session.user = rows[0];
-        res.json({ success: true });
-      } else {
-        res.json({ success: false, message: '유저 정보가 일치하지 않습니다.' });
-      }
+      db.query('SELECT * FROM client WHERE email = ? AND pswd = ?', [email, password], (err, rows, fields) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ success: false, message: '서버 에러 발생' });
+          return;
+        }
+      
+        console.log(rows, '=====================');
+        if (rows.length > 0) {
+          res.send({ success: true });
+        } else {
+          res.send({ success: false, message: '유저 정보가 일치하지 않습니다.' });
+        }
+      });
+      
     } catch (err) {
       console.error(err);
       res.status(500).json({ success: false, message: '서버 에러 발생' });
     }
   });
 
+  
+
 /* Update */
 app.put("/plogging/:params", (req, res)=>{
-    const todoid = req.body.todoid;
-    const author = req.body.author;
-    const title = req.body.title;
-    const content = req.body.content;
-    const priority = req.body.priority;
+    const city = req.body.city;
+    const clientName = req.body.Client_name;
+    console.log(city)
 
     db.query(
-        "UPDATE TODOLISTSYSTEM TODOS SET AUTHOR = ?, TITLE = ?, CONTENT = ?, PRIORITY = ? WHERE TODOID = ?;",
-        [author, title, content, priority, todoid],
+        `UPDATE plogging.client SET address = ? WHERE clientID = (SELECT clientID from plogging.client WHERE clientName= ? );`,
+        [city,clientName, clientName],
         (err,result)=>{
             if(err){
                 console.log(err);
@@ -110,13 +155,6 @@ app.put("/plogging/:params", (req, res)=>{
         }
     )
 });
-
-
-
-
-// 게시글 CRUD
-
-//map API 서버 연결
 
 
 /*서버와 포트와 연결*/

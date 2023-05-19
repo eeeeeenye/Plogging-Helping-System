@@ -3,10 +3,13 @@ import { WebView } from 'react-native-webview';
 import { View, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
+import axios from 'axios'
 
 const KakaoMapScreen = (props) => {
   const [position, setPosition] = useState(null);
   const [city, setCity] = useState(null);
+  const setting = props.tag || false;
+  const ip = Constants.manifest.extra.Local_ip;
 
   const getLocation = async () => {
     try {
@@ -22,7 +25,7 @@ const KakaoMapScreen = (props) => {
         { useGoogleMaps: false }
       );
       setPosition({ lat: latitude, lng: longitude });
-      setCity(location);
+      setCity(location[0].district);
 
     } catch {
       Alert.alert('위치 사용을 허용해주세요.');
@@ -30,8 +33,20 @@ const KakaoMapScreen = (props) => {
   };
 
   useEffect(() => {
-    getLocation();
-  }, []);
+    const fetchData = async () => {
+      if (setting === 'settings' ) {
+        try {
+          getLocation();
+          await axios.put(`http://${ip}:3000/plogging/:params`, {city:city, Client_name:'인혜'});
+          return
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+    
+    fetchData();
+  }, [city]);
 
   // position이 존재하지 않으면 렌더링하지 않는다.
   if (!position) {

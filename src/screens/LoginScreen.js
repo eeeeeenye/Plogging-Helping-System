@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TouchableOpacity, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
@@ -16,7 +16,6 @@ import axios from 'axios'
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
-  const [client, setClient] = useState(null);
   const ip = Constants.expoConfig.extra.Local_ip;
 
   const onLoginPressed = () => {
@@ -32,17 +31,18 @@ export default function LoginScreen({ navigation }) {
     axios.post(`http://${ip}:3000/api/login`, {email: email.value, password: password.value})
     .then((response) => {
       // MySQL 서버에서 받은 데이터를 클라이언트에 저장
-      const client = response.data;
-      setClient(client);}
+        const ClientData = response.data;
+
+        if(ClientData.success !== true){
+          setEmail({...email,error: ClientData.message})
+          setPassword({...password,error:ClientData.message})
+          return
+        }else{
+          console.log('[##] loggedIn : Success')
+        }
+      }
       )
 
-    if(client.success !== true){
-      setEmail({...email,error: client.message})
-      setPassword({...password,error:client.message})
-      return
-    }
-
-    console.log('[##] loggedIn', client.success)
     navigation.reset({
       index: 0,
       routes: [{ name: 'Dashboard' }],

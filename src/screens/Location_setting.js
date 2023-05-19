@@ -1,4 +1,3 @@
-import * as Location from 'expo-location';
 import {View} from 'react-native'
 import React,{useState,useEffect} from 'react'
 import Paragraph from '../components/Paragraph'
@@ -7,7 +6,6 @@ import KakaoMapScreen from './HomeMain';
 //최대한 디자인은 배제
 
 const LocationSettings =({navigation})=>{
-
     
     return(
         <View style={{flex:1}}>
@@ -20,11 +18,15 @@ const LocationSettings =({navigation})=>{
                 }}>
                 위치설정
             </Paragraph>
-            <KakaoMapScreen width='100%' height='70%'/>
+            <KakaoMapScreen 
+            width='100%' 
+            height='70%'
+            tag= 'settings'
+            />
             <Button
             mode="outlined"
             onPress={() => navigation.navigate('StartScreen')}
-            style={{bottom:200}}
+            style={{bottom:150}}
             >
                 확인
                 </Button>
