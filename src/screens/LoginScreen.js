@@ -12,6 +12,7 @@ import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import Constants from 'expo-constants';
 import axios from 'axios'
+import clientManager from '../helpers/localStorage'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -21,36 +22,33 @@ export default function LoginScreen({ navigation }) {
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
-
+  
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
     }
-
+  
     axios.post(`http://${ip}:3000/api/login`, {email: email.value, password: password.value})
-    .then((response) => {
-      // MySQL 서버에서 받은 데이터를 클라이언트에 저장
+      .then((response) => {
+        // MySQL 서버에서 받은 데이터를 클라이언트에 저장
         const ClientData = response.data;
-
+  
         if(ClientData.success !== true){
           setEmail({...email,error: ClientData.message})
           setPassword({...password,error:ClientData.message})
           return
-        }else{
+        } else {
           console.log('[##] loggedIn : Success')
+          clientManager.storeData('user',ClientData)
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Dashboard', params: { width: '100%', height: '50%' } }],
+          })
         }
-      }
-      )
-
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-      params: {                                   // 다른페이지로 사용자 이메일을 넘겨줌
-        email: email
-      }
-    })
+      })
   }
+  
 
   return (
     <Background>

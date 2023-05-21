@@ -4,7 +4,6 @@ import { theme } from '../core/theme'
 
 export default function Background({ children }) {
   return (
-    
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         {children}
       </KeyboardAvoidingView>

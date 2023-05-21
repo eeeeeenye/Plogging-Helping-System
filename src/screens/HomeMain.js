@@ -10,6 +10,7 @@ const KakaoMapScreen = (props) => {
   const [city, setCity] = useState(null);
   const setting = props.tag || false;
   const ip = Constants.manifest.extra.Local_ip;
+  console.log(props.width, props.height)
 
   const getLocation = async () => {
     try {
@@ -34,9 +35,10 @@ const KakaoMapScreen = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      getLocation();
+
       if (setting === 'settings' ) {
         try {
-          getLocation();
           await axios.put(`http://${ip}:3000/plogging/:params`, {city:city, Client_name:'인혜'});
           return
         } catch (error) {

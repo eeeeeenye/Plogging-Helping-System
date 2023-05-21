@@ -25,7 +25,7 @@ const LocationSettings =({navigation})=>{
             />
             <Button
             mode="outlined"
-            onPress={() => navigation.navigate('StartScreen')}
+            onPress={() => navigation.navigate('Dashboard',{ width: '100%', height: '50%' })}
             style={{bottom:150}}
             >
                 확인

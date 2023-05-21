@@ -1,30 +1,19 @@
 import React from 'react'
+import { View } from 'react-native';
 import Background from '../components/Background'
-import Logo from '../components/Logo'
-import Header from '../components/Header'
-import Paragraph from '../components/Paragraph'
-import Button from '../components/Button'
+import KakaoMapScreen from './HomeMain';
+import StepCounter from '../addons/Pedometer';
+import StopWatchAPI from '../addons/Watch';
 
-export default function Dashboard({ navigation }) {
+export default function Dashboard(props) {
+  const { route } = props;                  // route를 props로부터 분리하여 할당
+  const {width, height} = route.params
+
   return (
-    <Background>
-      <Logo />
-      <Header>Let’s start</Header>
-      <Paragraph>
-        Your amazing app starts here. Open you favorite code editor and start
-        editing this project.
-      </Paragraph>
-      <Button
-        mode="outlined"
-        onPress={() =>
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'StartScreen' }],
-          })
-        }
-      >
-        Logout
-      </Button>
-    </Background>
+    <View style={{ flex: 1 }}>
+      <KakaoMapScreen width={width} height={height}/>
+      <StepCounter/>
+      <StopWatchAPI/>
+    </View>
   )
 }

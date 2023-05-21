@@ -7,6 +7,7 @@ import {
     Dashboard,
     KakaoLoginScreen,
     LocationSettings,
+    KakaoMapScreen
   } from '../screens'
 
 import { createStackNavigator } from '@react-navigation/stack'
@@ -25,6 +26,7 @@ function StackNav(){
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
             <Stack.Screen name="Dashboard" component={Dashboard} />
+            <Stack.Screen name="homeMain" component={KakaoMapScreen} />
             <Stack.Screen
               name="ResetPasswordScreen"
               component={ResetPasswordScreen}

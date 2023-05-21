@@ -40,8 +40,8 @@ app.post("/create",(req,res)=>{
     const Client_email =req.body.Client_email;
     const Client_phone =req.body.Client_phone;
 
-    db.query(`INSERT INTO Plogging.CLIENT (CNAME,PASSWORD,EMAIL,PHONE) VALUES ( ?, ?, ?, ?)`,
-    [ Client_name, Client_pwd, Client_email,Client_phone],
+    db.query(`INSERT INTO Plogging.CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
+    [ Client_email, Client_name, Client_pwd ,Client_phone],
     (err, result)=>{
         if(err){
             console.log(err);
@@ -79,7 +79,7 @@ app.post("/plogging/client", (req,res)=>{
     const name =req.body.Client_name;
 
     db.query(
-        `SELECT EMAIL,CNAME FROM plogging.client WHERE EMAIL = ? OR CNAME = ?;`,
+        `SELECT EMAIL,clientName FROM plogging.client WHERE email = ? OR clientName = ?;`,
         [email,name],
         (err, result) => {
             if(err){
@@ -114,16 +114,19 @@ app.post('/api/login', (req, res) => {
       const { email, password } = req.body;
 
       // MySQL에서 해당 유저 정보를 가져옴
-      db.query('SELECT * FROM client WHERE email = ? AND pswd = ?', [email, password], (err, rows, fields) => {
+      db.query(
+        'SELECT clientID,email,clientName,phone,address FROM client WHERE email = ? AND pswd = ?', 
+        [email, password], 
+        (err, result) => {
         if (err) {
           console.error(err);
           res.status(500).json({ success: false, message: '서버 에러 발생' });
           return;
         }
       
-        console.log(rows, '=====================');
-        if (rows.length > 0) {
-          res.send({ success: true });
+        console.log(result, '=====================');
+        if (result.length > 0) {
+          res.send({ success: true , ...result[0]});
         } else {
           res.send({ success: false, message: '유저 정보가 일치하지 않습니다.' });
         }
@@ -168,4 +171,3 @@ app.listen(app.get('port'),()=>{
 //     console.error(err.stack);
 //     res.status(500).send('Something broke!');
 // });
-
