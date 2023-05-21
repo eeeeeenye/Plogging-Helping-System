@@ -4,6 +4,7 @@ import { View, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import axios from 'axios'
+import clientManager from '../helpers/localStorage';
 
 const KakaoMapScreen = (props) => {
   const [position, setPosition] = useState(null);
@@ -27,6 +28,7 @@ const KakaoMapScreen = (props) => {
       );
       setPosition({ lat: latitude, lng: longitude });
       setCity(location[0].district);
+      clientManager.storeData('city',city)
 
     } catch {
       Alert.alert('위치 사용을 허용해주세요.');
@@ -36,15 +38,6 @@ const KakaoMapScreen = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       getLocation();
-
-      if (setting === 'settings' ) {
-        try {
-          await axios.put(`http://${ip}:3000/plogging/:params`, {city:city, Client_name:'인혜'});
-          return
-        } catch (error) {
-          console.error(error);
-        }
-      }
     };
     
     fetchData();

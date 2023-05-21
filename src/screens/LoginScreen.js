@@ -43,7 +43,7 @@ export default function LoginScreen({ navigation }) {
           clientManager.storeData('user',ClientData)
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Dashboard', params: { width: '100%', height: '50%' } }],
+            routes: [{ name: 'Dashboard', params: { width: '100%', height: '100%' } }],
           })
         }
       })

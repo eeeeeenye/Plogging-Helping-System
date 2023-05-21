@@ -13,6 +13,7 @@ import { passwordConfirmer } from '../helpers/passwordConfirm'
 import image from '../assets/logo.png'
 import axios from 'axios'
 import Constants from 'expo-constants';
+import clientManager from '../helpers/localStorage'
 
 
 // phone 설정, id 자동 설정 해야함, phone validation 코드작성
@@ -78,6 +79,14 @@ export default function RegisterScreen({ navigation }) {
       console.log(res.data);
     })
     .catch(error => console.log(error));
+
+    await axios.post(`http://${ip}:3000/api/login`,clientDB)
+    .then((response) => {
+        // MySQL 서버에서 받은 데이터를 클라이언트에 저장
+        const ClientData = response.data;
+        clientManager.storeData('user',ClientData)
+    })
+    
   };
 
   const pullClient =  async() =>{            // 사용자 DB 조회

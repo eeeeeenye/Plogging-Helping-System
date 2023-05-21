@@ -124,7 +124,6 @@ app.post('/api/login', (req, res) => {
           return;
         }
       
-        console.log(result, '=====================');
         if (result.length > 0) {
           res.send({ success: true , ...result[0]});
         } else {
@@ -143,12 +142,12 @@ app.post('/api/login', (req, res) => {
 /* Update */
 app.put("/plogging/:params", (req, res)=>{
     const city = req.body.city;
-    const clientName = req.body.Client_name;
+    const clientID = req.body.Client_ID;
     console.log(city)
 
     db.query(
-        `UPDATE plogging.client SET address = ? WHERE clientID = (SELECT clientID from plogging.client WHERE clientName= ? );`,
-        [city,clientName, clientName],
+        `UPDATE plogging.client SET address = ? WHERE clientID = ?;`,
+        [city,clientID],
         (err,result)=>{
             if(err){
                 console.log(err);
