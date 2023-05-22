@@ -11,7 +11,6 @@ const KakaoMapScreen = (props) => {
   const [city, setCity] = useState(null);
   const setting = props.tag || false;
   const ip = Constants.manifest.extra.Local_ip;
-  console.log(props.width, props.height)
 
   const getLocation = async () => {
     try {
@@ -59,7 +58,7 @@ const KakaoMapScreen = (props) => {
         <script type="text/javascript" src="${url}"></script>
       </head>
       <body>
-        <div id="map" style="width:${props.width};height:${props.height};"></div>
+        <div id="map" style="width:100%;height:85%;"></div>
         <script>
           const container = document.getElementById('map');
           const options = {

@@ -17,10 +17,17 @@ const LocationSettings =({navigation})=>{
         
         try {
             await axios.put(`http://${ip}:3000/plogging/:params`, {Client_ID:clientID._j.clientID,city:city._j});
-            navigation.navigate('Dashboard',{ width: '100%', height: '70%' })
+
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // 리덕스 로그인 상태값 추가하는 것 코드 추가
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+            navigation.navigate('홈메인')
             return
         } catch (error) {
             console.error(error);
+            clientManager.storeData('login',false);
         }
     }
     

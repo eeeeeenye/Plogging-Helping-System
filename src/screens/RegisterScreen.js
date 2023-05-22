@@ -86,13 +86,12 @@ export default function RegisterScreen({ navigation }) {
         const ClientData = response.data;
         clientManager.storeData('user',ClientData)
     })
-    
+
   };
 
   const pullClient =  async() =>{            // 사용자 DB 조회
     await axios.post(`http://${ip}:3000/plogging/client`,{Client_email:client.Client_email,Client_name:client.Client_name})
     .then(res => {
-      console.log(res.data,"kkkkkkkkkkkkk")
       if(res.data.length !== 0){
         if(res.data[0].EMAIL === email.value){
           getClient((prevState)=>{

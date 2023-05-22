@@ -1,21 +1,24 @@
-import React from 'react'
+import React from 'react';
 import { View } from 'react-native';
-import Background from '../components/Background'
+import Background from '../components/Background';
 import KakaoMapScreen from './HomeMain';
 import StepCounter from '../addons/Pedometer';
 import StopWatchAPI from '../addons/Watch';
 import clientManager from '../helpers/localStorage';
 
-export default function Dashboard(props) {
-  const { route } = props;                  // route를 props로부터 분리하여 할당
-  const {width, height} = route.params
+export default function Dashboard() {
 
   clientManager.getAllKeys();
+
   return (
     <View style={{ flex: 1 }}>
-      <KakaoMapScreen width={width} height={height}/>
-      <StepCounter/>
-      <StopWatchAPI/>
+      <View style={{ flexDirection: 'row', height:50, top: 20}}>
+        <StepCounter style={{ flex: 1 }} />
+        <StopWatchAPI style={{ flex: 1 }} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <KakaoMapScreen/>
+      </View>
     </View>
-  )
+  );
 }

@@ -53,7 +53,7 @@ app.post("/create",(req,res)=>{
 
 //기록물 DB 저장코드
 app.post("/writeRecord",(req,res)=>{
-    const Client_name = req.body.Client_name;
+    const Client_id = req.body.Client_id;
     const latitude = req.body.latitude;
     const longitude = req.body.longitude;
     const walking = req.body.walking;
@@ -61,9 +61,10 @@ app.post("/writeRecord",(req,res)=>{
     const stopwatch = req.body.stopwatch;
     const image = req.body.imageURI;
     const record_time = req.body.time;
+    const record_result = req.body.result
 
-    db.query(`INSERT INTO Plogging.record (CNAME,PASSWORD,EMAIL,PHONE) VALUES ( ?, ?, ?, ?)`,
-    [ Client_name, Client_pwd, Client_email,Client_phone],
+    db.query(`INSERT INTO Plogging.record VALUES ( ?, ?, ?, ?, ?, ?,?)`,
+    [ , Client_pwd, Client_email,Client_phone],
     (err, result)=>{
         if(err){
             console.log(err);

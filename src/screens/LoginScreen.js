@@ -41,10 +41,18 @@ export default function LoginScreen({ navigation }) {
         } else {
           console.log('[##] loggedIn : Success')
           clientManager.storeData('user',ClientData)
+
+
+          // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+          // //리덕스 로그인 상태값 변환 코드 추가
+          // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Dashboard', params: { width: '100%', height: '100%' } }],
+            routes: [{ name: '홈메인', params: { width: '100%', height: '80%' } }],
           })
+
+          navigation.navigate('TabNav');
         }
       })
   }
