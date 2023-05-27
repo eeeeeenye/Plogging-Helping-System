@@ -64,7 +64,7 @@ app.post("/writeRecord",(req,res)=>{
     const record_result = req.body.result
 
     db.query(`INSERT INTO Plogging.record VALUES ( ?, ?, ?, ?, ?, ?,?)`,
-    [ , Client_pwd, Client_email,Client_phone],
+    [Client_id , Client_pwd, Client_email,Client_phone],
     (err, result)=>{
         if(err){
             console.log(err);

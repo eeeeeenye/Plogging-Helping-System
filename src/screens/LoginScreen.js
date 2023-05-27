@@ -49,7 +49,7 @@ export default function LoginScreen({ navigation }) {
 
           navigation.reset({
             index: 0,
-            routes: [{ name: '홈메인', params: { width: '100%', height: '80%' } }],
+            routes: [{ name: 'HomeMain'}],
           })
 
           navigation.navigate('TabNav');

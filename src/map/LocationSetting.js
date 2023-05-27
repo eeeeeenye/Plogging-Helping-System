@@ -3,13 +3,14 @@ import { WebView } from 'react-native-webview';
 import { View, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
-import axios from 'axios'
 import clientManager from '../helpers/localStorage';
+import axios from 'axios'
+import Button from '../components/Button';
+import Paragraph from '../components/Paragraph';
 
-const KakaoMapScreen = (props) => {
+const LocationSettings = ({navigation}) => {
   const [position, setPosition] = useState(null);
   const [city, setCity] = useState(null);
-  const setting = props.tag || false;
   const ip = Constants.manifest.extra.Local_ip;
 
   const getLocation = async () => {
@@ -28,9 +29,18 @@ const KakaoMapScreen = (props) => {
       setPosition({ lat: latitude, lng: longitude });
       setCity(location[0].district);
       clientManager.storeData('city',city)
+      await axios.put(`http://${ip}:3000/plogging/:params`, {Client_ID:clientID._j.clientID,city:city._j});
 
-    } catch {
-      Alert.alert('위치 사용을 허용해주세요.');
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // 리덕스 로그인 상태값 추가하는 것 코드 추가
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+      return
+
+    } catch (error){
+      console.error(error);
+      clientManager.storeData('login',false);
+      Alert.alert(error);
     }
   };
 
@@ -40,7 +50,7 @@ const KakaoMapScreen = (props) => {
     };
     
     fetchData();
-  }, [city]);
+  }, []);
 
   // position이 존재하지 않으면 렌더링하지 않는다.
   if (!position) {
@@ -77,8 +87,17 @@ const KakaoMapScreen = (props) => {
   `;
 
   return (
-    <View style={{ flex: 1 }}>
-      <WebView
+    <View style={{flex:1}}>
+    <Paragraph
+      style={{
+      color:'black',
+      top:100,
+      left:167,
+      fontSize:20,
+      }}>
+      위치설정
+    </Paragraph>
+    <WebView
         originWhitelist={['*']}
         source={{ html }}
         javaScriptEnabled={true}
@@ -87,8 +106,15 @@ const KakaoMapScreen = (props) => {
           flex: 1,
           top: 100 }}
       />
+    <Button
+      mode="outlined"
+      onPress={() => navigation.navigate('') }
+      style={{bottom:150}}
+    >
+      확인
+    </Button>
     </View>
   );
 };
 
-export default KakaoMapScreen;
+export default LocationSettings;

@@ -31,7 +31,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier":"com.Ploger.Plog"
+      "bundleIdentifier":"com.Ploger.Plog",
+      "infoPlist": {
+        "UIBackgroundModes": ["location"]
+      }
     },
     "android": {
       "package":"com.Ploger.Plog",

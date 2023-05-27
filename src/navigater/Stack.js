@@ -8,7 +8,7 @@ import {
     Dashboard,
     KakaoLoginScreen,
     LocationSettings,
-    KakaoMapScreen
+    locationTracker
 } from '../screens'
 import TabNav from './Tab'
 
@@ -40,9 +40,11 @@ function StackNav(){
             />
             <Stack.Screen name="StartScreen" component={StartScreen} />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="HomeMain" component={locationTracker} />
+            <Stack.Screen name="LocationSetting" component={LocationSettings} />
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
             <Stack.Screen 
-                name="홈메인"
+                name="HomeMain"
                 component={Dashboard}
                 options={{
                     headerShown:true,
@@ -52,7 +54,7 @@ function StackNav(){
                     },
                 }}
             />
-            <Stack.Screen name="homeMain" component={KakaoMapScreen} />
+            <Stack.Screen name="locationTracking" component={locationTracker} />
             <Stack.Screen
                 name="ResetPasswordScreen"
                 component={ResetPasswordScreen}
@@ -61,7 +63,6 @@ function StackNav(){
                 name="KakaoLoginScreen"
                 component={KakaoLoginScreen}
             />
-            <Stack.Screen name="Location" component={LocationSettings} />
             
         </Stack.Navigator>
     )

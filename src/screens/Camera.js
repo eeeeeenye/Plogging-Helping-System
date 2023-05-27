@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const CameraExample = () => {
+const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photoUri, setPhotoUri] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -16,8 +17,10 @@ const CameraExample = () => {
 
   const handleCapture = async () => {
     if (cameraRef) {
+      setIsLoading(true); // 로딩 상태로 변경
       const photo = await cameraRef.takePictureAsync();
       setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
+      setIsLoading(false); // 로딩 상태 해제
     }
   };
 
@@ -27,6 +30,15 @@ const CameraExample = () => {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Camera
@@ -38,7 +50,7 @@ const CameraExample = () => {
         <Text style={styles.photoUriText}>Photo URI: {photoUri}</Text>
       ) : (
         <TouchableOpacity style={styles.button} onPress={handleCapture}>
-          <Text style={styles.buttonText}>Capture</Text>
+          <Text style={styles.buttonText}>촬영</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -69,6 +81,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
-export default CameraExample;
+export default CameraScreen;
+

@@ -66,7 +66,7 @@ export default function RegisterScreen({ navigation }) {
 
         navigation.reset({
         index: 0,
-        routes: [{ name: 'Location' }],
+        routes: [{ name: 'HomeMain' }],
       })
       }
     }
