@@ -8,13 +8,6 @@ export default function StepCounter() {
   const [steps, setSteps] = useState(0);
   const stopwatchState = useSelector((state) => state.stopwatch.isRunning) // Redux 스토어의 stopwatch.isRunning 값 사용
 
-  useEffect(()=>{
-     const resetStatus = useSelector((state) => state.stopwatch.elapsedTime)
-     if(!resetStatus){
-        setSteps(0)
-     }
-   },[steps])
-
   useEffect(() => {
     let subscription;
 
