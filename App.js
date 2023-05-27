@@ -1,21 +1,23 @@
 import React from 'react'
-import {useState, useEffect} from 'react-native'
-import { Provider } from 'react-native-paper'
+import { Provider } from 'react-redux'
+import { DefaultTheme, Provider as PaperProvider, Text } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
-import { theme } from './src/core/theme'
 import StackNav from './src/navigater/Stack'
-import TabNav from './src/navigater/Tab'
-import clientManager from './src/helpers/localStorage'
-import CameraScreen from './src/screens/Camera'
+import store from './src/slices/store'
+
 export default function App() {
-  
+  const theme = {
+    ...DefaultTheme,
+    // 기존 테마 설정 유지
+  }
 
   return (
-    <CameraScreen/>
-      // <Provider theme={theme}>
-      //   <NavigationContainer>
-      //     <StackNav/>
-      //   </NavigationContainer>
-      // </Provider>
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <StackNav />
+        </NavigationContainer>
+      </PaperProvider>
+    </Provider>
   )
 }

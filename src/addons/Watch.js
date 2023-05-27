@@ -1,39 +1,57 @@
-import React, { Component, useState } from 'react';
-import { AppRegistry, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
+import React, { useState, useEffect } from 'react';
+import { Text, View, TouchableHighlight } from 'react-native';
+import { Stopwatch } from 'react-native-stopwatch-timer';
+import { useDispatch } from 'react-redux';
+import { start, stop, reset } from '../slices/All/Watchslice';
 
-const StopWatchAPI = ({
+const StopWatchAPI = () => {
+  const [isRunning, setIsRunning] = useState(false);
+  const [resetStatus, setResetStatus] = useState(false);
+  const dispatch = useDispatch();
 
-}) => {
+  useEffect(()=>{
+    if(isRunning){
+      dispatch(start())
+    }else{
+      dispatch(stop())
+    }
+  },[isRunning])
 
-  const [start, setStart] = useState(false);
-  const [reset, setReset] = useState(false);
+  useEffect(()=>{
+    if(resetStatus){
+      dispatch(reset())
+    }
+  },[resetStatus])
 
-  toggleStopwatch = () => {
-    setStart(!start);
-    setReset(false);
-  }
+  const toggleStopwatch = () => {
+    setIsRunning(!isRunning);
+    setResetStatus(false);
+  };
 
-  resetStopwatch = () => {
-    setStart(false);
-    setReset(true);
-  }
+  const resetStopwatch = () => {
+    setIsRunning(false);
+    setResetStatus(true);
+  };
 
   return (
-    <View>
-      <Stopwatch laps msecs  start={start}
-        reset={reset}
+    <View>  
+      <Stopwatch
+        laps
+        msecs
+        start={isRunning}                   
+        reset={resetStatus}
         options={options}
-        getTime={(time) => {}} />
+        getTime={(time) => {}}
+      />
       <TouchableHighlight onPress={toggleStopwatch}>
-        <Text style={{ fontSize: 30 }}>{!start ? "Start" : "Stop"}</Text>
+        <Text style={{ fontSize: 30 }}>{!isRunning ? 'Start' : 'Stop'}</Text>
       </TouchableHighlight>
       <TouchableHighlight onPress={resetStopwatch}>
         <Text style={{ fontSize: 30 }}>Reset</Text>
       </TouchableHighlight>
     </View>
-  )
-}
+  );
+};
 
 const options = {
   container: {
@@ -46,7 +64,7 @@ const options = {
     fontSize: 30,
     color: '#FFF',
     marginLeft: 7,
-  }
+  },
 };
 
 export default StopWatchAPI;

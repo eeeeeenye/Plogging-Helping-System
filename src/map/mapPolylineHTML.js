@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
-const locationTracker = () => {
+const LocationTracker = () => {
   const webViewRef = useRef();
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
 
@@ -73,7 +73,7 @@ const locationTracker = () => {
      </style>
    </head>
    <body>
-     <div id="map" style="width:100%;height:70%;"></div>  
+     <div id="map" style="width:100%;height:100%;"></div>  
    
      <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}"></script>
      <script>
@@ -172,5 +172,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default locationTracker;
+export default LocationTracker;
 

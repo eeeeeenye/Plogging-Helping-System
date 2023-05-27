@@ -44,7 +44,7 @@ function StackNav(){
             <Stack.Screen name="LocationSetting" component={LocationSettings} />
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
             <Stack.Screen 
-                name="HomeMain"
+                name="dash"
                 component={Dashboard}
                 options={{
                     headerShown:true,
