@@ -20,7 +20,6 @@ const CameraScreen = () => {
       setIsLoading(true); // 로딩 상태로 변경
       const photo = await cameraRef.takePictureAsync();
       setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
-      setIsLoading(false); // 로딩 상태 해제
     }
   };
 

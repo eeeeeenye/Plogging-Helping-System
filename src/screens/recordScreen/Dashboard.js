@@ -1,10 +1,10 @@
 import React, {useEffect,useState} from 'react';
 import { View,Alert } from 'react-native';
-import Background from '../components/Background';
-import LocationTracker from '../map/mapPolylineHTML';
-import StepCounter from '../addons/Pedometer';
-import StopWatchAPI from '../addons/Watch';
-import clientManager from '../helpers/localStorage';
+import Background from '../../components/Background';
+import LocationTracker from '../../map/mapPolyline';
+import StepCounter from '../../addons/Pedometer';
+import StopWatchAPI from '../../addons/Watch';
+import clientManager from '../../helpers/localStorage';
 import { useSelector } from 'react-redux';
 
 function Dashboard({navigation}) {
