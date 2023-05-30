@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 
 const CameraScreen = () => {
@@ -13,6 +13,16 @@ const CameraScreen = () => {
       const { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
+
+    Alert.alert(
+      '쓰레기 인증',
+        '쓰레기가 담긴 쓰레기 봉투를 L가 보이게 쓰레기통 전체를 촬영해주세요. 그러지 않으면 포인트를 얻기 힘들 수 있습니다.',
+        [
+          {
+            text: '잘알겠습니다',
+          },
+        ],
+    )
   }, []);
 
   const handleCapture = async () => {
@@ -48,9 +58,11 @@ const CameraScreen = () => {
       {photoUri ? (
         <Text style={styles.photoUriText}>Photo URI: {photoUri}</Text>
       ) : (
-        <TouchableOpacity style={styles.button} onPress={handleCapture}>
-          <Text style={styles.buttonText}>촬영</Text>
-        </TouchableOpacity>
+        <View style={{height:300}}>
+          <TouchableOpacity style={styles.button} onPress={handleCapture}>
+          <Text style={styles.buttonText}></Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -64,11 +76,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   button: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 100,
     padding: 15,
+    height:100,
+    width:80,
+    position:'absolute',
+    left:170,
+    top:50,
+    backgroundColor:'purple',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 8,
   },
   buttonText: {
     fontSize: 18,

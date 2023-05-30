@@ -3,10 +3,10 @@ import { WebView } from 'react-native-webview';
 import { View, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
-import clientManager from '../helpers/localStorage';
+import clientManager from '../../helpers/localStorage';
 import axios from 'axios'
-import Button from '../components/Button';
-import Paragraph from '../components/Paragraph';
+import Button from '../../components/Button';
+import Paragraph from '../../components/Paragraph';
 import LocationSet from './htmlCode/LocationHTML';
 
 

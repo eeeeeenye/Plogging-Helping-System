@@ -1,8 +1,9 @@
 // StepCounter.js
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View,StyleSheet,Image } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import { useSelector } from 'react-redux';
+import { Text } from 'react-native-paper';
 
 export default function StepCounter() {
   const [steps, setSteps] = useState(0);
@@ -41,8 +42,31 @@ export default function StepCounter() {
   }, [stopwatchState]); // stopwatchState가 변경될 때마다 useEffect 재실행
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 24 }}>걸음 수: {steps}</Text>
+    <View style={styles.container}>
+      <Image
+      source={require('../../assets/walking.png')} // 리소스 파일의 경로로 변경
+      style={{ width: 50, height: 50, marginBottom:20, marginTop:50 }} // 원하는 크기로 조절
+    />
+      <Text style={styles.text}>{steps}</Text>
     </View>
   );
+
+  
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 24,
+  },
+});
+
+
+
