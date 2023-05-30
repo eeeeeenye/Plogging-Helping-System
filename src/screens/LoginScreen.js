@@ -13,11 +13,14 @@ import { passwordValidator } from '../helpers/passwordValidator'
 import Constants from 'expo-constants';
 import axios from 'axios'
 import clientManager from '../helpers/localStorage'
+import { useDispatch, useSelector } from 'react-redux'
+import { authorize } from '../slices/All/Authslice'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
   const ip = Constants.expoConfig.extra.Local_ip;
+  const dispatch = useDispatch();
 
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value)
@@ -33,26 +36,19 @@ export default function LoginScreen({ navigation }) {
       .then((response) => {
         // MySQL 서버에서 받은 데이터를 클라이언트에 저장
         const ClientData = response.data;
-  
-        if(ClientData.success !== true){
+        
+        if(ClientData.status !== 'active'){
           setEmail({...email,error: ClientData.message})
           setPassword({...password,error:ClientData.message})
           return
         } else {
-          console.log('[##] loggedIn : Success')
           clientManager.storeData('user',ClientData)
-
-
-          // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-          // //리덕스 로그인 상태값 변환 코드 추가
-          // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
+          dispatch(authorize(ClientData))
+          console.log('[##] loggedIn : Success')
           navigation.reset({
             index: 0,
             routes: [{ name: 'HomeMain'}],
           })
-
-          navigation.navigate('TabNav');
         }
       })
   }

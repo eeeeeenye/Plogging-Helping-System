@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableHighlight } from 'react-native';
+import { Text, View, TouchableHighlight,Alert } from 'react-native';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import { useDispatch } from 'react-redux';
 import { start, stop, reset } from '../slices/All/Watchslice';
 
-const StopWatchAPI = () => {
-  const [isRunning, setIsRunning] = useState(false);
+const StopWatchAPI = ({navigation}) => {
+  const [isRunning, setIsRunning] = useState(null);
   const [resetStatus, setResetStatus] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(()=>{
     if(isRunning){
       dispatch(start())
-    }else{
+    }
+    
+    if(isRunning === false){
       dispatch(stop())
+      Alert.alert(
+        '기록종료',
+        '기록을 종료하시겠습니까?',
+        [
+          {
+            text: '예',
+            onPress: ()=>{
+              navigation.navigate('Camera');
+            },
+          },
+          {
+            text: '아니오',
+            onPress: ()=>{
+              dispatch(stop())
+            }
+          },
+        ],
+      )
     }
   },[isRunning])
 

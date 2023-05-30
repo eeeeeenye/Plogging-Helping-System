@@ -5,7 +5,6 @@ import {
   StartScreen,
   LoginScreen,
   RegisterScreen,
-  ResetPasswordScreen,
   Dashboard,
 } from '../screens'
 
@@ -13,14 +12,26 @@ const Tab = createBottomTabNavigator()
 export default function TabNav() {
   return (
       <Tab.Navigator initialRouteName="Dashboard">
+          <Tab.Screen
+            name="Dashboard"
+            component={Dashboard}
+            options={{
+              title: '홈메인',
+              headerTitle: `Let's Plogging!`,
+              tabBarIcon: ({ color, size }) => (
+              <Icon name="home" color={color} size={size} />
+            ),
+            }}
+          />
+
         <Tab.Screen
             name="StartScreen"
             component={StartScreen}
             options={{
                 headerShown: false,
-                title: 'StartScreen',
+                title: '스토어',
                 tabBarIcon: ({ color, size }) => (
-                <Icon name="home" color={color} size={size} />
+                <Icon name="dashboard" color={color} size={size} />
              ),
           }}
         />
@@ -28,7 +39,7 @@ export default function TabNav() {
             name="LoginScreen"
             component={LoginScreen}
             options={{
-                title: 'LoginScreen',
+                title: '게시판',
                 tabBarIcon: ({ color, size }) => (
                 <Icon name="notifications" color={color} size={size} />
             ),
@@ -38,22 +49,13 @@ export default function TabNav() {
             name="RegisterScreen"
             component={RegisterScreen}
             options={{
-                title: 'RegisterScreen',
+                title: '내정보',
                 tabBarIcon: ({ color, size }) => (
               <Icon name="search" color={color} size={size} />
             ),
           }}
         />
-        <Tab.Screen
-            name="Dashboard"
-            component={Dashboard}
-            options={{
-            title: 'Dashboard',
-            tabBarIcon: ({ color, size }) => (
-            <Icon name="dashboard" color={color} size={size} />
-    ),
-  }}
-/>
+        
       </Tab.Navigator>
   )
 }

@@ -5,25 +5,19 @@ const app = express()
 const cors = require('cors')
 const path = require("path")
 const dotenv = require('dotenv')
+const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 
 /*포트설정*/
 app.set('port',3000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
                                      // app.set(키,값) 함수는 키,값 파라미터를 이용하여 키에 값을 설정하도록 설정할 수 있는 함수
-          
+    
 /*공통 미들웨어 */
 app.use(express.static(__dirname+'/public'))
 app.use(logger('dev'))                                                       
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
-
-const db = mysql.createConnection({
-    host:"localhost",
-    user:process.env.user,
-    password: process.env.password,
-    database:"Plogging",
-});
 
 db.connect((error) => {
     if (error) {
@@ -113,30 +107,39 @@ app.post('/api/login', (req, res) => {
     try {
       // 클라이언트에서 전달받은 로그인 정보
       const { email, password } = req.body;
-
+  
       // MySQL에서 해당 유저 정보를 가져옴
       db.query(
-        'SELECT clientID,email,clientName,phone,address FROM client WHERE email = ? AND pswd = ?', 
-        [email, password], 
+        'SELECT clientID, email, clientName, phone, address FROM client WHERE email = ? AND pswd = ?',
+        [email, password],
         (err, result) => {
-        if (err) {
-          console.error(err);
-          res.status(500).json({ success: false, message: '서버 에러 발생' });
-          return;
+          if (err) {
+            console.error(err);
+            res.status(500).json({ success: false, message: '서버 에러 발생' });
+            return;
+          }
+  
+          if (result.length > 0) {
+            const user = {
+              clientID: result[0].clientID,
+              email: result[0].email,
+              ClientName: result[0].clientName,
+              phone: result[0].phone,
+              address: result[0].address,
+            };
+            res.send({ status: 'active', ...user });
+          } else {
+            res.send({ success: false, message: '유저 정보가 일치하지 않습니다.' });
+          }
         }
-      
-        if (result.length > 0) {
-          res.send({ success: true , ...result[0]});
-        } else {
-          res.send({ success: false, message: '유저 정보가 일치하지 않습니다.' });
-        }
-      });
-      
+      );
+  
     } catch (err) {
       console.error(err);
       res.status(500).json({ success: false, message: '서버 에러 발생' });
     }
   });
+  
 
   
 
