@@ -13,7 +13,8 @@ import { passwordConfirmer } from '../../helpers/passwordConfirm'
 import image from '../../assets/logo.png'
 import axios from 'axios'
 import Constants from 'expo-constants';
-import clientManager from '../../helpers/localStorage'
+import { useDispatch } from 'react-redux'
+import { authorize } from '../../slices/All/Authslice'
 
 
 // phone 설정, id 자동 설정 해야함, phone validation 코드작성
@@ -28,6 +29,7 @@ export default function RegisterScreen({ navigation }) {
   const [phone, setPhone] = useState({ value: '', error: '' })
   const ip = Constants.manifest.extra.Local_ip;
   const [check,clientCheck] = useState(false)
+  const dispatch = useDispatch()
 
   //console.log(ip)
   const [client, setClient] = useState({
@@ -54,7 +56,7 @@ export default function RegisterScreen({ navigation }) {
   }, [name.value, password.value, email.value, phone.value]);
 
   useEffect(() => {
-    if(check === true){                   // dup, valid check
+    if(check){                   // dup, valid check
       console.log(clientDB.Client_name === client.Client_name)
       if(clientDB.Client_name === client.Client_name){
         setName({ ...name, error: "already exist!!" })
@@ -63,11 +65,7 @@ export default function RegisterScreen({ navigation }) {
         setEmail({ ...email, error: "already exist!!" })
       }else if(check === true && clientDB.dupCheck === true){
         addClient()
-
-        navigation.reset({
-        index: 0,
-        routes: [{ name: 'HomeMain' }],
-      })
+        navigation.navigate('LocationSetting')
       }
     }
     console.log(clientDB.Client_name === client.Client_name,'useeffect')
@@ -80,13 +78,7 @@ export default function RegisterScreen({ navigation }) {
     })
     .catch(error => console.log(error));
 
-    await axios.post(`http://${ip}:3000/api/login`,clientDB)
-    .then((response) => {
-        // MySQL 서버에서 받은 데이터를 클라이언트에 저장
-        const ClientData = response.data;
-        clientManager.storeData('user',ClientData)
-    })
-
+    dispatch(authorize(client))
   };
 
   const pullClient =  async() =>{            // 사용자 DB 조회

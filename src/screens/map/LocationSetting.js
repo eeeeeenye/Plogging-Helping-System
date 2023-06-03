@@ -8,13 +8,16 @@ import axios from 'axios'
 import Button from '../../components/Button';
 import Paragraph from '../../components/Paragraph';
 import LocationSet from './htmlCode/LocationHTML';
+import { useSelector,useDispatch } from 'react-redux';
+import {addAdress} from '../../slices/All/Authslice'
 
 
-//수정필요!!!!!!!!!!!!!!!!
 const LocationSettings = ({navigation}) => {
   const [position, setPosition] = useState(null);
   const [city, setCity] = useState(null);
   const ip = Constants.manifest.extra.Local_ip;
+  const dispatch = useDispatch()
+  const user = useSelector((state)=>state.auth.user.Client_ID)
 
   const getLocation = async () => {
     try {
@@ -31,11 +34,6 @@ const LocationSettings = ({navigation}) => {
       );
       setPosition({ lat: latitude, lng: longitude });
       setCity(location[0].district);
-      await axios.put(`http://${ip}:3000/plogging/:params`, {Client_ID:clientID._j.clientID,city:city._j});
-      clientManager.storeData('user',ClientData)
-      dispatch(authorize(ClientData))
-        
-
       return
 
     } catch (error){
@@ -44,6 +42,18 @@ const LocationSettings = ({navigation}) => {
       Alert.alert(error);
     }
   };
+
+  const onPressButton= async()=>{       // 버튼을 누르면 작동하는 기능들 (회원 상태값 업데이트, 화면전환)
+    try{
+      
+      await axios.put(`http://${ip}:3000/plogging/:params`, {Client_ID:user,city:city});
+      dispatch(addAdress(city))
+      navigation.navigate('HomeMain')
+    }catch(event){
+      console.log(event)
+    }
+      
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +96,7 @@ const LocationSettings = ({navigation}) => {
       />
     <Button
       mode="outlined"
-      onPress={() => navigation.navigate('') }
+      onPress={onPressButton}
       style={{bottom:150}}
     >
       확인
