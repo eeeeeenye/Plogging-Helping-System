@@ -36,7 +36,7 @@ app.post("/clients", async(req,res)=>{
     const Client_email =req.body.Client_email;
     const Client_phone =req.body.Client_phone;
 
-    db.query(`INSERT INTO Plogging.CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
+    db.query(`INSERT INTO plogging.CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
     [ Client_email, Client_name, Client_pwd ,Client_phone],
     (err, result)=>{
         if(err){
@@ -117,36 +117,53 @@ app.post("/plogging/client", (req,res)=>{
 });
 
 // 각 기간의 랭킹에 맞는 회원 정보 가져오기
-app.post("/plogging/ranking", async(req,res)=>{
-    try{
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-
-        // 클라이언트 데이터 종합 데이터베이스 상에서 랭킹을 매겨 가져옴
-        const [rows] = await db.query(
-            `SELECT c.name AS clientName, `+
-            `SUM(walking) AS totalWaking,`+
-            `SUM(distance) AS totalDistance,`+
-            `SUM(trashCount) AS totalTrashCount`+
-            `RANK() OVER (ORDER BY SUM(walking) DESC) AS walkingRank,`+
-            `RANK() OVER (ORDER BY SUM(distance) DESC) AS distanceRank,`+
-            `Rank() OVER (ORDER BY SUM(trashCount) DESC) AS trashCountRank,`+
-            `FROM plogging.record`+
-            `JOIN plogging.client c ON r.clientID = c.id`+
-            `WHERE record_time >= ?`+
-            `GROUP BY clientID, c.name`+
-            `ORDER BY totalWalking DESC`+
-            `LIMIT 10;`,
-        [oneWeekAgo]);
-
-        const ranking = rows[0]
-
-        res.json(ranking);
-    }catch(error){
-        console.error('Error while aggregating client data:', error);
-        res.status(500).json({error: 'Interval Server Error'})
+app.post("/plogging/ranking", async (req, res) => {
+    try {
+      // const oneWeekAgo = new Date();
+      // oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+      // console.log(oneWeekAgo)
+      const oneWeekAgo = '2023-06-05 02:13:50'
+  
+      const SELECT =
+        `SELECT c.clientID,` +
+        `c.clientName,` +
+        `t.totalWalking,` +
+        `t.totalDistance,` +
+        `t.totalTrashCount,` +
+        `t.walkingRank ` +
+        `FROM plogging.client AS c ` +
+        `JOIN(` +
+        `SELECT r.clientID,` +
+        `SUM(r.walking) AS totalWalking,` +
+        `SUM(r.distance) AS totalDistance,` +
+        `SUM(r.trash_cnt) AS totalTrashCount,` +
+        `RANK() OVER (ORDER BY SUM(r.walking) DESC) AS walkingRank ` +
+        `FROM plogging.record AS r ` +
+        `WHERE r.record_time >= ? ` +
+        `GROUP BY r.clientID ` +
+        `LIMIT 10` +
+        `) AS t ON c.clientID = t.clientID;`
+        var dataList = [];
+      // 클라이언트 데이터 종합 데이터베이스 상에서 랭킹을 매겨 가져옴
+     await db.query(SELECT, [oneWeekAgo],
+        function(error,result){
+            
+            for (var data of result){
+                dataList.push(data)
+            }
+            console.log(dataList)
+        })
+  
+     // const ranking = rows.rows
+     // console.log(ranking)
+  
+     // res.json(ranking);
+    } catch (error) {
+      console.error('Error while aggregating client data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+  });
+  
 
 // 회원 로그인 -> 회원정보를 DB에서 가져옴
 app.post('/api/login', (req, res) => {

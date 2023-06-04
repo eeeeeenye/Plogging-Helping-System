@@ -1,24 +1,25 @@
 import React from 'react'
-import { View } from 'react-native';
+import { View } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Ionicons } from '@expo/vector-icons';
-import { Text } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons'
+import { Text } from 'react-native-paper'
 import {
   StartScreen,
   LoginScreen,
   RegisterScreen,
   Dashboard,
+  RankingScreen
 } from '../screens'
 
 const Tab = createBottomTabNavigator()
 export default function TabNav() {
   return (
-      <Tab.Navigator 
+      <Tab.Navigator
         initialRouteName="Dashboard"
         screenOptions={{
           tabBarStyle: {
-            height: 80, // Adjust the tab height as desired
+            height: 80, 
           },
         }}
       >
@@ -38,7 +39,7 @@ export default function TabNav() {
                 height: 100, 
               },
               headerTitleStyle: {
-                fontSize: 25, // Adjust the font size as desired
+                fontSize: 25,
               },
               tabBarIcon: ({ color, size }) => (
               <Icon name="home" color={color} size={size} />
@@ -54,16 +55,30 @@ export default function TabNav() {
                 title: '스토어',
                 tabBarIcon: ({ color, size }) => (
                 <Icon name="store" color={color} size={size} />
-             ),
+                ),
           }}
         />
+
         <Tab.Screen
-            name="LoginScreen"
-            component={LoginScreen}
+            name="Ranking"
+            component={RankingScreen}
             options={{
-                title: '게시판',
-                tabBarIcon: ({ color, size }) => (
-                <Icon name="message" color={color} size={size} />
+              title: '명예의 전당',
+              headerTitle: () => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="md-locate" size={24} color="purple" style={{ marginRight: 5 }} />
+                  <Text style={{ fontSize: 25, fontWeight: 'bold' }}>명예의 전당</Text>
+                </View>
+              ),
+              headerTitleAlign: 'left',
+              headerStyle: {
+                height: 100, 
+              },
+              headerTitleStyle: {
+                fontSize: 25,
+              },
+              tabBarIcon: ({ color, size }) => (
+              <Icon name="star" color={color} size={size} />
             ),
           }}
         />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const Profile = () => {
+const EditProfile = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Profile;
+export default EditProfile;
