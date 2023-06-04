@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import Constants from 'expo-constants'
 
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -10,6 +12,8 @@ const CameraScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const distance = useSelector((state)=>state.dist.distance)
   const time = useSelector((state)=>state.stopwatch.elapsedTime)
+  const ip = Constants.expoConfig.extra.Local_ip
+  console.log(ip)
 
   useEffect(() => {
     (async () => {
@@ -33,7 +37,8 @@ const CameraScreen = () => {
       setIsLoading(true); // 로딩 상태로 변경
       const photo = await cameraRef.takePictureAsync();
       setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
-      console.log(photo.uri)
+      const data = await axios.post(`http://10.20.32.13:5000/detection`,{photoURI:photo.uri});
+      console.log(data.data)
     }
   };
 
