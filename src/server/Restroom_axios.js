@@ -2,44 +2,40 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 
-// 환경 변수 설정
-require('dotenv').config();
+// 포트 설정
+app.set('port', process.env.PORT || 8080);
 
 // 미들웨어 설정
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 화장실 정보 가져오기 엔드포인트
-app.get('/toilets', async (req, res) => {
+// 화장실 정보 API 엔드포인트
+app.get('/publicToilets', async (req, res) => {
   try {
-    const API_KEY = process.env.API_KEY; // API 키를 .env 파일에 저장하고 사용
-    const url = `http://api.data.go.kr/openapi/tn_pubr_public_toilet_api?serviceKey=${API_KEY}&type=json`;
+    const serviceKey = process.env.airServiceKey;
+    const toiletUrl = 'http://api.data.go.kr/openapi/tn_pubr_public_toilet_api';
+    const queryParams = [
+      'ServiceKey=' + encodeURIComponent(serviceKey),
+      'pageNo=1',
+      'numOfRows=10',
+      'resultType=json',
+    ].join('&');
 
+    const url = toiletUrl + '?' + queryParams;
     const response = await axios.get(url);
-    const data = response.data;
+    const toiletData = response.data;
 
-    // 데이터 가공 또는 필요한 정보 추출 작업 수행
-    const extractedData = extractToiletData(data);
+    // 화장실 정보 처리 및 응답
+    // ...
 
-    res.json(extractedData);
+    res.json(toiletData);
   } catch (error) {
-    console.error('Error fetching toilet data:', error);
-    res.status(500).json({ error: 'Failed to fetch toilet data' });
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// 데이터 가공 또는 필요한 정보 추출 작업 함수
-const extractToiletData = (data) => {
-  // 예시: 필요한 정보를 추출하여 객체 배열로 반환
-  return data.map((toilet) => ({
-    name: toilet.name,
-    address: toilet.address,
-    // 추가 필요한 정보 추출
-  }));
-};
-
 // 서버 시작
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(app.get('port'), () => {
+  console.log('Server is running on port', app.get('port'));
 });
