@@ -53,6 +53,15 @@ const StopWatchAPI = ({ navigation }) => {
     setResetStatus(true);
   };
 
+  const handleTimeElapsed = (time) => {
+    const str = time;
+    const result = str.replace(/:/g, "");
+    const number = parseInt(result);
+    const seconds = number / 1000;
+
+    if(!isRunning){dispatch(updateElapsedTime(seconds))}
+  };
+
   return (
     <View>
       <Stopwatch
@@ -61,7 +70,7 @@ const StopWatchAPI = ({ navigation }) => {
         start={isRunning}
         reset={resetStatus}
         options={options}
-        getTime={(time) => {if(!isRunning){dispatch(updateElapsedTime(time))}}}
+        getTime={(time) => {handleTimeElapsed(time)}}
       />
       <View style={{position:'absolute', top:480, left:180}}>
       <TouchableHighlight style={styles.circleButton} onPress={toggleStopwatch}>
@@ -108,4 +117,3 @@ const styles = StyleSheet.create({
 });
 
 export default StopWatchAPI;
-

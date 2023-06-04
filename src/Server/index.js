@@ -153,11 +153,8 @@ app.post("/plogging/ranking", async (req, res) => {
             }
             console.log(dataList)
         })
-  
-     // const ranking = rows.rows
-     // console.log(ranking)
-  
-     // res.json(ranking);
+        
+      res.send(dataList);
     } catch (error) {
       console.error('Error while aggregating client data:', error);
       res.status(500).json({ error: 'Internal Server Error' });
