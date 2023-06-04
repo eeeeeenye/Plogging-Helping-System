@@ -12,7 +12,7 @@ import { nameValidator } from '../../helpers/nameValidator'
 import { passwordConfirmer } from '../../helpers/passwordConfirm'
 import image from '../../assets/logo.png'
 import axios from 'axios'
-import Constants from 'expo-constants';
+import Constants from 'expo-constants'
 import { useDispatch } from 'react-redux'
 import { authorize } from '../../slices/All/Authslice'
 
@@ -40,6 +40,7 @@ export default function RegisterScreen({ navigation }) {
   })
 
   const [clientDB, getClient] = useState({
+    Client_ID:'',
     Client_name: '',
     Client_email:'',
     dupCheck: false
@@ -57,18 +58,21 @@ export default function RegisterScreen({ navigation }) {
 
   useEffect(() => {
     if(check){                   // dup, valid check
-      console.log(clientDB.Client_name === client.Client_name)
       if(clientDB.Client_name === client.Client_name){
         setName({ ...name, error: "already exist!!" })
         return
       }else if(clientDB.Client_email === client.Client_email){
         setEmail({ ...email, error: "already exist!!" })
+        return
       }else if(check === true && clientDB.dupCheck === true){
         addClient()
-        navigation.navigate('LocationSetting')
       }
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LocationSetting'}],
+      })
     }
-    console.log(clientDB.Client_name === client.Client_name,'useeffect')
   }, [clientDB]);
 
   const addClient = async()=>{             // 사용자 DB 구축
@@ -78,7 +82,14 @@ export default function RegisterScreen({ navigation }) {
     })
     .catch(error => console.log(error));
 
-    dispatch(authorize(client))
+    const clientData = {
+      ID : clientDB.Client_ID,
+      email: client.Client_email,
+      name: client.Client_name,
+      phone: client.Client_phone
+    }
+    
+    dispatch(authorize(clientData))
   };
 
   const pullClient =  async() =>{            // 사용자 DB 조회
@@ -89,16 +100,17 @@ export default function RegisterScreen({ navigation }) {
           getClient((prevState)=>{
             return{
               ...prevState,
-              Client_email: res.data[0].EMAIL
+              Client_email: res.data[0].EMAIL,
+              Client_ID: res.data[0].clientID
             }
           })
         }
 
-         if(res.data[0].CNAME === name.value){
+         if(res.data[0].clientName === name.value){
               getClient((prevState)=>{
                 return{
                   ...prevState,
-                  Client_name: res.data[0].CNAME
+                  Client_name: res.data[0].clientName
                 }
               }) 
         }}else{
@@ -214,9 +226,9 @@ export default function RegisterScreen({ navigation }) {
         회원가입
       </Button>
       <View style={styles.row}>
-        <Text>Already have an account? </Text>
+        <Text>이미 계정이 있으신가요? </Text>
         <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
-          <Text style={styles.link}>Login</Text>
+          <Text style={styles.link}>로그인</Text>
         </TouchableOpacity>
       </View>
       </ScrollView>

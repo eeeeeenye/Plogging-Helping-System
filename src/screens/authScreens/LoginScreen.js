@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }) {
         } else {
           clientManager.storeData('user',ClientData)
           dispatch(authorize(ClientData))
-          console.log('[##] loggedIn : Success')
+          console.log('[##] loggedIn : Success') 
           navigation.reset({
             index: 0,
             routes: [{ name: 'HomeMain'}],

@@ -54,9 +54,9 @@ app.post('/detection', (req, res) => {
         const yoloCommand = 'python';
         const yoloScriptPath = '/path/to/yolo_script.py';
         const photoURI = req.body.photoURI;
-            const yoloArgs = [yoloScriptPath, photoURI];
+        const yoloArgs = [yoloScriptPath, photoURI];
 
-    // YOLO 스크립트 실행
+    // YOLO 스크립트(외부 프로세스) 실행
         const yoloProcess = spawn(yoloCommand, yoloArgs);
 
     // YOLO 실행 결과를 받음
@@ -98,23 +98,23 @@ app.post("/Record", async(req,res)=>{
 })
 
 /* read */
-// 기록물 내역을 읽어옴
-// app.post("/plogging/client", (req,res)=>{
-//     const email = req.body.Client_email;
-//     const name =req.body.Client_name;
+app.post("/plogging/client", (req,res)=>{
+    const email = req.body.Client_email;
+    const name =req.body.Client_name;
 
-//     db.query(
-//         `SELECT EMAIL,clientName FROM plogging.client WHERE email = ? OR clientName = ?;`,
-//         [email,name],
-//         (err, result) => {
-//             if(err){
-//                 console.log(err);
-//             }else{
-//                 res.send(result);
-//             }
-//         }
-//     )
-// });
+    console.log(email,name)
+    db.query(
+        `SELECT EMAIL,clientName,clientID FROM plogging.client WHERE email = ? OR clientName = ?;`,
+        [email,name],
+        (err, result) => {
+            if(err){
+                console.log(err);
+            }else{
+                res.send(result);
+            }
+        }
+    )
+});
 
 // 각 기간의 랭킹에 맞는 회원 정보 가져오기
 app.post("/plogging/ranking", async(req,res)=>{
@@ -192,12 +192,11 @@ app.post('/api/login', (req, res) => {
 /* Update */
 app.put("/plogging/:params", (req, res)=>{
     const city = req.body.city;
-    const clientID = req.body.Client_ID;
-    console.log(city)
+    const clientName = req.body.ClientName;
 
     db.query(
-        `UPDATE plogging.client SET address = ? WHERE clientID = ?;`,
-        [city,clientID],
+        `UPDATE plogging.client SET address = ? WHERE clientName = ?;`,
+        [city,clientName],
         (err,result)=>{
             if(err){
                 console.log(err);

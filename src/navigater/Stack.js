@@ -13,6 +13,7 @@ import {
 } from '../screens'
 import { useSelector } from 'react-redux'
 import TabNav from './Tab'
+import { Ionicons } from '@expo/vector-icons';
 
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -20,8 +21,10 @@ const Stack = createStackNavigator()
 
 function StackNav(){
     const State = useSelector((state)=>state.auth.user)
+    const status = State ? State.status : null;
+    console.log(status)
     // 로그인 한 상태가 아니라면 null 나옴.
-    if (State===null ) {
+    if (status===undefined || status===null ) {
     return(
         <Stack.Navigator>
             <Stack.Screen 
@@ -40,14 +43,27 @@ function StackNav(){
                     headerStyle:{
                     shadowColor:'#000', 
                     elevation:25,}}} />
-            <Stack.Screen 
-                name="LocationSetting" 
+            <Stack.Screen
+                name="LocationSetting"
                 component={LocationSettings}
                 options={{
-                    headerShown:false,
-                    headerStyle:{
-                    shadowColor:'#000', 
-                    elevation:25,}}} />
+                    headerLeft: () => (
+                        <Ionicons
+                          name="arrow-back"
+                          size={24}
+                          color="black"
+                          style={{ marginLeft: 10 }}
+                        />
+                      ),
+                    headerTitle: '거주지 설정',
+                    headerTitleAlign: 'left',
+                    headerShown: true,
+                    headerStyle: {
+                    elevation: 25,
+                    },
+                }}
+            />
+
             <Stack.Screen 
                 name="RegisterScreen" 
                 component={RegisterScreen}

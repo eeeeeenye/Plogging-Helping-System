@@ -11,6 +11,7 @@ const RankingScreen = () =>{
     },[])
 
     const fetchClients = async () =>{
+        //JSON 형식
         const fetchedClients = await getClients();
         setClients(fetchedClients);
     }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Constans from 'expo-contants'
+import Constans from 'expo-constants'
 
 export async function getClients(){
     const ip = Constans.manifest.extra.Local_ip

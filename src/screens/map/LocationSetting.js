@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { WebView } from 'react-native-webview';
-import { View, Alert } from 'react-native';
-import Constants from 'expo-constants';
-import * as Location from 'expo-location';
-import clientManager from '../../helpers/localStorage';
+import React, { useEffect, useState } from 'react'
+import { WebView } from 'react-native-webview'
+import { View, Alert } from 'react-native'
+import Constants from 'expo-constants'
+import * as Location from 'expo-location'
+import clientManager from '../../helpers/localStorage'
 import axios from 'axios'
-import Button from '../../components/Button';
-import Paragraph from '../../components/Paragraph';
-import LocationSet from './htmlCode/LocationHTML';
-import { useSelector,useDispatch } from 'react-redux';
+import Button from '../../components/Button'
+import Paragraph from '../../components/Paragraph'
+import LocationSet from './htmlCode/LocationHTML'
+import { useSelector,useDispatch } from 'react-redux'
 import {addAdress} from '../../slices/All/Authslice'
 
 
@@ -17,8 +17,10 @@ const LocationSettings = ({navigation}) => {
   const [city, setCity] = useState(null);
   const ip = Constants.manifest.extra.Local_ip;
   const dispatch = useDispatch()
-  const user = useSelector((state)=>state.auth.user.Client_ID)
+  const user = useSelector((state)=>state.auth.user)
+  const name = user ? user.name : '';
 
+  console.log(name,'--------LocationSetting')
   const getLocation = async () => {
     try {
       await Location.requestForegroundPermissionsAsync();
@@ -45,9 +47,9 @@ const LocationSettings = ({navigation}) => {
 
   const onPressButton= async()=>{       // 버튼을 누르면 작동하는 기능들 (회원 상태값 업데이트, 화면전환)
     try{
-      
-      await axios.put(`http://${ip}:3000/plogging/:params`, {Client_ID:user,city:city});
-      dispatch(addAdress(city))
+      console.log(city,name,"----------------->>>>")
+      await axios.put(`http://${ip}:3000/plogging/:params`, {ClientName:name,city:city});
+      dispatch(addAdress({adress:city,status:true}))
       navigation.navigate('HomeMain')
     }catch(event){
       console.log(event)
@@ -70,21 +72,11 @@ const LocationSettings = ({navigation}) => {
 
   // 카카오 맵 API를 사용하기 위한 설정값
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY;
-  console.log(apiKey);
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`;
   
 
   return (
     <View style={{flex:1}}>
-    <Paragraph
-      style={{
-      color:'black',
-      top:100,
-      left:167,
-      fontSize:20,
-      }}>
-      위치설정
-    </Paragraph>
     <WebView
         originWhitelist={['*']}
         source={{ html: LocationSet(url,position) }}
@@ -97,7 +89,7 @@ const LocationSettings = ({navigation}) => {
     <Button
       mode="outlined"
       onPress={onPressButton}
-      style={{bottom:150}}
+      style={{bottom:130}}
     >
       확인
     </Button>

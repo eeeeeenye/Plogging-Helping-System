@@ -6,7 +6,7 @@ const LocationSet =(url,position)=>{
         <script type="text/javascript" src="${url}"></script>
       </head>
       <body>
-        <div id="map" style="width:100%;height:85%;"></div>
+        <div id="map" style="width:100%;height:70%;"></div>
         <script>
           const container = document.getElementById('map');
           const options = {
