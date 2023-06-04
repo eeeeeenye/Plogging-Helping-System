@@ -21,11 +21,25 @@ const StopWatchAPI = () => {
     console.log(minutes);
   };
 
+  const options = {
+    container: {
+      backgroundColor: '#000',
+      padding: 5,
+      borderRadius: 5,
+      width: 220,
+    },
+    text: {
+      fontSize: 30,
+      color: '#FFF',
+      marginLeft: 7,
+    },
+  };
+
   return (
     <View>
       <Stopwatch
         laps={false}
-        msecs
+        msecs={false}
         start={start}
         reset={reset}
         options={options}
@@ -39,20 +53,6 @@ const StopWatchAPI = () => {
       </TouchableHighlight>
     </View>
   );
-};
-
-const options = {
-  container: {
-    backgroundColor: '#000',
-    padding: 5,
-    borderRadius: 5,
-    width: 220,
-  },
-  text: {
-    fontSize: 30,
-    color: '#FFF',
-    marginLeft: 7,
-  },
 };
 
 export default StopWatchAPI;
