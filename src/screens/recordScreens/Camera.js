@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
+import { useSelector } from 'react-redux';
 
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photoUri, setPhotoUri] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const distance = useSelector((state)=>state.dist.distance)
+  const time = useSelector((state)=>state.stopwatch.elapsedTime)
 
   useEffect(() => {
     (async () => {

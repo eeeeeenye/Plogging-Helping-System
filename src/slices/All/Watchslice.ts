@@ -16,7 +16,6 @@ const stopwatchSlice = createSlice({
   reducers: {
     start(state) {
       state.isRunning = true;
-      state.elapsedTime += 1;
     },
     stop(state) {
       state.isRunning = false;

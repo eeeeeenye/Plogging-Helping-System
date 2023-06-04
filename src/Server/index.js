@@ -5,6 +5,8 @@ const app = express()
 const cors = require('cors')
 const path = require("path")
 const dotenv = require('dotenv')
+const multer = require('multer')
+const {spawn} = require('child_process')
 const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 
@@ -28,7 +30,7 @@ db.connect((error) => {
 
 // 회원정보 CRUD
 /* Create */
-app.post("/create",(req,res)=>{
+app.post("/clients", async(req,res)=>{
     const Client_name = req.body.Client_name;
     const Client_pwd = req.body.Client_pwd;
     const Client_email =req.body.Client_email;
@@ -45,8 +47,35 @@ app.post("/create",(req,res)=>{
     })
 })
 
-//기록물 DB 저장코드
-app.post("/writeRecord",(req,res)=>{
+// URI 전달하여 객체 감지 및 결과값 출력
+app.post('/detection', (req, res) => {
+    try{
+    // YOLO 실행 커맨드와 인자 설정
+        const yoloCommand = 'python';
+        const yoloScriptPath = '/path/to/yolo_script.py';
+        const photoURI = req.body.photoURI;
+            const yoloArgs = [yoloScriptPath, photoURI];
+
+    // YOLO 스크립트 실행
+        const yoloProcess = spawn(yoloCommand, yoloArgs);
+
+    // YOLO 실행 결과를 받음
+
+        yoloProcess.stdout.on('data',(data)=>{
+            const detectionResults = JSON.parse(data);
+
+            res.json(detectionResults);
+        })
+    }
+    catch(error){
+        console.error("YOLO 실행 중 오류 발생 : ",error)
+        res.status(500).json({ error: 'YOLO 실행 중 오류 발생'});
+    }
+    
+  });
+
+// 기록물 DB 저장코드
+app.post("/Record", async(req,res)=>{
     const Client_id = req.body.Client_id;
     const latitude = req.body.latitude;
     const longitude = req.body.longitude;
@@ -54,11 +83,11 @@ app.post("/writeRecord",(req,res)=>{
     const distance = req.body.distance;
     const stopwatch = req.body.stopwatch;
     const image = req.body.imageURI;
-    const record_time = req.body.time;
     const record_result = req.body.result
 
-    db.query(`INSERT INTO Plogging.record VALUES ( ?, ?, ?, ?, ?, ?,?)`,
-    [Client_id , latitude, longitude,walking, distance, stopwatch, image, record_time, record_result],
+    db.query(
+        `INSERT INTO Plogging.record VALUES ( ?, ?, ?, ?, ?, ?,?)`,
+    [Client_id , latitude, longitude,walking, distance, stopwatch, image, record_result],
     (err, result)=>{
         if(err){
             console.log(err);
@@ -69,40 +98,57 @@ app.post("/writeRecord",(req,res)=>{
 })
 
 /* read */
-app.post("/plogging/client", (req,res)=>{
-    const email = req.body.Client_email;
-    const name =req.body.Client_name;
+// 기록물 내역을 읽어옴
+// app.post("/plogging/client", (req,res)=>{
+//     const email = req.body.Client_email;
+//     const name =req.body.Client_name;
 
-    db.query(
-        `SELECT EMAIL,clientName FROM plogging.client WHERE email = ? OR clientName = ?;`,
-        [email,name],
-        (err, result) => {
-            if(err){
-                console.log(err);
-            }else{
-                res.send(result);
-            }
-        }
-    )
+//     db.query(
+//         `SELECT EMAIL,clientName FROM plogging.client WHERE email = ? OR clientName = ?;`,
+//         [email,name],
+//         (err, result) => {
+//             if(err){
+//                 console.log(err);
+//             }else{
+//                 res.send(result);
+//             }
+//         }
+//     )
+// });
+
+// 각 기간의 랭킹에 맞는 회원 정보 가져오기
+app.post("/plogging/ranking", async(req,res)=>{
+    try{
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
+        // 클라이언트 데이터 종합 데이터베이스 상에서 랭킹을 매겨 가져옴
+        const [rows] = await db.query(
+            `SELECT c.name AS clientName, `+
+            `SUM(walking) AS totalWaking,`+
+            `SUM(distance) AS totalDistance,`+
+            `SUM(trashCount) AS totalTrashCount`+
+            `RANK() OVER (ORDER BY SUM(walking) DESC) AS walkingRank,`+
+            `RANK() OVER (ORDER BY SUM(distance) DESC) AS distanceRank,`+
+            `Rank() OVER (ORDER BY SUM(trashCount) DESC) AS trashCountRank,`+
+            `FROM plogging.record`+
+            `JOIN plogging.client c ON r.clientID = c.id`+
+            `WHERE record_time >= ?`+
+            `GROUP BY clientID, c.name`+
+            `ORDER BY totalWalking DESC`+
+            `LIMIT 10;`,
+        [oneWeekAgo]);
+
+        const ranking = rows[0]
+
+        res.json(ranking);
+    }catch(error){
+        console.error('Error while aggregating client data:', error);
+        res.status(500).json({error: 'Interval Server Error'})
+    }
 });
 
-app.post("/plogging/record", (req,res)=>{
-    const email = req.body.Client_email;
-    const name =req.body.Client_name;
-
-    db.query(
-        `SELECT EMAIL,CNAME FROM plogging.client WHERE EMAIL = ? OR CNAME = ?;`,
-        [email,name],
-        (err, result) => {
-            if(err){
-                console.log(err);
-            }else{
-                res.send(result);
-            }
-        }
-    )
-});
-
+// 회원 로그인 -> 회원정보를 DB에서 가져옴
 app.post('/api/login', (req, res) => {
     try {
       // 클라이언트에서 전달받은 로그인 정보

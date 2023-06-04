@@ -72,7 +72,7 @@ export default function RegisterScreen({ navigation }) {
   }, [clientDB]);
 
   const addClient = async()=>{             // 사용자 DB 구축
-    await axios.post(`http://${ip}:3000/create`,client)
+    await axios.post(`http://${ip}:3000/clients`,client)
     .then(res => {
       console.log(res.data);
     })

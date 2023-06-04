@@ -60,8 +60,6 @@ return( `
         path = [];
       }
 
-        
-
       // 사용자의 위치 변경을 감지하여 이동 경로를 업데이트하고 선과 마커 그림
       function updatePath(position) {
         var latLng = new kakao.maps.LatLng(position.latitude, position.longitude);

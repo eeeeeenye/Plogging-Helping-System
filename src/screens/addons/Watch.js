@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableHighlight, Alert, StyleSheet } from 'react-native';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import { useDispatch } from 'react-redux';
-import { start, stop, reset } from '../../slices/All/Watchslice';
+import { start, stop, reset,updateElapsedTime } from '../../slices/All/Watchslice';
 
 const StopWatchAPI = ({ navigation }) => {
   const [isRunning, setIsRunning] = useState(null);
@@ -61,7 +61,7 @@ const StopWatchAPI = ({ navigation }) => {
         start={isRunning}
         reset={resetStatus}
         options={options}
-        getTime={(time) => {}}
+        getTime={(time) => {if(!isRunning){dispatch(updateElapsedTime(time))}}}
       />
       <View style={{position:'absolute', top:480, left:180}}>
       <TouchableHighlight style={styles.circleButton} onPress={toggleStopwatch}>
