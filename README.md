@@ -1,5 +1,4 @@
 # Plogging-Helping-System
-Plogging-Helping-System
 It's about "Plogging Tracking & Recording System" for ploggers. ❤️<br>
 We'd like to make the Earth clean. 🌍<br>
 <br>
