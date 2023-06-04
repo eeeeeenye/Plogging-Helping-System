@@ -1,6 +1,5 @@
 const express = require('express')
 const logger = require('morgan')                       // moran API 로그 남기기
-const mysql = require('mysql')
 const app = express()
 const cors = require('cors')
 const path = require("path")
@@ -9,6 +8,8 @@ const multer = require('multer')
 const {spawn} = require('child_process')
 const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
+
+const axios = require('axios');
 
 /*포트설정*/
 app.set('port',3000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
@@ -27,6 +28,35 @@ db.connect((error) => {
       return;
     }
 })
+
+//화장실 정보 api end point ###########
+
+app.get('/publicToilets', async (req, res) => {
+    try {
+      const serviceKey = "s9Fw0hV%2B%2Foir2lVlrJY%2B9rW6XncFHmRKYnXBy8%2B7pqf%2F1Z0euTYpaLx6xENdUJhb0W52%2BZ%2FYu%2FbfsxsMZrIFSg%3D%3D";
+      const toiletUrl = 'http://api.data.go.kr/openapi/tn_pubr_public_toilet_api';
+      const queryParams = [
+        'ServiceKey=' + encodeURIComponent(serviceKey),
+        'pageNo=1',
+        'numOfRows=10',
+        'resultType=json',
+      ].join('&');
+  
+      const url = toiletUrl + '?' + queryParams;
+      const response = await axios.get(url);
+      const toiletData = response.data;
+  
+      // 화장실 정보 처리 및 응답
+
+  
+      res.json(toiletData);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
 
 // 회원정보 CRUD
 /* Create */
@@ -48,23 +78,27 @@ app.post("/clients", async(req,res)=>{
 })
 
 // URI 전달하여 객체 감지 및 결과값 출력
-app.post('/detection', (req, res) => {
+app.post('/detection', async(req, res) => {
     try{
     // YOLO 실행 커맨드와 인자 설정
         const yoloCommand = 'python';
-        const yoloScriptPath = '/path/to/yolo_script.py';
+        const yoloScriptPath = '../detect/trashmodel4.py';
         const photoURI = req.body.photoURI;
         const yoloArgs = [yoloScriptPath, photoURI];
 
     // YOLO 스크립트(외부 프로세스) 실행
         const yoloProcess = spawn(yoloCommand, yoloArgs);
+        
 
     // YOLO 실행 결과를 받음
+        console.log(yoloProcess.stdout)
 
         yoloProcess.stdout.on('data',(data)=>{
-            const detectionResults = JSON.parse(data);
-
-            res.json(detectionResults);
+            var dataList = []
+            for(var d of data){
+                dataList.push(d)
+            }
+            console.log(dataList)
         })
     }
     catch(error){
@@ -153,7 +187,7 @@ app.post("/plogging/ranking", async (req, res) => {
             }
             console.log(dataList)
         })
-        
+
       res.send(dataList);
     } catch (error) {
       console.error('Error while aggregating client data:', error);
@@ -233,3 +267,6 @@ app.listen(app.get('port'),()=>{
 //     console.error(err.stack);
 //     res.status(500).send('Something broke!');
 // });
+
+
+
