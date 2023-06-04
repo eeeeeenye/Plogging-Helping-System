@@ -1,6 +1,12 @@
 # Plogging-Helping-System
-It's about "Plogging records &amp; Community System(app)" for plogger.   
+It's about "Plogging Tracking & Recording System" for ploggers. ❤️<br>
+We'd like to make the Earth clean. 🌍<br>
+<br>
+Language: JavaScript, Python<br>
+APP Usage: React (React Native), EXPO, Redux (Status Management)<br>
+AI model Usage: YOLOv5, CNN<br>
+Server: Node.js (JavaScript)<br>
+Database: MariaDB<br>
 
-![image](https://github.com/eeeeeenye/Plogging-Helping-System/assets/75657062/9ad34756-815c-44fa-a102-f604ba460140)
-![image](https://github.com/eeeeeenye/Plogging-Helping-System/assets/75657062/216efccb-46d1-4238-80e7-9409790e71a7)
+
 
