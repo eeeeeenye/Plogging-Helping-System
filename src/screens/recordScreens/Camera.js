@@ -4,6 +4,8 @@ import { Camera } from 'expo-camera';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Constants from 'expo-constants'
+import Amplify, { Storage } from 'aws-amplify';
+
 
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -26,21 +28,55 @@ const CameraScreen = () => {
         '쓰레기가 담긴 쓰레기 봉투를 L가 보이게 쓰레기통 전체를 촬영해주세요. 그러지 않으면 포인트를 얻기 힘들 수 있습니다.',
         [
           {
-            text: '잘알겠습니다',
+            text: '잘 알겠습니다',
           },
         ],
     )
   }, []);
 
-  const handleCapture = async () => {
-    if (cameraRef) {
-      setIsLoading(true); // 로딩 상태로 변경
-      const photo = await cameraRef.takePictureAsync();
-      setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
-      const data = await axios.post(`http://10.20.32.13:5000/detection`,{photoURI:photo.uri});
-      console.log(data.data)
+  // const handleCapture = async () => {
+  //   if (cameraRef) {
+  //     setIsLoading(true); // 로딩 상태로 변경
+  //     const photo = await cameraRef.takePictureAsync();
+  //     setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
+  //     // console.log(photo.uri)
+  //     // const localFilePath = 'C:/Users/db030/Desktop/aimodel/image.jpg'; // 로컬에 저장할 파일 경로와 이름 지정
+  //     await FileSystem.copyAsync({ from: photo.uri, to: localFilePath });
+
+  //     const data = await axios.post(`http://10.20.32.201:5000/detection`, { photoURI: localFilePath });
+  //     console.log(data.data);
+  //   }
+  // };
+  // import Amplify, { Storage } from 'aws-amplify';
+
+  // AWS Amplify 설정
+  Amplify.configure({
+    Auth: {
+      region: 'ap-northeast-2',
+      identityPoolId: 'us-east-1:b87515b3-1dce-41d6-ad86-fa6f9ff8875d',
+    },
+    Storage: {
+      AWSS3: {
+        bucket: 'plogging-helping-system',
+        region: 'ap-northeast-2',
+      },
+    },
+  });
+  
+  async function uploadImageToS3(filePath, objectKey) {
+    try {
+      await Storage.put(objectKey, filePath);
+      console.log('Image uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading image:', error);
     }
-  };
+  }
+  
+  // 이미지 업로드
+  const filePath = 'path_to_your_image.jpg';
+  const objectKey = 'uploaded_image.jpg';
+  uploadImageToS3(filePath, objectKey);
+  
 
   if (hasPermission === null) {
     return <View />;
