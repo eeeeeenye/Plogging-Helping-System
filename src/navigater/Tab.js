@@ -67,12 +67,15 @@ export default function TabNav() {
               headerTitle: () => (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Ionicons name="md-locate" size={24} color="purple" style={{ marginRight: 5 }} />
-                  <Text style={{ fontSize: 25, fontWeight: 'bold' }}>명예의 전당</Text>
+                  <View style={{flexDirection:'column'}}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold' }}>명예의 전당</Text>
+                    <Text style={{fontSize:12, color:'gray', marginTop:5}}>* 일주일 단위로 업데이트됩니다.</Text>
+                  </View>
                 </View>
               ),
               headerTitleAlign: 'left',
               headerStyle: {
-                height: 100, 
+                height: 120, 
               },
               headerTitleStyle: {
                 fontSize: 25,
