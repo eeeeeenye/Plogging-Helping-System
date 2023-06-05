@@ -5,8 +5,7 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, "../../config.env") });
 
 const db = mysql.createConnection({
-  connectionLimit: 10,
-  host: "localhost",
+  host: "10.20.32.181",
   user: process.env.user,
   password: process.env.password,
   database: "Plogging",

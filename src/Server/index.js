@@ -12,7 +12,7 @@ dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 const axios = require('axios');
 
 /*포트설정*/
-app.set('port',3000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
+app.set('port',5000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
                                      // app.set(키,값) 함수는 키,값 파라미터를 이용하여 키에 값을 설정하도록 설정할 수 있는 함수
     
 /*공통 미들웨어 */
@@ -78,7 +78,7 @@ app.post("/clients", async(req,res)=>{
 })
 
 // URI 전달하여 객체 감지 및 결과값 출력
-app.post('/detection', async(req, res) => {
+app.post('/detection', (req, res) => {
     try{
     // YOLO 실행 커맨드와 인자 설정
         const yoloCommand = 'python';
@@ -88,17 +88,13 @@ app.post('/detection', async(req, res) => {
 
     // YOLO 스크립트(외부 프로세스) 실행
         const yoloProcess = spawn(yoloCommand, yoloArgs);
-        
 
     // YOLO 실행 결과를 받음
-        console.log(yoloProcess.stdout)
 
         yoloProcess.stdout.on('data',(data)=>{
-            var dataList = []
-            for(var d of data){
-                dataList.push(d)
-            }
-            console.log(dataList)
+            const detectionResults = JSON.parse(data);
+
+            res.json(detectionResults);
         })
     }
     catch(error){
