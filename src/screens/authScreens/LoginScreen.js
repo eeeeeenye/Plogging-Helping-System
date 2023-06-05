@@ -12,7 +12,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import Constants from 'expo-constants';
 import axios from 'axios'
-import clientManager from '../../helpers/localStorage'
+import StatusManager from '../../helpers/localStorage'
 import { useDispatch, useSelector } from 'react-redux'
 import { authorize } from '../../slices/All/Authslice'
 
@@ -42,7 +42,7 @@ export default function LoginScreen({ navigation }) {
           setPassword({...password,error:ClientData.message})
           return
         } else {
-          clientManager.storeData('user',ClientData)
+          StatusManager.storeData('user',ClientData)
           dispatch(authorize(ClientData))
           console.log('[##] loggedIn : Success') 
           navigation.reset({

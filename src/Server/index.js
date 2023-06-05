@@ -12,7 +12,7 @@ dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 const axios = require('axios');
 
 /*포트설정*/
-app.set('port',5000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
+app.set('port',3000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
                                      // app.set(키,값) 함수는 키,값 파라미터를 이용하여 키에 값을 설정하도록 설정할 수 있는 함수
     
 /*공통 미들웨어 */
@@ -149,25 +149,24 @@ app.post("/plogging/client", (req,res)=>{
 // 각 기간의 랭킹에 맞는 회원 정보 가져오기
 app.post("/plogging/ranking", async (req, res) => {
     try {
-      // const oneWeekAgo = new Date();
-      // oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-      // console.log(oneWeekAgo)
-      const oneWeekAgo = '2023-06-05 02:13:50'
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)    // 7일 전 DATE를 가져와서 업데이트
   
       const SELECT =
         `SELECT c.clientID,` +
         `c.clientName,` +
+        `c.address, `+
         `t.totalWalking,` +
         `t.totalDistance,` +
         `t.totalTrashCount,` +
-        `t.walkingRank ` +
+        `t.totalRank ` +
         `FROM plogging.client AS c ` +
         `JOIN(` +
         `SELECT r.clientID,` +
         `SUM(r.walking) AS totalWalking,` +
         `SUM(r.distance) AS totalDistance,` +
         `SUM(r.trash_cnt) AS totalTrashCount,` +
-        `RANK() OVER (ORDER BY SUM(r.walking) DESC) AS walkingRank ` +
+        `RANK() OVER (ORDER BY SUM(r.walking)+SUM(r.distance)+SUM(r.trash_cnt) DESC) AS totalRank ` +
         `FROM plogging.record AS r ` +
         `WHERE r.record_time >= ? ` +
         `GROUP BY r.clientID ` +
@@ -181,10 +180,8 @@ app.post("/plogging/ranking", async (req, res) => {
             for (var data of result){
                 dataList.push(data)
             }
-            console.log(dataList)
+            res.send(dataList);
         })
-
-      res.send(dataList);
     } catch (error) {
       console.error('Error while aggregating client data:', error);
       res.status(500).json({ error: 'Internal Server Error' });

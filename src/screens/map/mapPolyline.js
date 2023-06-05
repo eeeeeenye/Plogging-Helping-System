@@ -43,7 +43,7 @@ const LocationTracker = () => {
   },[path])
 
   useEffect(()=>{
-    console.log(distance,"===================+++useEffect Distance");
+    console.log(distance,"useEffect Distance");
     dispatch(distCal({ dist: { distance } }));
   },[distance])
 

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const clientManager = {
+const StatusManager = {
     // Object Data를 한꺼번에 가져오기
     async storeData(key, value) {
         try {
@@ -36,4 +36,4 @@ const clientManager = {
       }
 };
 
-export default clientManager;
+export default StatusManager;

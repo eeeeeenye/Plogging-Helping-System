@@ -3,7 +3,7 @@ import { WebView } from 'react-native-webview'
 import { View, Alert } from 'react-native'
 import Constants from 'expo-constants'
 import * as Location from 'expo-location'
-import clientManager from '../../helpers/localStorage'
+import StatusManager from '../../helpers/localStorage'
 import axios from 'axios'
 import Button from '../../components/Button'
 import Paragraph from '../../components/Paragraph'
@@ -40,7 +40,7 @@ const LocationSettings = ({navigation}) => {
 
     } catch (error){
       console.error(error);
-      clientManager.storeData('login',false);
+      StatusManager.storeData('login',false);
       Alert.alert(error);
     }
   };

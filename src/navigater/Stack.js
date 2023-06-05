@@ -9,7 +9,6 @@ import {
     LocationSettings,
     locationTracker,
     CameraScreen,
-    RankScreen
 } from '../screens'
 import { useSelector } from 'react-redux'
 import TabNav from './Tab'
