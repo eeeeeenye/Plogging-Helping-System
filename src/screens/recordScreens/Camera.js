@@ -5,15 +5,13 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Constants from 'expo-constants'
 
+
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photoUri, setPhotoUri] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const distance = useSelector((state)=>state.dist.distance)
-  const time = useSelector((state)=>state.stopwatch.elapsedTime)
   const ip = Constants.expoConfig.extra.Local_ip
-  console.log(ip)
 
   useEffect(() => {
     (async () => {
@@ -26,7 +24,7 @@ const CameraScreen = () => {
         '쓰레기가 담긴 쓰레기 봉투를 L가 보이게 쓰레기통 전체를 촬영해주세요. 그러지 않으면 포인트를 얻기 힘들 수 있습니다.',
         [
           {
-            text: '잘알겠습니다',
+            text: '잘 알겠습니다',
           },
         ],
     )
@@ -37,10 +35,29 @@ const CameraScreen = () => {
       setIsLoading(true); // 로딩 상태로 변경
       const photo = await cameraRef.takePictureAsync();
       setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
-      const data = await axios.post(`http://10.20.32.13:5000/detection`,{photoURI:photo.uri});
-      console.log(data.data)
+
+      try{
+      const formatData = new FormData();
+
+      console.log(photo.uri)
+      formatData.append('file',{
+        uri: photo.uri,
+        type: 'image/jpeg',
+        name: 'photo.jpg',
+      });
+
+      const data = await axios.post(`http://10.20.32.45:5000/detection`,formatData,{
+        headers: {
+          'Content-Type' : 'multipart/form-data'
+        }
+      });
+      console.log(data.data);
+    }catch(error){
+      console.error('File upload failed', error)
+    }
     }
   };
+  
 
   if (hasPermission === null) {
     return <View />;
@@ -122,4 +139,3 @@ const styles = StyleSheet.create({
 });
 
 export default CameraScreen;
-
