@@ -31,7 +31,6 @@ const LocationTracker = () => {
   useEffect(() => {
     if (webViewRef.current) {
       webViewRef.current.postMessage(JSON.stringify({}));
-      dispatch(distCal({distance:0}))
     }
   }, []);
 
@@ -44,7 +43,7 @@ const LocationTracker = () => {
 
   useEffect(()=>{
     console.log(distance,"useEffect Distance");
-    dispatch(distCal({ dist: { distance } }));
+    dispatch(distCal(distance));
   },[distance])
 
   // 웹뷰에 보낼 메시지를 관리 (position)

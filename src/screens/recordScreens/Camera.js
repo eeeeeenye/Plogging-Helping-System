@@ -1,63 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { Camera } from 'expo-camera';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
-import Constants from 'expo-constants'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
+import { Camera } from 'expo-camera'
+import { useDispatch } from 'react-redux'
+import axios from 'axios'
 import {save} from '../../slices/All/urislice'
-import { trashCount } from '../../slices/All/Distanceslice';
+import { trashCount } from '../../slices/All/Distanceslice'
+import { useSelector } from 'react-redux';
 
 
 const CameraScreen = ({navigation}) => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [cameraRef, setCameraRef] = useState(null);
-  const [photoUri, setPhotoUri] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const ip = Constants.expoConfig.extra.Local_ip
-  const dispatch = useDispatch();
+  const [hasPermission, setHasPermission] = useState(null)
+  const [cameraRef, setCameraRef] = useState(null)
+  const [photoUri, setPhotoUri] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const userID= useSelector((state) => state.auth.user?.clientID);
+  const dispatch = useDispatch()
+
+  // console.log(navigation.navigate('HomeMain'))
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await Camera.requestPermissionsAsync()
       setHasPermission(status === 'granted');
     })();
-
+   
     Alert.alert(
       '쓰레기 인증',
         '쓰레기가 담긴 쓰레기 봉투를 L가 보이게 쓰레기통 전체를 촬영해주세요. 그러지 않으면 포인트를 얻기 힘들 수 있습니다.',
-        [
-          {
-            text: '잘 알겠습니다',
-          },
-        ],
-    )
+          [
+            {
+              text: '잘 알겠습니다',
+            },
+          ],
+      )
   }, []);
 
   const handleCapture = async () => {
+
     if (cameraRef) {
-      setIsLoading(true); // 로딩 상태로 변경
+      setIsLoading(true);     // 로딩 상태로 변경
       const photo = await cameraRef.takePictureAsync();
-      setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
-      dispatch(save(photo.uri))
+      setPhotoUri(photo?.uri)
+      dispatch(save(photo?.uri))
       try{
-      const formatData = new FormData();
 
-      console.log(photo.uri)
-      formatData.append('file',{
-        uri: photo.uri,
-        type: 'image/jpeg',
-        name: 'photo.jpg',
-      });
+        const formatData = new FormData();
 
-      const data = await axios.post(`http://10.20.32.28:5000/detection`,formatData,{
-        headers: {
-          'Content-Type' : 'multipart/form-data'
-        }
-      });
-      
+        formatData.append('file',{
+          uri: photo.uri,
+          type: 'image/jpeg',
+          name: 'photo.jpg',
+        });
+
+        const data = await axios.post(`http://10.20.32.28:5000/detection`,formatData,{
+          headers: {
+            'Content-Type' : 'multipart/form-data'
+          }
+        });
+
+      console.log(data.data)
       setIsLoading(false); // 로딩 상태 해제
-      dispatch(trashCount(data.result3))
-      navigation.navigate('Record')
+      dispatch(trashCount(data.data?.result2));
+      navigation.navigate('Record');
     }catch(error){
       console.error('File upload failed', error)
       setIsLoading(false); // 로딩 상태 해제

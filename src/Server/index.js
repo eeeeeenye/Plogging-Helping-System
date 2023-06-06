@@ -5,15 +5,14 @@ const cors = require('cors')
 const path = require("path")
 const dotenv = require('dotenv')
 const {spawn} = require('child_process')
-const xml2js = require('xml2js');
 const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 
 const axios = require('axios');
 
 /*포트설정*/
-app.set('port',3000);                // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
-                                     // app.set(키,값) 함수는 키,값 파라미터를 이용하여 키에 값을 설정하도록 설정할 수 있는 함수
+app.set('port',3000);                                  // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
+                                                       // app.set(키,값) 함수는 키,값 파라미터를 이용하여 키에 값을 설정하도록 설정할 수 있는 함수
     
 /*공통 미들웨어 */
 app.use(express.static(__dirname+'/public'))
@@ -29,8 +28,6 @@ db.connect((error) => {
     }
 })
 
-//화장실 정보 api end point ###########
-
 //화장실 정보 api end point
 app.get('/publicToilets', async (req, res) => {
   try {
@@ -39,7 +36,7 @@ app.get('/publicToilets', async (req, res) => {
     const queryParams = [
       'serviceKey=' + serviceKey,
       'pageNo=1',
-      'numOfRows=10',
+      'numOfRows=100',
       'type=json',
     ].join('&');
     
@@ -69,7 +66,6 @@ app.get('/publicToilets', async (req, res) => {
 
 
 
-
 // 회원정보 CRUD
 /* Create */
 app.post("/clients", async(req,res)=>{
@@ -89,32 +85,6 @@ app.post("/clients", async(req,res)=>{
     })
 })
 
-// URI 전달하여 객체 감지 및 결과값 출력
-app.post('/detection', (req, res) => {
-    try{
-    // YOLO 실행 커맨드와 인자 설정
-        const yoloCommand = 'python';
-        const yoloScriptPath = '../detect/trashmodel4.py';
-        const photoURI = req.body.photoURI;
-        const yoloArgs = [yoloScriptPath, photoURI];
-
-    // YOLO 스크립트(외부 프로세스) 실행
-        const yoloProcess = spawn(yoloCommand, yoloArgs);
-
-    // YOLO 실행 결과를 받음
-
-        yoloProcess.stdout.on('data',(data)=>{
-            const detectionResults = JSON.parse(data);
-
-            res.json(detectionResults);
-        })
-    }
-    catch(error){
-        console.error("YOLO 실행 중 오류 발생 : ",error)
-        res.status(500).json({ error: 'YOLO 실행 중 오류 발생'});
-    }
-    
-  });
 
 // 기록물 DB 저장코드
 app.post("/Record", async(req,res)=>{
