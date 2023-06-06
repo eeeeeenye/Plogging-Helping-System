@@ -5,12 +5,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Ionicons } from '@expo/vector-icons'
 import { Text } from 'react-native-paper'
 import {
-  StartScreen,
-  LoginScreen,
-  RegisterScreen,
   Dashboard,
-  RankingScreen
+  RankingScreen,
+  Public_toilet,
+  MyPage
 } from '../screens'
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator()
 export default function TabNav() {
@@ -48,15 +48,26 @@ export default function TabNav() {
           />
 
         <Tab.Screen
-            name="StartScreen"
-            component={StartScreen}
+            name="toliet"
+            component={Public_toilet}
             options={{
-                headerShown: false,
-                title: '스토어',
-                tabBarIcon: ({ color, size }) => (
-                <Icon name="store" color={color} size={size} />
-                ),
-          }}
+              title: '화장실 정보',
+              headerTitle: () => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="md-locate" size={24} color="purple" style={{ marginRight: 5 }} />
+                  <Text style={{ fontSize: 25, fontWeight: 'bold' }}>화장실 위치 표시</Text>
+                </View>
+              ),
+              headerTitleAlign: 'left',
+              headerStyle: {
+                height: 100, 
+              },
+              headerTitleStyle: {
+                fontSize: 25,
+              },
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="toilet" color={color} size={size} />
+            ),}}
         />
 
         <Tab.Screen
@@ -86,14 +97,26 @@ export default function TabNav() {
           }}
         />
         <Tab.Screen
-            name="RegisterScreen"
-            component={RegisterScreen}
+            name="MyPage"
+            component={MyPage}
             options={{
-                title: '내정보',
+                title: '마이페이지',
+                headerTitle: () => (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                    <Ionicons name="md-locate" size={24} color="purple" style={{ marginRight: 5 }} />
+                    <View style={{ flexDirection: 'column' }}>
+                      <Text style={{ fontSize: 25, fontWeight: 'bold', textAlign: 'left' }}>마이페이지</Text>
+                    </View>
+                  </View>
+                ),
+                headerTitleAlign: 'left',
+                headerStyle: {
+                  height: 120, 
+                },
                 tabBarIcon: ({ color, size }) => (
-              <Icon name="account-circle" color={color} size={size} />
-            ),
-          }}
+                  <Icon name="account-circle" color={color} size={size} />
+                ),
+              }}
         />
         
       </Tab.Navigator>

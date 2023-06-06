@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import Constants from 'expo-constants'
+import {save} from '../../slices/All/urislice'
+import { trashCount } from '../../slices/All/Distanceslice';
 
 
-const CameraScreen = () => {
+const CameraScreen = ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photoUri, setPhotoUri] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const ip = Constants.expoConfig.extra.Local_ip
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -35,7 +38,7 @@ const CameraScreen = () => {
       setIsLoading(true); // 로딩 상태로 변경
       const photo = await cameraRef.takePictureAsync();
       setPhotoUri(photo.uri); // 캡처된 사진의 경로를 상태로 저장
-
+      dispatch(save(photo.uri))
       try{
       const formatData = new FormData();
 
@@ -46,14 +49,18 @@ const CameraScreen = () => {
         name: 'photo.jpg',
       });
 
-      const data = await axios.post(`http://10.20.32.45:5000/detection`,formatData,{
+      const data = await axios.post(`http://10.20.32.28:5000/detection`,formatData,{
         headers: {
           'Content-Type' : 'multipart/form-data'
         }
       });
-      console.log(data.data);
+      
+      setIsLoading(false); // 로딩 상태 해제
+      dispatch(trashCount(data.result3))
+      navigation.navigate('Record')
     }catch(error){
       console.error('File upload failed', error)
+      setIsLoading(false); // 로딩 상태 해제
     }
     }
   };
@@ -81,15 +88,13 @@ const CameraScreen = () => {
         type={Camera.Constants.Type.back}
         ref={(ref) => setCameraRef(ref)}
       />
-      {photoUri ? (
-        <Text style={styles.photoUriText}>Photo URI: {photoUri}</Text>
-      ) : (
+      
         <View style={{height:300}}>
           <TouchableOpacity style={styles.button} onPress={handleCapture}>
           <Text style={styles.buttonText}></Text>
           </TouchableOpacity>
         </View>
-      )}
+      
     </View>
   );
 };

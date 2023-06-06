@@ -4,8 +4,8 @@ const app = express()
 const cors = require('cors')
 const path = require("path")
 const dotenv = require('dotenv')
-const multer = require('multer')
 const {spawn} = require('child_process')
+const xml2js = require('xml2js');
 const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 
@@ -31,30 +31,42 @@ db.connect((error) => {
 
 //화장실 정보 api end point ###########
 
+//화장실 정보 api end point
 app.get('/publicToilets', async (req, res) => {
-    try {
-      const serviceKey = "s9Fw0hV%2B%2Foir2lVlrJY%2B9rW6XncFHmRKYnXBy8%2B7pqf%2F1Z0euTYpaLx6xENdUJhb0W52%2BZ%2FYu%2FbfsxsMZrIFSg%3D%3D";
-      const toiletUrl = 'http://api.data.go.kr/openapi/tn_pubr_public_toilet_api';
-      const queryParams = [
-        'ServiceKey=' + encodeURIComponent(serviceKey),
-        'pageNo=1',
-        'numOfRows=10',
-        'resultType=json',
-      ].join('&');
-  
-      const url = toiletUrl + '?' + queryParams;
-      const response = await axios.get(url);
-      const toiletData = response.data;
-  
-      // 화장실 정보 처리 및 응답
+  try {
+    const serviceKey = "x8Ly2Ky3EFj3SPAan6WH%2BTTfvh0zQHz%2FQRtPaQ4EDDwXVFgjFKdWxaztltBdnXR7xo3IB1VJyLuNvm%2BuawUvBg%3D%3D";
+    const toiletUrl = 'http://api.data.go.kr/openapi/tn_pubr_public_toilet_api';
+    const queryParams = [
+      'serviceKey=' + serviceKey,
+      'pageNo=1',
+      'numOfRows=10',
+      'type=json',
+    ].join('&');
+    
+    const url = toiletUrl + '?' + queryParams;
+    console.log(url)
+    const response = await axios.get(url);
+    const Data = response.data.response.body.items;
 
-  
-      res.json(toiletData);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
+    console.log(response.data.response.body.items)
+
+    const refinedData = Data.map((item) => {
+      return {
+        rdnmadr: item.rdnmadr,
+        lnmadr: item.lnmadr,
+        latitude: item.latitude,
+        longitude: item.longitude,
+      };
+    });
+
+    console.log(refinedData)
+    res.json(refinedData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 

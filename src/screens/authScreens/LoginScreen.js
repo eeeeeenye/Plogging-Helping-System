@@ -36,7 +36,7 @@ export default function LoginScreen({ navigation }) {
       .then((response) => {
         // MySQL 서버에서 받은 데이터를 클라이언트에 저장
         const ClientData = response.data;
-        
+        console.log(ClientData)
         if(ClientData.status !== 'active'){
           setEmail({...email,error: ClientData.message})
           setPassword({...password,error:ClientData.message})

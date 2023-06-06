@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { View,StyleSheet,Image } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
+import { walking } from '../../slices/All/Distanceslice';
 import { Text } from 'react-native-paper';
 
 export default function StepCounter() {
   const [steps, setSteps] = useState(0);
   const stopwatchState = useSelector((state) => state.stopwatch.isRunning) // Redux 스토어의 stopwatch.isRunning 값 사용
+  const dispatch = useDispatch() 
 
   useEffect(() => {
     let subscription;
@@ -31,6 +33,7 @@ export default function StepCounter() {
         }
       });
     } else {
+      dispatch(walking(steps))
       return;
     }
 

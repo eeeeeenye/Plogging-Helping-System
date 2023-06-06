@@ -9,21 +9,21 @@ def show_results():
     data = request.get_json()                                        # 클라이언트로부터 받은 값 가져오기
     data = data['photoURI']
 
-     new_image_path = 'C:/Users/db030/Desktop/aimodel/testimage.jpg'  # 추후 data에서 URI 가져올것
-     result1 = trashmodel4.predict_trash(new_image_path)
+    new_image_path = 'C:/Users/db030/Desktop/aimodel/testimage.jpg'  # 추후 data에서 URI 가져올것
+    result1 = trashmodel4.predict_trash(new_image_path)
 
-     weights_path = "C:/Users/db030/Desktop/aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt"
-     new_image = cv2.imread('C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png')
-     result2 = trashmodel4.detect_trash(weights_path, new_image)
+    weights_path = "C:/Users/db030/Desktop/aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt"
+    new_image = cv2.imread('C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png')
+    result2 = trashmodel4.detect_trash(weights_path, new_image)
 
-     image_path = 'C:/windows_v1.8.1/trash-20230423T171738Z-001/trash/trash613.png'
-     result3 = trashmodel4.process_image(image_path)
+    image_path = 'C:/windows_v1.8.1/trash-20230423T171738Z-001/trash/trash613.png'
+    result3 = trashmodel4.process_image(image_path)
 
-     response = {
-         'result1': result1,
-         'result2': result2,
-         'result3': result3
-     }
+    response = {
+        'result1': result1,
+        'result2': result2,
+        'result3': result3
+    }
 
     print(data)
 

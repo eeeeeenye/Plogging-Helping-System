@@ -6,7 +6,6 @@ import StepCounter from '../addons/Pedometer';
 import StopWatchAPI from '../addons/Watch';
 import { useSelector } from 'react-redux';
 import { Text } from 'react-native-paper';
-import LocationSettings from '../map/Restroom';
 
 function Dashboard({navigation}) {
   useEffect(()=>{

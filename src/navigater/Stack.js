@@ -9,6 +9,8 @@ import {
     LocationSettings,
     locationTracker,
     CameraScreen,
+    RecordScreen,
+    MyPage
 } from '../screens'
 import { useSelector } from 'react-redux'
 import TabNav from './Tab'
@@ -89,6 +91,15 @@ function StackNav(){
                     shadowColor:'#000', 
                     elevation:25,}}}
             />
+            <Stack.Screen
+                name="MyPage"
+                component={MyPage}
+                options={{
+                    headerShown:false,
+                    headerStyle:{
+                    shadowColor:'#000', 
+                    elevation:25,}}}
+            />
         </Stack.Navigator>
     )}else{
         return(
@@ -113,6 +124,7 @@ function StackNav(){
                 />
                 <Stack.Screen name="locationTracking" component={locationTracker} />
                 <Stack.Screen name='Camera' component={CameraScreen} />
+                <Stack.Screen name='Record' component={RecordScreen}/>
                 {/* <Stack.Screen name='Ranking' component={RankScreen} /> */}
             </Stack.Navigator>
         )

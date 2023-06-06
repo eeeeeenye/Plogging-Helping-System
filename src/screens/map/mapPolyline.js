@@ -131,7 +131,6 @@ const LocationTracker = () => {
           }
         }}
         onMessage={handleMessage}
-        style={styles.webView}
         javaScriptEnabled={true}
       />
     </View>
