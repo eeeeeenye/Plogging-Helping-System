@@ -1,4 +1,19 @@
-const RestroomSet =(url,position)=>{ 
+// markers 데이터를 가져오는 비동기 함수 예시
+async function fetchMarkers(url) {
+  try {
+    const response = await fetch(url); // 외부 API 호출 또는 데이터 요청
+    const data = await response.json(); // 응답 데이터를 JSON 형식으로 파싱
+    return data.markers; // markers 데이터 반환
+  } catch (error) {
+    console.error('Failed to fetch markers:', error);
+    return []; // 에러 발생 시 빈 배열 반환
+  }
+}
+
+const RestroomSet = async (url, position) => {
+  // markers 데이터 가져오기
+  const markers = await fetchMarkers(url);
+
   return(`
     <html>
       <head>
