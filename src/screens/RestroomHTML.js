@@ -1,4 +1,5 @@
 // markers 데이터를 가져오는 비동기 함수 예시
+// ERROR  Failed to fetch markers: [TypeError: Network request failed]
 async function fetchMarkers(url) {
   try {
     const response = await fetch(url); // 외부 API 호출 또는 데이터 요청
