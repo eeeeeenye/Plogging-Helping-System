@@ -1,61 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { WebView } from 'react-native-webview';
-import Constants from 'expo-constants';
-import RestroomSet from '../map/htmlCode/RestroomHTML';
+import WebView from 'react-native-webview';
+import Background from '../../components/Background';
+import { useSelector } from 'react-redux';
+import { Text } from 'react-native-paper';
+import RestroomSet from './htmlCode/RestroomHTML';
 import axios from 'axios';
+import Constants from 'expo-constants';
 
-
-const Public_toilet = () =>{
-  const [toiletData, setToiletData] = useState([]);
+function Public_toilet({ navigation }) {
+  const [markers, setMarkers] = useState([]); // 정제된 데이터를 저장할 상태 변수
   const ip = Constants.manifest.extra.Local_ip;
 
   useEffect(() => {
-  fetchData();
+    // 백엔드에서 정제된 데이터를 가져와 markers 상태 변수에 설정
+    getData();
+
+    navigation.navigate('TabNav');
   }, []);
 
-  useEffect(()=>{
-    console.log(toiletData)
-  },[toiletData])
-
-  const fetchData = async () => {
+  const getData = async () => {
     try {
       const response = await axios.get(`http://${ip}:3000/publicToilets`);
-      
-      console.log(toiletData)
-
-      // 가져온 데이터 정제하기, 도로명, 지번, 위도, 경도 가져오기
-      const refinedData = response.data.map((item) => {
-        return {
-          rdnmadr: item.rdnmadr,
-          lnmadr: item.lnmadr,
-          latitude: item.latitude,
-          longitude: item.longitude,
-        };
-      });
-
-      setToiletData(refinedData);
+      const data = response.data;
+      setMarkers(data);
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <WebView source={RestroomSet} style={styles.map} />
-      {/* <MyComponent toiletData={toiletData} /> */}
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flex: 1 }}>
+        <WebView
+          style={{ flex: 1 }}
+          source={{ html: RestroomSet(markers) }}
+          javaScriptEnabled={true}
+        />
+      </View>
     </View>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  map: {
-    flex: 1,
-  },
-});
-
-export default Public_toilet
+export default Public_toilet;
