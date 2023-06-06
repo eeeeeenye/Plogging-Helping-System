@@ -41,11 +41,8 @@ app.get('/publicToilets', async (req, res) => {
     ].join('&');
     
     const url = toiletUrl + '?' + queryParams;
-    console.log(url)
     const response = await axios.get(url);
     const Data = response.data.response.body.items;
-
-    console.log(response.data.response.body.items)
 
     const refinedData = Data.map((item) => {
       return {

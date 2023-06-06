@@ -89,6 +89,7 @@ const CameraScreen = ({navigation}) => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.loadingText}>사진을 분석 중입니다...</Text>
       </View>
     );
   }
@@ -152,7 +153,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f5f5f5', // Adjust the background color to your preference
   },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 18,
+    color: 'black',
+  },
+  
 });
 
 export default CameraScreen;
