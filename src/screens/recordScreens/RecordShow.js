@@ -72,19 +72,32 @@ const RecordScreen = ({ navigation }) => {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.title}>기록정보</Title>
-          <Paragraph style={styles.info}>걸음 수: <Text style={styles.infoValue}>{walking}</Text></Paragraph>
-          <Paragraph style={styles.info}>쓰레기 양: <Text style={styles.infoValue}>{trashcnt}</Text></Paragraph>
-          <Paragraph style={styles.info}>거리: <Text style={styles.infoValue}>{distance}</Text></Paragraph>
-          <Paragraph style={styles.info}>시간: <Text style={styles.infoValue}>{stopwatch}</Text></Paragraph>
+          <Paragraph style={styles.info}>
+            <Text style={styles.infoLabel}>걸음 수: </Text>
+            <Text style={styles.infoValue}>{walking}</Text>
+          </Paragraph>
+          <Paragraph style={styles.info}>
+            <Text style={styles.infoLabel}>쓰레기 양: </Text>
+            <Text style={styles.infoValue}>{trashcnt}</Text>
+          </Paragraph>
+          <Paragraph style={styles.info}>
+            <Text style={styles.infoLabel}>거리: </Text>
+            <Text style={styles.infoValue}>{distance}</Text>
+          </Paragraph>
+          <Paragraph style={styles.info}>
+            <Text style={styles.infoLabel}>시간: </Text>
+            <Text style={styles.infoValue}>{stopwatch}</Text>
+          </Paragraph>
         </Card.Content>
         <Card.Cover source={{ uri: uri }} style={styles.image} />
-        <Card.Actions>
+        <Card.Actions style={styles.cardActions}>
           <Button onPress={ButtonOnPress} mode="contained" style={styles.button}>
             확인
           </Button>
         </Card.Actions>
       </Card>
     </View>
+
   );
 };
 
@@ -97,9 +110,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '80%',
-    padding: 16,
-    alignItems: 'center',
     borderRadius: 16,
+    elevation: 4, // Add elevation for a card-like effect
   },
   title: {
     fontSize: 24,
@@ -110,7 +122,12 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 18,
     marginBottom: 8,
-    textAlign: 'left',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoLabel: {
+    fontWeight: 'bold',
+    marginRight: 4,
   },
   infoValue: {
     textAlign: 'right',
@@ -120,10 +137,14 @@ const styles = StyleSheet.create({
     marginTop: 16,
     borderRadius: 8,
   },
+  cardActions: {
+    justifyContent: 'center',
+  },
   button: {
     marginTop: 16,
     backgroundColor: '#007AFF',
   },
 });
+
 
 export default RecordScreen;

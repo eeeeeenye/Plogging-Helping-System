@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import {save} from '../../slices/All/urislice'
 import { trashCount } from '../../slices/All/Distanceslice'
-import { useSelector } from 'react-redux';
 
 
 const CameraScreen = ({navigation}) => {
@@ -13,7 +12,6 @@ const CameraScreen = ({navigation}) => {
   const [cameraRef, setCameraRef] = useState(null)
   const [photoUri, setPhotoUri] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const userID= useSelector((state) => state.auth.user?.clientID);
   const dispatch = useDispatch()
 
   // console.log(navigation.navigate('HomeMain'))
@@ -65,6 +63,16 @@ const CameraScreen = ({navigation}) => {
     }catch(error){
       console.error('File upload failed', error)
       setIsLoading(false); // 로딩 상태 해제
+
+      Alert.alert(
+        '재촬영',
+          '사진 인식을 못하였습니다. 다시 촬영해주세요.',
+            [
+              {
+                text: '잘 알겠습니다',
+              },
+            ],
+      )
     }
     }
   };
