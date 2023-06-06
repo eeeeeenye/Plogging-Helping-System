@@ -1,9 +1,9 @@
-const RestroomSet =(url,position)=>{ 
-  return(`
+const RestroomSet = (markers) => {
+  return `
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=093f44ff0baa195ab8c672ddce75f0fd&libraries=services"></script>
+        <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=093f44ff0baa195ab8c672ddce75f0fd"></script>
         <style>
           #map {
             width: 100%;
@@ -14,9 +14,9 @@ const RestroomSet =(url,position)=>{
       <body>
         <div id="map"></div>
         <script>
-          const markers = ${JSON.stringify(markers)}; // 가져온 화장실 위치 데이터
+          const markers = ${JSON.stringify(markers)};
 
-          // Kakao 지도 API 초기화 
+          // Kakao 지도 API 초기화
           kakao.maps.load(() => {
             const container = document.getElementById('map');
             const options = {
@@ -26,18 +26,18 @@ const RestroomSet =(url,position)=>{
             const map = new kakao.maps.Map(container, options);
 
             // 화장실 위치에 마커 생성
-            markers.forEach((marker) => {
-              const markerPosition = new kakao.maps.LatLng(marker.latitude, marker.longitude);
+            markers.forEach((markerObj) => {
+              const markerPosition = new kakao.maps.LatLng(markerObj.latitude, markerObj.longitude);
               const marker = new kakao.maps.Marker({
                 position: markerPosition,
-              }); 
+              });
               marker.setMap(map);
             });
           });
         </script>
       </body>
     </html>
-  `)
-}
+  `;
+};
 
 export default RestroomSet;
