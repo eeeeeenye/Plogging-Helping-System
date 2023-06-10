@@ -1,4 +1,4 @@
-# YOLOv5 🚀 by Ultralytics, AGPL-3.0 license
+YOLOv5 🚀 by Ultralytics, AGPL-3.0 license
 """
 Run YOLOv5 detection inference on images, videos, directories, globs, YouTube, webcam, streams, etc.
 
@@ -52,9 +52,9 @@ from utils.torch_utils import select_device, smart_inference_mode
 
 @smart_inference_mode()
 def run(
-        weights=ROOT / 'best.pt',  # model path or triton URL
+        weights=ROOT / 'yolov5s.pt',  # model path or triton URL
         source=ROOT / 'data/images',  # file/dir/URL/glob/screen/0(webcam)
-        data=ROOT / 'data/coco.yaml',  # dataset.yaml path
+        data=ROOT / 'data/coco128.yaml',  # dataset.yaml path
         imgsz=(640, 640),  # inference size (height, width)
         conf_thres=0.25,  # confidence threshold
         iou_thres=0.45,  # NMS IOU threshold
@@ -82,6 +82,8 @@ def run(
 ):
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
+    save_txt = save_txt or save_img  # save_txt=True if either save_txt or save_img is True
+
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
     is_url = source.lower().startswith(('rtsp://', 'rtmp://', 'http://', 'https://'))
     webcam = source.isnumeric() or source.endswith('.streams') or (is_url and not is_file)
@@ -160,6 +162,12 @@ def run(
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
+                # for *xyxy, conf, cls in reversed(det):
+                #     if save_txt:  # Write to file
+                #         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                #         line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+                #         with open(f'{txt_path}.txt', 'a') as f:
+                #             f.write(('%g ' * len(line)).rstrip() % line + '\n')
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
@@ -167,13 +175,19 @@ def run(
                         with open(f'{txt_path}.txt', 'a') as f:
                             f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
+                    # if save_img or save_crop or view_img:  # Add bbox to image
+                    #     c = int(cls)  # integer class
+                    #     label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+                    #     annotator.box_label(xyxy, label, color=colors(c, True))
+                    # if save_crop:
+                    #     save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+
                     if save_img or save_crop or view_img:  # Add bbox to image
                         c = int(cls)  # integer class
                         label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
-                    if save_crop:
-                        save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
-
+                        if save_crop:
+                            save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)    
             # Stream results
             im0 = annotator.result()
             if view_img:
@@ -209,7 +223,7 @@ def run(
     # Print results
     t = tuple(x.t / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {(1, 3, *imgsz)}' % t)
-    if save_txt or save_img:
+    if save_txt and save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
     if update:

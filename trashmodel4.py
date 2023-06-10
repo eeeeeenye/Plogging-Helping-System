@@ -54,18 +54,9 @@ def predict_trash(new_image_path):
     elif predicted_class == 2:
         return "쓰레기봉투가 잘 보이네요!"
 
-# 테스트
-# new_image_path = 'C:/Users/db030/Desktop/aimodel/testimage.jpg'
-# result = predict_trash(new_image_path)
-# print(result)
-
 
 #2차 인공지능
 #커맨드창으로 detect.py를 실행시켜야함.
-import cv2
-import subprocess
-import tempfile
-
 import cv2
 import subprocess
 import tempfile
@@ -74,13 +65,9 @@ import psutil
 
 
 def detect_trash(new_image):
-    # 이미지 데이터를 파일로 저장
-    temp_image = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-    cv2.imwrite(temp_image.name, new_image)
 
-    output_image = os.path.abspath("../aimodel/trash334.png")
-    weights_path = os.path.abspath("../aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt")
-    detect_script = os.path.abspath("../aimodel/detect.py")
+    weights_path = os.path.abspath("../exp28-20230604T084521Z-001/exp28/weights/best.pt")
+    detect_script = os.path.abspath("../detect.py")
 
     command = [
         "python",
@@ -92,30 +79,49 @@ def detect_trash(new_image):
         "--conf",
         "0.5",
         "--source",
-        output_image
+        new_image,
+        "--save-txt"
     ]
 
     subprocess.run(command)
+    
 
 
-    # 임시 파일 삭제
-    temp_image.close()
+def display_image(image_path):
+    image = cv2.imread(image_path)
 
-    # 출력 이미지 표시
-    output_img = cv2.imread(output_image)
-    cv2.imshow("Output Image", output_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    if image is not None:
+        cv2.imshow("Image", image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    else:
+        print("이미지를 읽어올 수 없습니다.")
 
-# # 테스트
-# new_image = cv2.imread('../aimodel/runs/detect/exp4/trash334.png')
-# detect_trash(new_image)
+def find_recent_folder(directory):
+    entries = os.listdir(directory)
+    folders = [entry for entry in entries if os.path.isdir(os.path.join(directory, entry))]
+    sorted_folders = sorted(folders, key=lambda folder: os.path.getctime(os.path.join(directory, folder)))
+    if sorted_folders:
+        recent_folder = sorted_folders[-1]
+        return os.path.join(directory, recent_folder)
+    else:
+        return "find_recent_folder의 오류"
 
+def find_recent_file_in_folder(folder):
+    entries = os.listdir(folder)
+    files = [entry for entry in entries if os.path.isfile(os.path.join(folder, entry))]
+    if files:
+        recent_file = max(files, key=lambda file: os.path.getctime(os.path.join(folder, file)))
+        return os.path.join(folder, recent_file)
+    else:
+        return "find_recent_file_in_folder의 오류"
 
-# 테스트
-# weights_path = "C:/Users/db030/Desktop/aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt"
-# new_image = cv2.imread('C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png')
-# detect_trash(weights_path, new_image)
+def find_recent_file(directory):
+    recent_folder = find_recent_folder(directory)
+    if recent_folder:
+        return find_recent_file_in_folder(recent_folder)
+    else:
+        return "find_recent_file의 오류"
 
 
 #3차 인공지능
@@ -168,10 +174,5 @@ def remove_last_value(numbers):
 def process_image(image_path):
     extracted_numbers = extract_numbers_from_image(image_path)
     string_num = convert_numbers_to_string(extracted_numbers)
-    updated_string_num = remove_last_value(string_num)
-    return int(updated_string_num)
-
-# 함수 호출
-# image_path = 'C:/windows_v1.8.1/trash-20230423T171738Z-001/trash/trash334.png'
-# result = process_image(image_path)
-# print(result)
+    # updated_string_num = remove_last_value(string_num)
+    return string_num
