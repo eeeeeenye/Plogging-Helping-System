@@ -6,10 +6,10 @@ dotenv.config({ path: path.resolve(__dirname, "../../config.env") });
 
 const db = mysql.createConnection({
   connectionLimit: 10,
-  host: "localhost",
+  host: process.env.host,
   user: process.env.user,
   password: process.env.password,
-  database: "Plogging",
+  database: process.env.database,
 });
 
 module.exports = db;

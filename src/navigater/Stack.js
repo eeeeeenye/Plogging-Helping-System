@@ -4,13 +4,14 @@ import {
     LoginScreen,
     RegisterScreen,
     ResetPasswordScreen,
-    Dashboard,
     KakaoLoginScreen,
     LocationSettings,
     locationTracker,
     CameraScreen,
     RecordScreen,
-    MyPage
+    MyPage,
+    pointHistory,
+    RecordHistory
 } from '../screens'
 import { useSelector } from 'react-redux'
 import TabNav from './Tab'
@@ -111,20 +112,24 @@ function StackNav(){
                         headerShown:false
                     }}
                 />
-                <Stack.Screen 
-                    name="HomeMain"
-                    component={Dashboard}
-                    options={{
-                        headerShown:true,
-                        headerStyle:{
-                            height:90,
-                            elevation:25,
-                        },
-                    }}
-                />
                 <Stack.Screen name="locationTracking" component={locationTracker} />
                 <Stack.Screen name='Camera' component={CameraScreen} />
                 <Stack.Screen name='Record' component={RecordScreen}/>
+                <Stack.Screen
+                    name='point'
+                    component={pointHistory}
+                    options={{
+                    headerTitle: '포인트 내역 조회',
+                    }}
+                />
+                <Stack.Screen
+                    name='recordHistory'
+                    component={RecordHistory}
+                    options={{
+                    headerTitle: '플로깅 내역 조회',
+                    }}
+                />
+
                 {/* <Stack.Screen name='Ranking' component={RankScreen} /> */}
             </Stack.Navigator>
         )

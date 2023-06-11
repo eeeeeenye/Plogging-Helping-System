@@ -21,7 +21,6 @@ function Public_toilet({ navigation }) {
       const response = await axios.get(`http://${ip}:3000/publicToilets`);
       const data = response.data;
       setMarkers(data);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

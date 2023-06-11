@@ -22,11 +22,12 @@ from keras.models import load_model
 
 def predict_trash(new_image_path):
     # 저장된 모델 불러오기
-    model = load_model('C:/Users/db030/Desktop/aimodel/fai.h5') 
+    model = load_model('./fai.h5') 
 
+    print(new_image_path,"-------------------------------------------dkhsfsdgfigsdfhdsiufgdsug")
     # 새로운 이미지 불러오기
     new_image = cv2.imread(new_image_path)
-
+    
     category_mapping = {0: "person", 1: "hand", 2: "trash"}
 
     # 이미지가 성공적으로 불러와졌는지 확인
@@ -37,7 +38,6 @@ def predict_trash(new_image_path):
     image_w = 64
     image_h = 64
     
-
     # 이미지 크기 조정
     new_image = cv2.resize(new_image, (image_w, image_h))
 
@@ -47,7 +47,6 @@ def predict_trash(new_image_path):
     # 예측 수행
     prediction = model.predict(np.array([new_image]))
     predicted_class = np.argmax(prediction)
-
     if predicted_class == 0:
         return "사람이 더 많게 찍힌 것으로 추정됩니다. 주의해서 진행해주세요"
     elif predicted_class == 1:
@@ -55,55 +54,73 @@ def predict_trash(new_image_path):
     elif predicted_class == 2:
         return "쓰레기봉투가 잘 보이네요!"
 
-# 테스트
-# new_image_path = 'C:/Users/db030/Desktop/aimodel/testimage.jpg'
-# result = predict_trash(new_image_path)
-# print(result)
-
 
 #2차 인공지능
 #커맨드창으로 detect.py를 실행시켜야함.
 import cv2
 import subprocess
 import tempfile
+import os
+import psutil
 
-def detect_trash(weights_path, new_image):
-    # 이미지 데이터를 파일로 저장
-    # temp_image = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-    # cv2.imwrite(temp_image.name, new_image)
 
-    output_image = "C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png"
+def detect_trash(new_image):
 
-    # command = [
-    #     "python",
-    #     "/content/drive/MyDrive/2023finalproject/detect.py",
-    #     "--weights",
-    #     weights_path,
-    #     "--img",
-    #     "320",
-    #     "--conf",
-    #     "0.5",
-    #     "--source",
-    #     temp_image.name,
-    #     "--output",
-    #     output_image
-    # ]
+    weights_path = os.path.abspath("./best.pt")
+    detect_script = os.path.abspath("./detect.py")
+    command = [
+        "python",
+        detect_script,
+        "--weights",
+        weights_path,
+        "--img",
+        "320",
+        "--conf",
+        "0.5",
+        "--source",
+        new_image,
+        "--save-txt"
+    ]
 
-    # subprocess.run(command)
+    subprocess.run(command)
+    
 
-    # # 임시 파일 삭제
-    # temp_image.close()
 
-    # 출력 이미지 표시
-    output_img = cv2.imread(output_image)
-    cv2.imshow("Output Image", output_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def display_image(image_path):
+    image = cv2.imread(image_path)
 
-# 테스트
-# weights_path = "C:/Users/db030/Desktop/aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt"
-# new_image = cv2.imread('C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png')
-# detect_trash(weights_path, new_image)
+    if image is not None:
+        cv2.imshow("Image", image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    else:
+        print("이미지를 읽어올 수 없습니다.")
+
+def find_recent_folder(directory):
+    entries = os.listdir(directory)
+    folders = [entry for entry in entries if os.path.isdir(os.path.join(directory, entry))]
+    sorted_folders = sorted(folders, key=lambda folder: os.path.getctime(os.path.join(directory, folder)))
+    if sorted_folders:
+        recent_folder = sorted_folders[-1]
+        return os.path.join(directory, recent_folder)
+    else:
+        return "find_recent_folder의 오류"
+
+def find_recent_file_in_folder(folder):
+    entries = os.listdir(folder)
+    files = [entry for entry in entries if os.path.isfile(os.path.join(folder, entry))]
+    if files:
+        recent_file = max(files, key=lambda file: os.path.getctime(os.path.join(folder, file)))
+        return os.path.join(folder, recent_file)
+    else:
+        return "find_recent_file_in_folder의 오류"
+
+def find_recent_file(directory):
+    recent_folder = find_recent_folder(directory)
+    if recent_folder:
+        return find_recent_file_in_folder(recent_folder)
+    else:
+        return "find_recent_file의 오류"
 
 
 #3차 인공지능
@@ -156,69 +173,5 @@ def remove_last_value(numbers):
 def process_image(image_path):
     extracted_numbers = extract_numbers_from_image(image_path)
     string_num = convert_numbers_to_string(extracted_numbers)
-    updated_string_num = remove_last_value(string_num)
-    return int(updated_string_num)
-
-# 함수 호출
-# image_path = 'C:/windows_v1.8.1/trash-20230423T171738Z-001/trash/trash334.png'
-# result = process_image(image_path)
-# print(result)import cv2
-import numpy as np
-from keras.models import load_model
-
-def predict_trash(new_image_path):
-    model = load_model('C:/Users/db030/Desktop/aimodel/fai.h5') 
-    new_image = cv2.imread(new_image_path)
-
-    category_mapping = {0: "person", 1: "hand", 2: "trash"}
-
-    if new_image is None:
-        print("이미지 불러오기 실패")
-        return None
-    
-    image_w = 64
-    image_h = 64
-    
-
-    new_image = cv2.resize(new_image, (image_w, image_h))
-    new_image = new_image.astype(float) / 255
-
-    prediction = model.predict(np.array([new_image]))
-    predicted_class = np.argmax(prediction)
-
-    if predicted_class == 0:
-        return "사람이 더 많게 찍힌 것으로 추정됩니다. 주의해서 진행해주세요"
-    elif predicted_class == 1:
-        return "손이 보이도록 찍힌 것으로 추정됩니다. 쓰레기 봉투의 리터가 보일 수 있도록 해주세요."
-    elif predicted_class == 2:
-        return "쓰레기봉투가 잘 보이네요!"
-
-def detect_trash(weights_path, new_image_path):
-    new_image = cv2.imread(new_image_path)
-    output_image = "C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png"
-
-    output_img = cv2.imread(output_image)
-    cv2.imshow("Output Image", output_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-def process_image(image_path):
-    extracted_numbers = extract_numbers_from_image(image_path)
-    string_num = convert_numbers_to_string(extracted_numbers)
-    updated_string_num = remove_last_value(string_num)
-    return int(updated_string_num)
-
-# 테스트 코드
-new_image_path = 'C:/Users/db030/Desktop/aimodel/testimage.jpg'
-result1 = predict_trash(new_image_path)
-
-weights_path = "C:/Users/db030/Desktop/aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt"
-new_image_path = 'C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png'
-result2 = detect_trash(weights_path, new_image_path)
-
-image_path = 'C:/windows_v1.8.1/trash-20230423T171738Z-001/trash/trash613.png'
-result3 = process_image(image_path)
-
-print(result1)
-print(result2)
-print(result3)
+    # updated_string_num = remove_last_value(string_num)
+    return string_num

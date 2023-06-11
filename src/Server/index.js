@@ -4,21 +4,17 @@ const app = express()
 const cors = require('cors')
 const path = require("path")
 const dotenv = require('dotenv')
-const {spawn} = require('child_process')
 const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 
 const axios = require('axios');
 
 /*포트설정*/
-app.set('port',3000);                                  // process.env 객체에 기본 포트번호가 있다면 해당 포트를 사용한다는 것이고 없다면 8080 포트번호를 사용하겠다.
-                                                       // app.set(키,값) 함수는 키,값 파라미터를 이용하여 키에 값을 설정하도록 설정할 수 있는 함수
-    
+app.set('port',process.env.PORT || 3000);                                  
+                                                                         
 /*공통 미들웨어 */
-app.use(express.static(__dirname+'/public'))
 app.use(logger('dev'))                                                       
 app.use(express.json())
-app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 db.connect((error) => {
@@ -28,10 +24,11 @@ db.connect((error) => {
     }
 })
 
-//화장실 정보 api end point
+// 공공데이터 부분 관련 코드 ///////////////// 충청남도 화장실 다뜨게 천안시 아산시 그리고 내위치 뜨도록 수정 -> 맨마지막에
+// 화장실 정보 api end point
 app.get('/publicToilets', async (req, res) => {
   try {
-    const serviceKey = "x8Ly2Ky3EFj3SPAan6WH%2BTTfvh0zQHz%2FQRtPaQ4EDDwXVFgjFKdWxaztltBdnXR7xo3IB1VJyLuNvm%2BuawUvBg%3D%3D";
+    const serviceKey = process.env.openRestAPI;
     const toiletUrl = 'http://api.data.go.kr/openapi/tn_pubr_public_toilet_api';
     const queryParams = [
       'serviceKey=' + serviceKey,
@@ -53,7 +50,6 @@ app.get('/publicToilets', async (req, res) => {
       };
     });
 
-    console.log(refinedData)
     res.json(refinedData);
   } catch (error) {
     console.error(error);
@@ -61,74 +57,130 @@ app.get('/publicToilets', async (req, res) => {
   }
 });
 
-
-
-// 회원정보 CRUD
-/* Create */
-app.post("/clients", async(req,res)=>{
-    const Client_name = req.body.Client_name;
-    const Client_pwd = req.body.Client_pwd;
-    const Client_email =req.body.Client_email;
-    const Client_phone =req.body.Client_phone;
-
-    db.query(`INSERT INTO plogging.CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
-    [ Client_email, Client_name, Client_pwd ,Client_phone],
-    (err, result)=>{
-        if(err){
-            console.log(err);
-        }else{
-            res.send("Insert values successfully!");
-        }
-    })
-})
-
-
-// 기록물 DB 저장코드
+// 기록물 관리
+// 기록물 DB 저장코드 // network Error
 app.post("/Record", async(req,res)=>{
-    const Client_id = req.body.Client_id;
+    const Client_id = req.body.clientID;
     const latitude = req.body.latitude;
     const longitude = req.body.longitude;
     const walking = req.body.walking;
     const distance = req.body.distance;
     const stopwatch = req.body.stopwatch;
     const image = req.body.imageURI;
-    const record_result = req.body.result
+    const record_result = req.body.result;
 
     db.query(
-        `INSERT INTO Plogging.record VALUES ( ?, ?, ?, ?, ?, ?,?)`,
-    [Client_id , latitude, longitude,walking, distance, stopwatch, image, record_result],
+        `INSERT INTO record.plogging (clientID, latitude, longitude, walking, distance, stopwatch, image, trash_cnt)`
+        +` VALUES ( ?, ?, ?, ?, ?, ?,?,?)`,
+        [Client_id , latitude, longitude,walking, distance, stopwatch, image, record_result],
     (err, result)=>{
         if(err){
             console.log(err);
         }else{
-            res.send("Insert values successfully!");
+            res.send("Record : Insert values successfully!");
         }
     })
 })
 
-/* read */
-app.post("/plogging/client", (req,res)=>{
-    const email = req.body.Client_email;
-    const name =req.body.Client_name;
+// 기록물 조회코드 (최신순)
+app.post("/Record/:clientID", async (req, res) => {
+  try {
+    const clientID = req.params.clientID;
 
-    console.log(email,name)
     db.query(
-        `SELECT EMAIL,clientName,clientID FROM plogging.client WHERE email = ? OR clientName = ?;`,
-        [email,name],
-        (err, result) => {
-            if(err){
-                console.log(err);
-            }else{
-                res.send(result);
-            }
+      `SELECT * FROM plogging.record WHERE clientID = ? ORDER BY record_time DESC`,
+      [clientID],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ error: "Internal Server Error" });
+        } else {
+          res.json(result);
         }
-    )
+      }
+    );
+  } catch (error) {
+    console.error("Error while retrieving client data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
+
+// 포인트 데이터 저장 /// 테스트해봐야 함
+app.post('/point',async(req,res)=>{
+    const clientID = req.body.clientID;
+    const points = req.body.points;
+    const event = req.body.event;
+    const descript = req.body.discript;
+    const sqlInsert = `INSERT INTO plogging.point_history (clientID, points, event, description) VALUES ( ?, ?, ?, ?)`
+    const sqlSelect = `SELECT clientID, SUM(points) FROM points_history WHERE clientID = ?`   // client가 가지고 있는 포인트의 총합 조회
+
+    try{
+      // Insert문 시행
+      await db.query(
+        sqlInsert,
+        [clientID,points,event,descript],
+        (err, result)=>{
+          if(err){
+              console.log(err);
+          }else{
+              //select문 시행 -> Insert문에 오류가 없을때 가져옴 (오류가 있으면 이전값 유지)
+              db.query(
+                sqlSelect,
+                [clientID],
+                (err, result)=>{
+                  if(err){
+                    console.log(err);
+                  }else{ res.json(result[0]) }
+                }
+              )
+          }
+      })
+
+    }catch(error){console.error('points Inserting is fail : ',error)}
+
+})
+
+
+// 포인트 데이터 데이터 조회 // 수정완료
+app.post('/point-history/:clientId', async (req, res) => {
+  const clientId = req.params.clientId; // 사용자 ID
+
+  let query = `SELECT * FROM point_history WHERE clientID = ${clientId}`;
+      query += ` ORDER BY created_at DESC`; // 최신순으로 정렬
+
+    try {
+      await db.query(query,(err, results) => {
+        if (err) {
+          console.error('Error retrieving point history:', err);
+          res.status(500).json({ error: 'Internal Server Error' }); // 오류 발생 시 JSON 형태의 오류 응답 전송
+          return;
+        }
+      
+        const dataList = results.map(data => ({
+          clientID: data.clientID,
+          points: data.points,
+          event: data.event,
+          description: data.description,
+          created_at: data.created_at
+        }));
+      
+        res.json(dataList);
+      });
+    } catch (error) {
+      console.error('Error retrieving point history:', error);
+      res.status(500).json({ error: 'Internal Server Error' }); // 예외 처리 시 JSON 형태의 오류 응답 전송
+    }
+});
+
+
+
+// 랭킹 관련 코드
 // 각 기간의 랭킹에 맞는 회원 정보 가져오기
 app.post("/plogging/ranking", async (req, res) => {
     try {
       const oneWeekAgo = new Date();
+      var dataList = [];
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)    // 7일 전 DATE를 가져와서 업데이트
   
       const SELECT =
@@ -151,9 +203,9 @@ app.post("/plogging/ranking", async (req, res) => {
         `GROUP BY r.clientID ` +
         `LIMIT 10` +
         `) AS t ON c.clientID = t.clientID;`
-        var dataList = [];
+
       // 클라이언트 데이터 종합 데이터베이스 상에서 랭킹을 매겨 가져옴
-     await db.query(SELECT, [oneWeekAgo],
+      await db.query(SELECT, [oneWeekAgo],
         function(error,result){
             
             for (var data of result){
@@ -165,9 +217,10 @@ app.post("/plogging/ranking", async (req, res) => {
       console.error('Error while aggregating client data:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+});
   
 
+// 회원 관리 코드
 // 회원 로그인 -> 회원정보를 DB에서 가져옴
 app.post('/api/login', (req, res) => {
     try {
@@ -204,17 +257,95 @@ app.post('/api/login', (req, res) => {
       console.error(err);
       res.status(500).json({ success: false, message: '서버 에러 발생' });
     }
+});
+
+// 비밀번호 재설정 API 엔드포인트 // 프론트앤드에서 사용하지 않음 -> 추후 추가
+app.post('/api/reset-password', (req, res) => {
+  const email = req.body.email; // 사용자 이메일
+
+  // 임시 비밀번호 생성
+  const tempPassword = randomstring.generate(8);
+
+  // 임시 비밀번호 해싱
+  bcrypt.hash(tempPassword, 10, (err, hashedPassword) => {
+    if (err) {
+      console.error('Error hashing password:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+
+    // 데이터베이스에 임시 비밀번호 저장
+    const query = `UPDATE users SET password = '${hashedPassword}' WHERE email = '${email}'`;
+
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.error('Error resetting password:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      if (results.affectedRows === 0) {
+        res.status(404).json({ error: 'User not found' });
+      } else {
+        // 임시 비밀번호 이메일로 전송 (여기서는 생략)
+        res.json({ message: 'Password reset successful' });
+      }
+    });
   });
-  
+});
+
+// 회원정보 관리
+// 회원가입 관련 코드   //테스트 해봐야 함
+app.post("/clients", async (req, res) => {
+  const Client_name = req.body.Client_name;
+  const Client_pwd = req.body.Client_pwd;
+  const Client_email = req.body.Client_email;
+  const Client_phone = req.body.Client_phone;
+
+  try {
+
+    await db.query(
+      `INSERT INTO plogging.CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
+      [Client_email, Client_name, Client_pwd, Client_phone],
+      async (err, result) => {
+        if (err) {
+          console.log(err);
+          throw err; // 오류 발생 시 트랜잭션 롤백을 위해 예외 throw
+        } else {
+          console.log("Insert values successfully!");
+
+          // INSERT 작업이 성공한 경우 SELECT 작업 수행
+          await db.query(
+            `SELECT clientID FROM plogging.client WHERE clientName = ?`,
+            [Client_name],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+                throw err; // 오류 발생 시 트랜잭션 롤백을 위해 예외 throw
+              } else {
+                console.log(result);
+                res.send(result);
+              }
+            }
+          );
+        }
+      }
+    );
+
+  } catch (err) {
+    console.error("Transaction failed. Rolling back.", err);
+    res.status(500).send("Transaction failed. Rolling back.");
+  }
+});
 
   
 
-/* Update */
-app.put("/plogging/:params", (req, res)=>{
+// 회원 주소 변경
+app.put("/plogging/:params", async(req, res)=>{
     const city = req.body.city;
     const clientName = req.body.ClientName;
 
-    db.query(
+    await db.query(
         `UPDATE plogging.client SET address = ? WHERE clientName = ?;`,
         [city,clientName],
         (err,result)=>{
@@ -227,18 +358,35 @@ app.put("/plogging/:params", (req, res)=>{
     )
 });
 
+// 사용자 조회
+app.post("/plogging/client", async(req,res)=>{
+  const email = req.body.Client_email;
+  const name =req.body.Client_name;
+
+  console.log(email,name)
+  await db.query(
+      `SELECT EMAIL,clientName,clientID FROM plogging.client WHERE email = ? OR clientName = ?;`,
+      [email,name],
+      (err, result) => {
+          if(err){
+              console.log(err);
+          }else{
+              res.send(result);
+          }
+      }
+  )
+});
 
 /*서버와 포트와 연결*/
-
 app.listen(app.get('port'),()=>{
     console.log(app.get('port'),"번 포트에서 서버 실행 중...")
 });
 
 /*오류 미들웨어 설정*/
-// app.use(function (err,req,res){
-//     console.error(err.stack);
-//     res.status(500).send('Something broke!');
-// });
+app.use(function (err,req,res){
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 
 

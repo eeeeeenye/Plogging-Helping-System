@@ -4,7 +4,8 @@ import { Camera } from 'expo-camera'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import {save} from '../../slices/All/urislice'
-import { trashCount } from '../../slices/All/Distanceslice'
+import { trashCount, trashCount2 } from '../../slices/All/Distanceslice'
+import Constants from 'expo-constants'
 
 
 const CameraScreen = ({navigation}) => {
@@ -12,6 +13,7 @@ const CameraScreen = ({navigation}) => {
   const [cameraRef, setCameraRef] = useState(null)
   const [photoUri, setPhotoUri] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const ip = Constants.manifest.extra.Local_ip
   const dispatch = useDispatch()
 
   // console.log(navigation.navigate('HomeMain'))
@@ -50,7 +52,7 @@ const CameraScreen = ({navigation}) => {
           name: 'photo.jpg',
         });
 
-        const data = await axios.post(`http://10.20.32.28:5000/detection`,formatData,{
+        const data = await axios.post(`http://${ip}:5000/detection`,formatData,{
           headers: {
             'Content-Type' : 'multipart/form-data'
           }
@@ -59,6 +61,7 @@ const CameraScreen = ({navigation}) => {
       console.log(data.data)
       setIsLoading(false); // 로딩 상태 해제
       dispatch(trashCount(data.data?.result2));
+      dispatch(trashCount2(data.data?.result3));
       navigation.navigate('Record');
     }catch(error){
       console.error('File upload failed', error)

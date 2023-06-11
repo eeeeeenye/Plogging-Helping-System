@@ -1,35 +1,87 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
 import trashmodel4
-import cv2
-
+import os
+import base64
+import glob
 app = Flask(__name__)
+CORS(app)
 
-@app.route('/detection',methods=['POST'])
+# 한글 출력을 위한 설정 추가
+app.config['JSON_AS_ASCII'] = False
+
+@app.route('/detection', methods=['GET', 'POST'])
 def show_results():
-    data = request.get_json()                                        # 클라이언트로부터 받은 값 가져오기
-    data = data['photoURI']
+    parsed_request = request.files.get('file')
 
-    new_image_path = 'C:/Users/db030/Desktop/aimodel/testimage.jpg'  # 추후 data에서 URI 가져올것
-    result1 = trashmodel4.predict_trash(new_image_path)
+    if parsed_request is None:
+        return jsonify({'error': 'file is None'}), 400, {'Content-Type': 'application/json; charset=utf-8'}
+    
+    # 저장할 파일 경로 설정
+    save_dir = os.path.join(app.root_path, 'uploaded_images') #어플리케이션 루트경로
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = os.path.join(save_dir, 'uploaded_image.jpg')
 
-    weights_path = "C:/Users/db030/Desktop/aimodel/exp28-20230604T084521Z-001/exp28/weights/best.pt"
-    new_image = cv2.imread('C:/Users/db030/Desktop/aimodel/exp3-20230604T085454Z-001/exp3/trash613.png')
-    result2 = trashmodel4.detect_trash(weights_path, new_image)
+    # 파일 저장
+    parsed_request.save(save_path)
 
-    image_path = 'C:/windows_v1.8.1/trash-20230423T171738Z-001/trash/trash613.png'
+    # total_path = 'C:/Users/db030/Desktop/aimodel'  # 추후 data에서 URI 가져올것
+    #  업로드된 이미지 경로로 변경
+    image_path = os.path.join(app.root_path, 'uploaded_images', 'uploaded_image.jpg')
+    # text_path=total_path+"/runs/"+recent_file+'../labels/uploaded_image.txt'
+    result1 = trashmodel4.predict_trash(image_path)
+    detection_results = trashmodel4.detect_trash(image_path)
+    directory = os.path.join(app.root_path)         #루트경로의 하위경로
+    print(directory,"-------------------------------------------")
+    recent_file = trashmodel4.find_recent_file(directory)
+    # text_path=total_path+'/runs/'+ +'/labels/uploaded_image.txt'
+
+# 특정 디렉토리에서 최근에 생성된 폴더 경로 찾기
+    directory = os.path.join(app.root_path,'runs\detect')
+    newest_folder = max(glob.glob(os.path.join(directory, '*')), key=os.path.getctime)
+    text_path=newest_folder+'\\labels\\uploaded_image.txt'
+
+# 텍스트 파일 열기
+    with open(text_path, 'r') as file:
+        lines = file.readlines()  # 파일의 각 줄을 리스트로 읽어오기
+
+# 데이터 배열 생성
+    data_array = []
+    for line in lines:
+        values = line.strip().split()  # 각 줄의 공백을 기준으로 값들을 분리하여 리스트로 저장
+        data_array.append(values)
+    result2 = None 
+# # 결과 확인
+    classpre=data_array[0][0]
+    print(classpre)
+    
+    if classpre == '0':
+        result2='0'
+    elif classpre == '1':
+        result2='25'
+    elif classpre == '2':
+        result2='50'
+    elif classpre == '3':
+        result2='75'
+    elif classpre == '4':
+        result2='100'
+    else:
+        result2='30'
+
     result3 = trashmodel4.process_image(image_path)
-
+    print(result2)
     response = {
         'result1': result1,
-        'result2': result2,
+        'result2': result2 if result2 else "파일을 찾을 수 없습니다.",
         'result3': result3
-    }
+}
 
-    print(data)
-
-    # 결과를 템플릿에 전달하여 렌더링
     return jsonify(response)
 
+@app.route('/result', methods=['GET', 'POST'])
+def show_result_page():
+    return render_template('index.html')
+
 if __name__ == '__main__':
-    app.debug=True
-    app.run(host='0.0.0.0')               #port 추가해서 포트 설정가능
+    app.debug = True
+    app.run(host='0.0.0.0',port=5000)

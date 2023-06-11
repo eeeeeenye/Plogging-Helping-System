@@ -45,10 +45,6 @@ export default function LoginScreen({ navigation }) {
           StatusManager.storeData('user',ClientData)
           dispatch(authorize(ClientData))
           console.log('[##] loggedIn : Success') 
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'HomeMain'}],
-          })
         }
       })
   }

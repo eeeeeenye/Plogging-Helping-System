@@ -40,7 +40,6 @@ export default function RegisterScreen({ navigation }) {
   })
 
   const [clientDB, getClient] = useState({
-    Client_ID:'',
     Client_name: '',
     Client_email:'',
     dupCheck: false
@@ -76,19 +75,21 @@ export default function RegisterScreen({ navigation }) {
   }, [clientDB]);
 
   const addClient = async()=>{             // 사용자 DB 구축
-    await axios.post(`http://${ip}:3000/clients`,client)
+    let clientData
+    const id = await axios.post(`http://${ip}:3000/clients`,client)
     .then(res => {
-      console.log(res.data);
+      const data = res.data
+
+      clientData = {
+        clientID : data[0].clientID,
+        email: client.Client_email,
+        ClientName: client.Client_name,
+        phone: client.Client_phone
+      }
+      console.log(clientData.clientID,"===========")
     })
     .catch(error => console.log(error));
 
-    const clientData = {
-      ID : clientDB.Client_ID,
-      email: client.Client_email,
-      name: client.Client_name,
-      phone: client.Client_phone
-    }
-    
     dispatch(authorize(clientData))
   };
 
@@ -101,7 +102,6 @@ export default function RegisterScreen({ navigation }) {
             return{
               ...prevState,
               Client_email: res.data[0].EMAIL,
-              Client_ID: res.data[0].clientID
             }
           })
         }

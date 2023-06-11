@@ -1,18 +1,19 @@
 import React, {useEffect,useState} from 'react';
-import { View, StyleSheet,Text } from 'react-native';
+import { View, StyleSheet,Text,Alert } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import Constants from 'expo-constants'
+import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 const RecordScreen = ({ navigation }) => {
   const distance = useSelector((state) => state.dist.distance);
   const walking = useSelector((state) => state.dist.walking);
   const uri = useSelector((state) => state.uriState.uri);
-  const trashcnt = useSelector((state) => state.dist.trashcnt);
+  const result3 = useSelector((state) => state.dist.trashcnt_percent);
+  const result2 = useSelector((state)=>state.dist.trashcnt)
   const stopwatch = useSelector((state) => state.stopwatch.elapsedTime);
-  const [location, setLocation] = useState(null);
+  const [position, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const userID= useSelector((state) => state.auth.user?.clientID);
   const ip = Constants.manifest.Local_ip;
@@ -30,15 +31,23 @@ const RecordScreen = ({ navigation }) => {
 
       // 위치 정보 가져오기
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      const position = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      }
+      setLocation(position);
       })();
   }, []);
 
   useEffect(()=>{
-    setData()
-  },[location])
+    if(position){
+      setData(position)
+      console.log(position,"============")  
+    }
+    
+  },[position])
 
-  const setData = async() =>{
+  const setData = async(location) =>{
     const data = {
       Client_id:userID, 
       latitude: location.latitude, 
@@ -47,20 +56,45 @@ const RecordScreen = ({ navigation }) => {
       distance:distance,
       stopwatch:stopwatch,
       imageURI:uri,
-      result: trashcnt
+      result: result2
     }
-
     try{
-      await axios.post(`http://${ip}:3000/Record`,data)
+      axios.post(`http://${ip}:3000/Record`,data)
     }catch(error){
       console.error('Record Data Error :', error)
     }
   }
 
+  const getPoint=async()=>{
+    const point = result2 * result3 / 100
+    var result = [25, 50, 75, 100].includes(point) ? point : 0;
+    const data ={
+      clientID: userID,
+      points: result,
+      event:'RecordShow',
+      descript:'기록으로 인한 포인트 획득'
+    }
+
+    axios.post(`http://${ip}:3000/point`,data)
+    .catch((err)=>console.error('getPoing Error',err))
+
+    Alert.alert(
+      '포인트 획득!!',
+        result,
+          [
+            {
+              text: '확인',
+            },
+          ],
+    )
+  }
+
+    
+
   const ButtonOnPress = async () => {
     // 데이터베이스에 레코드 저장 코드 추가 -> axios
     try{
-      // await axios.post(`http://${ip}:3000/Record`,)
+      await getPoint()
       navigation.navigate('TabNav');
     }catch(error){
       console.error(error)
@@ -78,7 +112,7 @@ const RecordScreen = ({ navigation }) => {
           </Paragraph>
           <Paragraph style={styles.info}>
             <Text style={styles.infoLabel}>쓰레기 양: </Text>
-            <Text style={styles.infoValue}>{trashcnt}</Text>
+            <Text style={styles.infoValue}>{result3}</Text>
           </Paragraph>
           <Paragraph style={styles.info}>
             <Text style={styles.infoLabel}>거리: </Text>
