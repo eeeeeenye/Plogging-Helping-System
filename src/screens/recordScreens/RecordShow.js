@@ -12,11 +12,13 @@ const RecordScreen = ({ navigation }) => {
   const uri = useSelector((state) => state.uriState.uri);
   const result3 = useSelector((state) => state.dist.trashcnt_percent);
   const result2 = useSelector((state)=>state.dist.trashcnt)
+  const result1 = useSelector((state)=>state.dist.cnnResult)
   const stopwatch = useSelector((state) => state.stopwatch.elapsedTime);
   const [position, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const userID= useSelector((state) => state.auth.user?.clientID);
-  const ip = Constants.manifest.Local_ip;
+  const ip = Constants.expoConfig.extra.Local_ip;
+  console.log(ip,"-----------------------------")
 
   console.log(userID)
 
@@ -42,32 +44,31 @@ const RecordScreen = ({ navigation }) => {
   useEffect(()=>{
     if(position){
       setData(position)
-      console.log(position,"============")  
     }
     
   },[position])
 
   const setData = async(location) =>{
     const data = {
-      Client_id:userID, 
+      clientID:userID, 
       latitude: location.latitude, 
       longitude: location.longitude, 
       walking:walking, 
       distance:distance,
       stopwatch:stopwatch,
       imageURI:uri,
-      result: result2
+      result: result3
     }
     try{
-      axios.post(`http://${ip}:3000/Record`,data)
+      await axios.post(`http://${ip}:3000/Record`,data)
     }catch(error){
       console.error('Record Data Error :', error)
     }
   }
 
   const getPoint=async()=>{
-    const point = result2 * result3 / 100
-    var result = [25, 50, 75, 100].includes(point) ? point : 0;
+    const trashCount = result2 * result3 / 100
+    var result = [25, 50, 75, 100].includes(trashCount) ? trashCount : 0;
     const data ={
       clientID: userID,
       points: result,
@@ -75,12 +76,12 @@ const RecordScreen = ({ navigation }) => {
       descript:'기록으로 인한 포인트 획득'
     }
 
-    axios.post(`http://${ip}:3000/point`,data)
+    await axios.post(`http://${ip}:3000/point`,data)
     .catch((err)=>console.error('getPoing Error',err))
 
     Alert.alert(
       '포인트 획득!!',
-        result,
+        `${trashCount}만큼 포인트를 획득하였습니다 ^-^9`,
           [
             {
               text: '확인',
@@ -91,10 +92,10 @@ const RecordScreen = ({ navigation }) => {
 
     
 
-  const ButtonOnPress = async () => {
+  const ButtonOnPress = () => {
     // 데이터베이스에 레코드 저장 코드 추가 -> axios
     try{
-      await getPoint()
+      getPoint()
       navigation.navigate('TabNav');
     }catch(error){
       console.error(error)

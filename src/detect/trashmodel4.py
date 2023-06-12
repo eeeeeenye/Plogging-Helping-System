@@ -137,7 +137,7 @@ def filter_numbers(text):
 # 이미지로부터 숫자를 추출하는 함수
 def extract_numbers_from_image(image_path):
     # Vision API 클라이언트 인증 정보 설정
-    credentials = service_account.Credentials.from_service_account_file('C:/Users/db030/Desktop/aimodel/imagetext-387412-bab717bcee7f.json')
+    credentials = service_account.Credentials.from_service_account_file('./imagetext-387412-bab717bcee7f.json')
     client = vision.ImageAnnotatorClient(credentials=credentials)
 
     # 이미지 읽어오기

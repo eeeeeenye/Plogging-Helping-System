@@ -10,6 +10,7 @@ npm-debug.*
 web-build/
 config.env
 src/detect/venv/**/*
+src/detect/runs/**/*
 
 # macOS
 .DS_Store

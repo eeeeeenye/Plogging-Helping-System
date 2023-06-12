@@ -4,6 +4,8 @@ const app = express()
 const cors = require('cors')
 const path = require("path")
 const dotenv = require('dotenv')
+//const randomstring = require('randomstring');
+//const bcrypt = require('bcrypt');
 const db = require("./db"); // db.js 파일 임포트
 dotenv.config({path: path.resolve(__dirname,"../../config.env")});
 
@@ -24,7 +26,7 @@ db.connect((error) => {
     }
 })
 
-// 공공데이터 부분 관련 코드 ///////////////// 충청남도 화장실 다뜨게 천안시 아산시 그리고 내위치 뜨도록 수정 -> 맨마지막에
+// 공공데이터 부분 관련 코드 // 충청남도 화장실 다뜨게 천안시 아산시 그리고 내위치 뜨도록 최종 수정 필요
 // 화장실 정보 api end point
 app.get('/publicToilets', async (req, res) => {
   try {
@@ -58,7 +60,7 @@ app.get('/publicToilets', async (req, res) => {
 });
 
 // 기록물 관리
-// 기록물 DB 저장코드 // network Error
+// 기록물 DB 저장코드 // network Error 오류 개선
 app.post("/Record", async(req,res)=>{
     const Client_id = req.body.clientID;
     const latitude = req.body.latitude;
@@ -70,7 +72,7 @@ app.post("/Record", async(req,res)=>{
     const record_result = req.body.result;
 
     db.query(
-        `INSERT INTO record.plogging (clientID, latitude, longitude, walking, distance, stopwatch, image, trash_cnt)`
+        `INSERT INTO Plogging.record (clientID, latitude, longitude, walking, distance, stopwatch, image, trash_cnt)`
         +` VALUES ( ?, ?, ?, ?, ?, ?,?,?)`,
         [Client_id , latitude, longitude,walking, distance, stopwatch, image, record_result],
     (err, result)=>{
@@ -88,7 +90,7 @@ app.post("/Record/:clientID", async (req, res) => {
     const clientID = req.params.clientID;
 
     db.query(
-      `SELECT * FROM plogging.record WHERE clientID = ? ORDER BY record_time DESC`,
+      `SELECT * FROM Plogging.record WHERE clientID = ? ORDER BY record_time DESC`,
       [clientID],
       (err, result) => {
         if (err) {
@@ -106,14 +108,14 @@ app.post("/Record/:clientID", async (req, res) => {
 });
 
 
-// 포인트 데이터 저장 /// 테스트해봐야 함
+// 포인트 데이터 저장
 app.post('/point',async(req,res)=>{
     const clientID = req.body.clientID;
     const points = req.body.points;
     const event = req.body.event;
     const descript = req.body.discript;
-    const sqlInsert = `INSERT INTO plogging.point_history (clientID, points, event, description) VALUES ( ?, ?, ?, ?)`
-    const sqlSelect = `SELECT clientID, SUM(points) FROM points_history WHERE clientID = ?`   // client가 가지고 있는 포인트의 총합 조회
+    const sqlInsert = `INSERT INTO Plogging.point_history (clientID, points, event, description) VALUES ( ?, ?, ?, ?)`
+    const sqlSelect = `SELECT clientID, SUM(points) FROM Plogging.point_history WHERE clientID = ?`   // client가 가지고 있는 포인트의 총합 조회
 
     try{
       // Insert문 시행
@@ -131,9 +133,7 @@ app.post('/point',async(req,res)=>{
                 (err, result)=>{
                   if(err){
                     console.log(err);
-                  }else{ res.json(result[0]) }
-                }
-              )
+                  }else{ res.json(result[0]) }})
           }
       })
 
@@ -259,39 +259,50 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// 비밀번호 재설정 API 엔드포인트 // 프론트앤드에서 사용하지 않음 -> 추후 추가
-app.post('/api/reset-password', (req, res) => {
+// 비밀번호 재설정 API 엔드포인트 // 프론트엔드에서 사용하지 않음 -> 추후 추가 예정
+app.post('/api/reset-password', async(req, res) => {
   const email = req.body.email; // 사용자 이메일
+  const phone = req.body.phone; // 사용자 번호
+  const query = `SELECT clientID FROM plogging.client WHERE email = ${email} AND phone = ${phone}`
+  
+  // 이메일 + 번호 사용자 확인
+  await db.query(query, (err,results)=>{
+    if(results.length > 0 ){
+      // 임시 비밀번호 생성
+      const tempPassword = randomstring.generate(8);
 
-  // 임시 비밀번호 생성
-  const tempPassword = randomstring.generate(8);
+      // 임시 비밀번호 해싱
+      bcrypt.hash(tempPassword, 10, (err, hashedPassword) => {
+        if (err) {
+          console.error('Error hashing password:', err);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
 
-  // 임시 비밀번호 해싱
-  bcrypt.hash(tempPassword, 10, (err, hashedPassword) => {
-    if (err) {
-      console.error('Error hashing password:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
+        // 데이터베이스에 임시 비밀번호 저장
+        const query = `UPDATE users SET password = '${hashedPassword}' WHERE email = '${email}'`;
+
+        db.query(query, (err, results) => {
+          if (err) {
+            console.error('Error resetting password:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+          }
+
+          if (results.affectedRows === 0) {
+            res.status(404).json({ error: 'User not found' });
+          } else {
+            // 임시 비밀번호 이메일로 전송 (여기서는 생략)
+            res.json({ message: 'Password reset successful', tempPassword:tempPassword });
+          }
+        });
+      });
+    }else{
+      res.send({message: 'Not Founded your account!'})
+      res.status(500).json({ error: 'Not Founded any account.' });
     }
+   })
 
-    // 데이터베이스에 임시 비밀번호 저장
-    const query = `UPDATE users SET password = '${hashedPassword}' WHERE email = '${email}'`;
-
-    connection.query(query, (err, results) => {
-      if (err) {
-        console.error('Error resetting password:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-        return;
-      }
-
-      if (results.affectedRows === 0) {
-        res.status(404).json({ error: 'User not found' });
-      } else {
-        // 임시 비밀번호 이메일로 전송 (여기서는 생략)
-        res.json({ message: 'Password reset successful' });
-      }
-    });
-  });
 });
 
 // 회원정보 관리
@@ -337,8 +348,6 @@ app.post("/clients", async (req, res) => {
     res.status(500).send("Transaction failed. Rolling back.");
   }
 });
-
-  
 
 // 회원 주소 변경
 app.put("/plogging/:params", async(req, res)=>{

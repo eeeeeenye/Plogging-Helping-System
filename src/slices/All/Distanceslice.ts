@@ -4,14 +4,16 @@ export interface Distance{
     distance: number,
     walking: number,
     trashcnt_percent: number,
-    trashcnt:number
+    trashcnt:number,
+    cnnResult: string,
 }
 
 const initialState: Distance= {
     distance: 0,
     walking:0,
     trashcnt_percent:0,
-    trashcnt:0
+    trashcnt:0,
+    cnnResult:'',
   };
 
 
@@ -30,6 +32,9 @@ const distSlice = createSlice({
         },
         trashCount2(state, action:PayloadAction<number>){
             state.trashcnt = action.payload;
+        },
+        cnnResults(state, action:PayloadAction<string>){
+            state.cnnResult = action.payload;
         }
     }
 })
