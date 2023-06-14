@@ -39,5 +39,5 @@ const distSlice = createSlice({
     }
 })
 
-export const {distCal,walking,trashCount,trashCount2} = distSlice.actions;
+export const {distCal,walking,trashCount,trashCount2,cnnResults} = distSlice.actions;
 export default distSlice.reducer;

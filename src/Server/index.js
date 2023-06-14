@@ -115,7 +115,7 @@ app.post('/point',async(req,res)=>{
     const event = req.body.event;
     const descript = req.body.discript;
     const sqlInsert = `INSERT INTO Plogging.point_history (clientID, points, event, description) VALUES ( ?, ?, ?, ?)`
-    const sqlSelect = `SELECT clientID, SUM(points) FROM Plogging.point_history WHERE clientID = ?`   // client가 가지고 있는 포인트의 총합 조회
+    const sqlSelect = `SELECT SUM(points) FROM Plogging.point_history WHERE clientID = ?`   // client가 가지고 있는 포인트의 총합 조회
 
     try{
       // Insert문 시행
@@ -133,7 +133,9 @@ app.post('/point',async(req,res)=>{
                 (err, result)=>{
                   if(err){
                     console.log(err);
-                  }else{ res.json(result[0]) }})
+                  }else{ 
+                    res.send(result)
+                    console.log(result) }})
           }
       })
 

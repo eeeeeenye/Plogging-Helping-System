@@ -14,13 +14,10 @@ const RecordScreen = ({ navigation }) => {
   const result2 = useSelector((state)=>state.dist.trashcnt)
   const result1 = useSelector((state)=>state.dist.cnnResult)
   const stopwatch = useSelector((state) => state.stopwatch.elapsedTime);
-  const [position, setLocation] = useState(null);
+  const [position, setPosition] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const userID= useSelector((state) => state.auth.user?.clientID);
   const ip = Constants.expoConfig.extra.Local_ip;
-  console.log(ip,"-----------------------------")
-
-  console.log(userID)
 
   useEffect(() => {
     // 위치 정보 요청 권한 확인
@@ -37,7 +34,7 @@ const RecordScreen = ({ navigation }) => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       }
-      setLocation(position);
+      setPosition(position);
       })();
   }, []);
 
@@ -67,27 +64,56 @@ const RecordScreen = ({ navigation }) => {
   }
 
   const getPoint=async()=>{
-    const trashCount = result2 * result3 / 100
-    var result = [25, 50, 75, 100].includes(trashCount) ? trashCount : 0;
+    var result = [25, 50, 75, 100].includes(result3) ? result3 : 0;
+    let point = 0;
+    let result2_num = parseInt(result2)
+
+    if(result2_num > 100){
+      const inputString = result2_num.toString();
+      result2_num = inputString.slice(0, 3);
+    }
+
+    if(result !== 0){
+      console.log(result2)
+      point =((result3/100)*result2_num+(walking))/100
+    }else{
+      point =(result3/100)*result2_num+walking
+    }
+    
     const data ={
       clientID: userID,
       points: result,
-      event:'RecordShow',
-      descript:'기록으로 인한 포인트 획득'
+      event:'포인트 획득',
+      descript:'플로깅 인증'
     }
 
-    await axios.post(`http://${ip}:3000/point`,data)
-    .catch((err)=>console.error('getPoing Error',err))
+    if(point !== 0){
+      const totalPoint = await axios.post(`http://${ip}:3000/point`,data)
+                         .catch((err)=>console.error('getPoing Error',err))
+      // const DBdata = totalPoint.data    totalpoint 나중에 마이페이지에 수정
+      // console.log(DBdata, "----------------------------------------") // 
 
-    Alert.alert(
-      '포인트 획득!!',
-        `${trashCount}만큼 포인트를 획득하였습니다 ^-^9`,
-          [
-            {
-              text: '확인',
-            },
-          ],
-    )
+      Alert.alert(
+        '포인트 획득!!',
+          `${point}만큼 포인트를 획득하였습니다 ^-^9`,
+            [
+              {
+                text: '확인',
+              },
+            ],
+      )  
+    }else{
+      Alert.alert(
+        '포인트 획득 실패',
+          `평가기준에 맞춰지지 않았습니다.`,
+            [
+              {
+                text: '확인',
+              },
+            ],
+      )  
+    }
+    
   }
 
     
@@ -146,7 +172,7 @@ const styles = StyleSheet.create({
   card: {
     width: '80%',
     borderRadius: 16,
-    elevation: 4, // Add elevation for a card-like effect
+    elevation: 4, 
   },
   title: {
     fontSize: 24,

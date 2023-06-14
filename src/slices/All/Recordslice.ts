@@ -5,8 +5,8 @@ interface Record {
   recordID: number,
   clientID: number,
   record_time: string,
-  latitiude: number,
-  longitude: number,
+  latitude: number, // 수정된 부분
+  longitude: number, // 수정된 부분
   walking: number,
   distance: number,
   stopwatch: number,

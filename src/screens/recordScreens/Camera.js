@@ -62,7 +62,7 @@ const CameraScreen = ({navigation}) => {
       setIsLoading(false); // 로딩 상태 해제
       dispatch(trashCount(data.data?.result2));
       dispatch(trashCount2(data.data?.result3));
- //     dispatch(cnnResults(data.data?.result1));
+      dispatch(cnnResults(data.data?.result1));
       navigation.navigate('Record');
     }catch(error){
       console.error('File upload failed', error)
