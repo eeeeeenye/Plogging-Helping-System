@@ -14,7 +14,8 @@ import Constants from 'expo-constants'
 import HeaderBackScroll from '../../components/HeaderbackScroll'
 import Footer from '../../components/footer'
 
-import styles from './mypageStyle/poinHistoryStyle'
+import styles from './mypageStyle/pointHistoryStyle'
+import HeaderBack from '../../components/Headerback'
 
 const arr = [
   { description: '내용', event: '플로깅 완료!', points: '100' },
@@ -105,7 +106,7 @@ export default function PointHistory() {
 
   return (
     <View style={styles.container}>
-      <HeaderBackScroll title={'포인트 조회'}> </HeaderBackScroll>
+      <HeaderBack title={'포인트 조회'}> </HeaderBack>
       <View style={styles.contents}>
         <View style={styles.topContainer}>
           <View style={styles.topContainer_title}>

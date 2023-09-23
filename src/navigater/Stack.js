@@ -12,8 +12,6 @@ import {
   MyPage,
   pointHistory,
   RecordHistory,
-  Profile,
-  EditProfile,
 } from '../screens'
 import { useSelector } from 'react-redux'
 import TabNav from './Tab'
@@ -21,6 +19,15 @@ import { Ionicons } from '@expo/vector-icons'
 
 import { createStackNavigator } from '@react-navigation/stack'
 import HeaderBackScroll from '../components/HeaderbackScroll'
+import Profile from '../screens/mypage/profile'
+import EditProfile from '../screens/mypage/EditProfile'
+import PostHistory from '../screens/mypage/PostHistory'
+import PrivacyPolicy from '../screens/mypage/PrivacyPolicy'
+import TermsAndConditions from '../screens/mypage/TermsAndCondition'
+import IssueReport from '../screens/mypage/IssueReport'
+import PostReport from '../screens/mypage/PostReport'
+import ReportHistory from '../screens/mypage/ReportsHistory'
+
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
 const Stack = createStackNavigator()
@@ -55,7 +62,88 @@ function StackNav() {
           }}
         />
         <Stack.Screen
-          name="ProfileScreen"
+          name="IssueReport"
+          component={IssueReport}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ReportHistory"
+          component={ReportHistory}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="PostReport"
+          component={PostReport}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="postHistory"
+          component={PostHistory}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="TermsAndConditions"
+          component={TermsAndConditions}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="Privacy"
+          component={PrivacyPolicy}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="EditProfile"
           component={EditProfile}
           options={{
             headerShown: false,
@@ -149,7 +237,7 @@ function StackNav() {
           name="recordHistory"
           component={RecordHistory}
           options={{
-            // headerShown: false,
+            headerShown: false,
             headerTitle: '플로깅 내역 조회',
           }}
         />

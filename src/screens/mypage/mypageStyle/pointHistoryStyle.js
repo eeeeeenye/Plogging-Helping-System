@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
   topContainer: {
     flex: 1,
     padding: 10,
+
     backgroundColor: theme.colors.pointHistory,
     borderBottomWidth: 0.5,
     borderBottomColor: theme.colors.borderBottom,

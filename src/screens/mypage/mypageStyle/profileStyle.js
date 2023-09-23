@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    marginBottom: 50,
+    marginBottom: 80,
     marginTop: 100,
     justifyContent: 'center',
     alignItems: 'center',
@@ -21,14 +21,14 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
-  textContent: {
+  textContainer: {
     // width: width * 0.6,
 
     marginTop: 10,
     // marginLeft: 80,
     // marginRight: 50,
   },
-  textContainer: {
+  textContent: {
     // textAlign: 'left',
     flexDirection: 'row', // 수평으로 배치
     // alignItems: 'center', // 가운데 정렬

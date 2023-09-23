@@ -22,9 +22,8 @@ const MyPage = ({ navigation }) => {
   const phone = useSelector((state) => state.auth.user?.phone)
   const [note, setNote] = useState('잘부탁드립니다~~')
 
-  console.log(navigation)
   const handleProfile = () => {
-    navigation.navigate('ProfileScreen')
+    navigation.navigate('Profile')
   }
 
   const handlePointInquiry = () => {
@@ -34,9 +33,28 @@ const MyPage = ({ navigation }) => {
   const handleRecordHistory = () => {
     navigation.navigate('recordHistory')
   }
+  const handlePostHistory = () => {
+    navigation.navigate('postHistory')
+  }
 
   const handleServicePolicy = () => {
     // 서비스 정책
+    navigation.navigate('Privacy')
+  }
+
+  const handleTermsAndConditions = () => {
+    // 서비스 정책
+    navigation.navigate('TermsAndConditions')
+  }
+
+  const handleIssueReport = () => {
+    navigation.navigate('IssueReport')
+  }
+  const handlePostReport = () => {
+    navigation.navigate('PostReport')
+  }
+  const handleReportHistory = () => {
+    navigation.navigate('ReportHistory')
   }
 
   return (
@@ -66,8 +84,15 @@ const MyPage = ({ navigation }) => {
             </View>
 
             <View style={styles.centerContainer_label}>
-              <Text style={styles.text}>회원신고 내역</Text>
-              <Text style={styles.text}>불편신고 내역</Text>
+              <TouchableOpacity onPress={handleReportHistory}>
+                <Text style={styles.text}>회원신고 내역</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleIssueReport}>
+                <Text style={styles.text}>불편신고 내역</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handlePostReport}>
+                <Text style={styles.text}>게시글 신고</Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -88,8 +113,12 @@ const MyPage = ({ navigation }) => {
               </Text>
             </View>
             <View style={styles.centerContainer_label}>
-              <Text style={styles.text}>작성글 확인</Text>
-              <Text style={styles.text}>플로깅 데이터 확인</Text>
+              <TouchableOpacity onPress={handlePostHistory}>
+                <Text style={styles.text}>작성글 확인</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleRecordHistory}>
+                <Text style={styles.text}>플로깅 데이터 확인</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.centerContainer}>
@@ -109,8 +138,12 @@ const MyPage = ({ navigation }) => {
               <Text style={styles.centerContainer_title_text}>서비스 정책</Text>
             </View>
             <View style={styles.centerContainer_label2}>
-              <Text style={styles.text}>개인정보 취급정책</Text>
-              <Text style={styles.text}>이용약관</Text>
+              <TouchableOpacity onPress={handleServicePolicy}>
+                <Text style={styles.text}>개인정보 취급정책</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleTermsAndConditions}>
+                <Text style={styles.text}>이용약관</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

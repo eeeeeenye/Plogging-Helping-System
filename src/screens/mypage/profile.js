@@ -15,17 +15,15 @@ import styles from './mypageStyle/profileStyle'
 import HeaderBack from '../../components/Headerback'
 import HeaderBackScroll from '../../components/HeaderbackScroll'
 
-const EditProfile = () => {
+const Profile = ({ navigation }) => {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [note, setNote] = useState('')
 
-  const handleEditProfile = () => {
-    // 프로필 수정 로직을 여기에 작성
-    //프로필 수정api필요
-    //
+  const handleProfile = () => {
+    navigation.navigate('EditProfile')
   }
 
   const handleLogout = () => {
@@ -35,7 +33,7 @@ const EditProfile = () => {
   //글자 문제 해결 필요
   return (
     <View style={styles.container}>
-      <HeaderBackScroll title={'프로필'}>
+      <HeaderBackScroll title={'프로필 수정'}>
         <View style={styles.content}>
           <View style={styles.imageContent}>
             <Image
@@ -44,16 +42,16 @@ const EditProfile = () => {
             />
             <Text style={styles.title}>{name}플로깅1</Text>
           </View>
-          <View style={styles.textContent}>
-            <View style={styles.textContainer}>
+          <View style={styles.textContainer}>
+            <View style={styles.textContent}>
               <Text style={styles.label}>이메일 :</Text>
               <Text style={styles.text}>{email} sddoridori@naver.com</Text>
             </View>
-            <View style={styles.textContainer}>
+            <View style={styles.textContent}>
               <Text style={styles.label}>전화번호 :</Text>
               <Text style={styles.text}>{number} 010-xxxx-xxxx</Text>
             </View>
-            <View style={styles.textContainer}>
+            <View style={styles.textContent}>
               <Text style={styles.label}>한줄소개 :</Text>
 
               <Text style={styles.text}>
@@ -63,7 +61,7 @@ const EditProfile = () => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleEditProfile} style={styles.button}>
+            <TouchableOpacity onPress={handleProfile} style={styles.button}>
               <Text style={styles.buttonText}>프로필 수정</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout} style={styles.button}>
@@ -77,4 +75,4 @@ const EditProfile = () => {
   )
 }
 
-export default EditProfile
+export default Profile
