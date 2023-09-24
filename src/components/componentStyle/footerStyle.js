@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    resizeMode: 'cover',
+    resizeMode: 'contain',
+    // backgroundColor: 'gray',
     // textAlign: 'center',
     width: 30,
     height: 30,
@@ -61,6 +62,9 @@ const styles = StyleSheet.create({
     // color: 'red',
 
     // textAlign: 'center', // 푸터 텍스트 가운데 정렬
+  },
+  disabled: {
+    color: 'gray',
   },
 })
 

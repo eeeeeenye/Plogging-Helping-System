@@ -7,8 +7,8 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 90,
-    backgroundColor: '#fff', // 헤더 배경색상 설정
-    paddingRight: 10,
+    backgroundColor: 'white', // 헤더 배경색상 설정
+    // paddingRight: 10,
     paddingLeft: 10,
     paddingTop: 20,
     // marginBottom: 20,
@@ -37,29 +37,31 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 6 * pixelRatio,
   },
-  header_center: {
-    flex: 2,
-
-    alignItems: 'center',
-  },
-  header_center_text: {
-    fontSize: 18,
-  },
 
   headerRight: {
     flex: 1,
+    marginRight: 10,
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // 수평으로 오른쪽으로 정렬
+    alignItems: 'center',
+    // top: 150,
   },
   image: {
     marginLeft: 5,
     width: 32,
     height: 33,
   },
-  settingButton: {
-    marginLeft: 'auto',
-  },
+  // settingButton: {
+  //   marginLeft: 'auto',
+  // },
   image2: {
-    width: 23,
-    height: 23,
+    marginRight: 15,
+    // resizeMode: 'cover',
+    resizeMode: 'contain',
+    width: 25,
+    height: 25,
+    // backgroundColor: '#999999',
+    opacity: 0.3,
   },
 })
 
