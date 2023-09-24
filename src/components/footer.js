@@ -48,15 +48,16 @@ const Footer = ({ children }) => {
                 source={require(`../assets/Plogging/gray-home.png`)}
               ></Image>
             )}
+
+            <Text
+              style={[
+                styles.footer_text,
+                item[0].clicked ? styles.footer_text : styles.disabled,
+              ]}
+            >
+              홈
+            </Text>
           </TouchableOpacity>
-          <Text
-            style={[
-              styles.footer_text,
-              item[0].clicked ? styles.footer_text : styles.disabled,
-            ]}
-          >
-            홈
-          </Text>
         </View>
         <View style={styles.element}>
           <TouchableOpacity
