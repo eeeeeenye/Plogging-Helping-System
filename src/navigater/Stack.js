@@ -27,6 +27,7 @@ import TermsAndConditions from '../screens/mypage/TermsAndCondition'
 import IssueReport from '../screens/mypage/IssueReport'
 import PostReport from '../screens/mypage/PostReport'
 import ReportHistory from '../screens/mypage/ReportsHistory'
+import Board from '../boardScreens/board'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -50,6 +51,18 @@ function StackNav() {
             },
           }}
         />
+        <Stack.Screen
+          name="board"
+          component={Board}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
         <Stack.Screen
           name="LoginScreen"
           component={LoginScreen}
@@ -94,7 +107,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="postHistory"
           component={PostHistory}
@@ -106,7 +118,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="TermsAndConditions"
           component={TermsAndConditions}
@@ -118,7 +129,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="Privacy"
           component={PrivacyPolicy}
@@ -130,7 +140,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="Profile"
           component={Profile}
@@ -173,7 +182,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="RegisterScreen"
           component={RegisterScreen}
@@ -207,7 +215,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="point"
           component={pointHistory}
@@ -219,7 +226,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="MyPage"
           component={MyPage}
@@ -232,7 +238,6 @@ function StackNav() {
             },
           }}
         />
-
         <Stack.Screen
           name="recordHistory"
           component={RecordHistory}

@@ -1,4 +1,4 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, configureStore, createSlice } from '@reduxjs/toolkit'
 
 interface FooterImage {
   id: number
@@ -21,9 +21,8 @@ const footerSlice = createSlice({
   name: 'FooterImages',
   initialState,
   reducers: {
-    toggleImageClick: (state, action: PayloadAction<FooterImageState>) => {
+    toggleImageClick: (state, action: PayloadAction<FooterImage>) => {
       const { id } = action.payload
-      console.log(action, 'payload')
       //클릭한버튼만 true 나머진false
       state.FooterImages.forEach((button) => {
         button.clicked = button.id === id

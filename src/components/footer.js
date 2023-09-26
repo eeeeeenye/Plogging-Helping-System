@@ -22,11 +22,14 @@ const Footer = ({ children }) => {
 
   let item = useSelector((state) => state.footer.FooterImages)
 
-  console.log(item[0], '1차')
-  const navigate = useNavigation()
-  //게시판 접속
-  const handleBoard = (id) => {
+  const navigation = useNavigation()
+
+  const handleFooterButton = (id) => {
     dispatch(toggleImageClick({ id: id }))
+    if (id === 3) {
+      console.log('클릭')
+      navigation.navigate('board')
+    }
   }
   //1개가 true가 되면 나머진false로
   return (
@@ -35,7 +38,7 @@ const Footer = ({ children }) => {
         <View style={styles.element}>
           <TouchableOpacity
             disabled={item[0].clicked}
-            onPress={() => handleBoard(1)}
+            onPress={() => handleFooterButton(1)}
           >
             {item[0].clicked ? (
               <Image
@@ -62,7 +65,7 @@ const Footer = ({ children }) => {
         <View style={styles.element}>
           <TouchableOpacity
             disabled={item[1].clicked}
-            onPress={() => handleBoard(2)}
+            onPress={() => handleFooterButton(2)}
           >
             {item[1].clicked ? (
               <Image
@@ -89,7 +92,7 @@ const Footer = ({ children }) => {
         <View style={styles.element}>
           <TouchableOpacity
             disabled={item[2].clicked}
-            onPress={() => handleBoard(3)}
+            onPress={() => handleFooterButton(3)}
           >
             {item[2].clicked ? (
               <Image
@@ -116,7 +119,7 @@ const Footer = ({ children }) => {
         <View style={styles.element}>
           <TouchableOpacity
             disabled={item[3].clicked}
-            onPress={() => handleBoard(4)}
+            onPress={() => handleFooterButton(4)}
           >
             {item[3].clicked ? (
               <Image
