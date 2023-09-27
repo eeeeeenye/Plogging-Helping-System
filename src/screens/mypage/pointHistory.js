@@ -50,11 +50,13 @@ export default function PointHistory() {
 
   const getPointHistory = async () => {
     // 최초 실행 시 데이터 가져오기
+
     try {
       const response = await axios.post(
         `http://${ip}:3000/point-history/${userID}`
       )
       const data = response.data
+      console.log(data)
       dispatch(setPointHistory(data))
       setDataList(data)
     } catch (error) {

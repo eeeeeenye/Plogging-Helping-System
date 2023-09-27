@@ -30,6 +30,9 @@ const Footer = ({ children }) => {
       console.log('클릭')
       navigation.navigate('board')
     }
+    if (id === 4) {
+      navigation.navigate('MyPage')
+    }
   }
   //1개가 true가 되면 나머진false로
   return (

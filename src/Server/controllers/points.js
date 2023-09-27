@@ -10,15 +10,15 @@ module.exports = {
     const clientID = req.body.clientID
     const points = req.body.points
     const event = req.body.event
-    const descript = req.body.discript
-    const sqlInsert = `INSERT INTO Plogging.point_history (clientID, points, event, description) VALUES ( ?, ?, ?, ?)`
+    const description = req.body.description
+    const sqlInsert = `INSERT INTO PlogSging.point_history (clientID, points, event, description) VALUES ( ?, ?, ?, ?)`
     const sqlSelect = `SELECT SUM(points) FROM Plogging.point_history WHERE clientID = ?` // client가 가지고 있는 포인트의 총합 조회
 
     try {
       // Insert문 시행
       await db.query(
         sqlInsert,
-        [clientID, points, event, descript],
+        [clientID, points, event, description],
         (err, result) => {
           if (err) {
             console.log(err)

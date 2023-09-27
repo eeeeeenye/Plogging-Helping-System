@@ -79,6 +79,7 @@ export default function RecordHistory() {
   }, [])
 
   const getPointHistory = async () => {
+    console.log('실행')
     try {
       const response = await axios.post(`http://${ip}:3000/Record/${userID}`)
       const data = response.data

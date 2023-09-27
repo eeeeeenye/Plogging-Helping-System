@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import styles from './boardStyle/boardStyle'
 import HeaderScroll3 from '../components/HeaderScroll3'
+import Footer from '../components/footer'
 
 const data = [
   {
@@ -36,6 +37,27 @@ const data = [
   },
   {
     id: 4,
+    image: 'https://ifh.cc/g/P2Pd3v.png',
+    title: '선문대 대학로, 벚꽃길 플로깅',
+    date: 5,
+    location: '탕정면',
+  },
+  {
+    id: 5,
+    image: 'https://ifh.cc/g/P2Pd3v.png',
+    title: '선문대 대학로, 벚꽃길 플로깅',
+    date: 5,
+    location: '탕정면',
+  },
+  {
+    id: 6,
+    image: 'https://ifh.cc/g/P2Pd3v.png',
+    title: '선문대 대학로, 벚꽃길 플로깅',
+    date: 5,
+    location: '탕정면',
+  },
+  {
+    id: 7,
     image: 'https://ifh.cc/g/P2Pd3v.png',
     title: '선문대 대학로, 벚꽃길 플로깅',
     date: 5,
@@ -70,7 +92,6 @@ const Board = () => {
               <View>
                 <Text>{el.title}</Text>
                 <Text style={styles.text}>
-                  {' '}
                   {el.location} {dateToDays(el.date)}전{' '}
                 </Text>
               </View>
@@ -78,6 +99,8 @@ const Board = () => {
           ))}
         </View>
       </HeaderScroll3>
+      <View style={styles.plus}></View>
+      <Footer></Footer>
     </View>
   )
 }
