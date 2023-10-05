@@ -5,11 +5,9 @@ import { ScrollView } from 'react-native-gesture-handler'
 
 export default function Background({ children }) {
   return (
-    <ScrollView>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        {children}
-      </KeyboardAvoidingView>
-    </ScrollView>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      {children}
+    </KeyboardAvoidingView>
   )
 }
 
@@ -24,6 +22,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     maxWidth: 340,
+    // backgroundColor: 'red',
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',

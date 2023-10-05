@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "extra": {
       "KAKAO_RESTAPI_KEY": "c8dff4fd970eba9659e64c906bcfd678",
-      "KAKAO_JAVASCRIPT_KEY" : "093f44ff0baa195ab8c672ddce75f0fd",
+      "KAKAO_JAVASCRIPT_KEY": "093f44ff0baa195ab8c672ddce75f0fd",
       "Local_ip": "10.20.35.15"
     },
     "splash": {
@@ -17,27 +17,25 @@
       "plugins": [
         "@react-native-seoul/kakao-login",
         {
-          "kakaoAppkey":"",
-          "overrideKakaoSDKVersion":"2.9.0",
-          "kotlinVersion":"1.5.10"
+          "kakaoAppkey": "",
+          "overrideKakaoSDKVersion": "2.9.0",
+          "kotlinVersion": "1.5.10"
         }
       ]
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier":"com.Ploger.Plog",
+      "bundleIdentifier": "com.Ploger.Plog",
       "infoPlist": {
         "UIBackgroundModes": ["location"]
       }
     },
     "android": {
-      "package":"com.Ploger.Plog",
+      "package": "com.Ploger.Plog",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -46,6 +44,5 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
-
   }
 }

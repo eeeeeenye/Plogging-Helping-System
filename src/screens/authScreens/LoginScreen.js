@@ -15,14 +15,12 @@ import axios from 'axios'
 import StatusManager from '../../helpers/localStorage'
 import { useDispatch, useSelector } from 'react-redux'
 import { authorize } from '../../slices/All/Authslice'
-
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
   const ip = Constants.expoConfig.extra.Local_ip
   const dispatch = useDispatch()
-  console.log(ip)
-  const onLoginPressed = () => {
+  const onLoginPressed = async () => {
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
 
@@ -31,32 +29,36 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
+    console.log(process.env.REACT_APP_API_URI, ip, 'env')
 
     axios
-      .post(`http://${ip}:3000/api/login`, {
+      .post(`${process.env.REACT_APP_API_URI}/auth/login`, {
         email: email.value,
         password: password.value,
       })
+
       .then((response) => {
-        console.log(response, 'response')
         // MySQL 서버에서 받은 데이터를 클라이언트에 저장
         const ClientData = response.data
         console.log(ClientData)
-        if (ClientData.status !== 'active') {
-          setEmail({ ...email, error: ClientData.message })
-          setPassword({ ...password, error: ClientData.message })
-          return
-        } else {
-          StatusManager.storeData('user', ClientData)
-          dispatch(authorize(ClientData))
-          console.log('[##] loggedIn : Success')
-        }
+        //로그인 성공시
+
+        navigation.navigate('MyPage')
+        StatusManager.storeData('user', ClientData)
+        dispatch(authorize(ClientData))
+        console.log('[##] loggedIn : Success')
+      })
+      .catch((err) => {
+        //로그인 실패시
+
+        console.error(err)
       })
   }
 
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
+
       <Logo />
       <Header>Welcome back.</Header>
       <TextInput

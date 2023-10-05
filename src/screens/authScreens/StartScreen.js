@@ -5,12 +5,12 @@ import Header from '../../components/Header'
 import Button from '../../components/Button'
 import Paragraph from '../../components/Paragraph'
 import { useSelector } from 'react-redux'
+import Background2 from '../../components/Background2'
+import { useEffect } from 'react'
+import axios from 'axios'
 export default function StartScreen({ navigation }) {
-  const State = useSelector((state) => state.auth.user)
-
-console.log(State)
   return (
-    <Background>
+    <Background2>
       <Header>Plog</Header>
       <Logo />
       <Paragraph>Step for the Environment!</Paragraph>
@@ -29,6 +29,6 @@ console.log(State)
       <Button mode="contained" onPress={() => navigation.navigate('MyPage')}>
         임시 로그인 버튼
       </Button>
-    </Background>
+    </Background2>
   )
 }

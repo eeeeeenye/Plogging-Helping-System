@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import {
   View,
   Text,
@@ -20,15 +22,17 @@ import Footer from '../../components/footer.js'
 
 import HeaderBackScroll from '../../components/HeaderbackScroll'
 import { toggleImageClick } from '../../slices/All/footerSlice'
+import StatusManager, { getUser } from '../../helpers/localStorage.js'
 const MyPage = ({ navigation }) => {
   // const navigation = useNavigation()
+  const userInfo = StatusManager.getData('uer')
 
   const dispatch = useDispatch()
-  const username = useSelector((state) => state.auth.user?.ClientName)
+  const username = useSelector((state) => state.auth.user?.clientName)
   const email = useSelector((state) => state.auth.user?.email)
   const phone = useSelector((state) => state.auth.user?.phone)
   const [note, setNote] = useState('잘부탁드립니다~~')
-
+  console.log(userInfo, username, email)
   const handleProfile = () => {
     navigation.navigate('Profile')
   }
@@ -66,20 +70,21 @@ const MyPage = ({ navigation }) => {
 
   // toggleImageClick
   useEffect(() => {
-    const backAction = () => {
-      dispatch(toggleImageClick({ id: 4, clicked: true }))
+    // const backAction = () => {
+    //   dispatch(toggleImageClick({ id: 4, clicked: true }))
+    //   // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
+    //   // return true // 기본 뒤로 가기 동작을 막음
+    // }
 
-      // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
-      // return true // 기본 뒤로 가기 동작을 막음
-    }
+    // const backHandler = BackHandler.addEventListener(
+    //   'hardwareBackPress',
+    //   backAction
+    // )
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    )
+    dispatch(toggleImageClick({ id: 4, clicked: true }))
 
-    return () => backHandler.remove() // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
-  }, [])
+    // return () => backHandler.remove() // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+  }, [navigation])
 
   return (
     // <Footer>
@@ -90,9 +95,11 @@ const MyPage = ({ navigation }) => {
             {/* <View> */}
             <Profile_photo />
             {/* </View> */}
+            <View>
+              <Text style={styles.ProfileText}>{username}</Text>
+            </View>
 
             <View style={styles.profileInfo}>
-              <Text style={styles.text}>플로깅</Text>
               <TouchableOpacity
                 style={styles.profileButton}
                 onPress={handleProfile}

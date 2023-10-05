@@ -1,48 +1,41 @@
+export {}
+
 require('dotenv').config()
 
 const db = require('../db')
 const randomstring = require('randomstring')
 const bcrypt = require('bcrypt')
+const con = require('../config/using.ts')
 
 module.exports = {
   // 회원 관리 코드
   // 회원 로그인 -> 회원정보를 DB에서 가져옴
+
   loginControl: async (req, res) => {
+    const { email, password } = req.body
+    const sql =
+      'SELECT email,clientName,address,phone  FROM client WHERE email = ? AND pswd = ?'
+      res.header("Access-Control-Allow-Origin", "*");
+    await using getdb = await con()
+
+
     try {
       // 클라이언트에서 전달받은 로그인 정보
-      const { email, password } = req.body
 
       // MySQL에서 해당 유저 정보를 가져옴
-      db.query(
-        'SELECT clientID, email, clientName, phone, address FROM client WHERE email = ? AND pswd = ?',
-        [email, password],
-        (err, result) => {
-          if (err) {
-            console.error(err)
-            res.status(500).json({ success: false, message: '서버 에러 발생' })
-            return
-          }
 
-          if (result.length > 0) {
-            const user = {
-              clientID: result[0].clientID,
-              email: result[0].email,
-              ClientName: result[0].clientName,
-              phone: result[0].phone,
-              address: result[0].address,
-            }
-            res.send({ status: 'active', ...user })
-          } else {
-            res.send({
-              success: false,
-              message: '유저 정보가 일치하지 않습니다.',
-            })
-          }
-        }
-      )
+      const [rows, fields] = await getdb.connection.execute(sql, [email, password])
+
+      console.log(rows, fields)
+
+      //로그인 실패
+      // if (rows.length === 0) {
+      //   return res.status(405).send('login failure')
+      // }
+      //로그인 성공
+      return res.status(200).send(rows[0])
     } catch (err) {
-      console.error(err)
-      res.status(500).json({ success: false, message: '서버 에러 발생' })
+      return res.status(500).send(err)
     }
   },
 
@@ -97,42 +90,41 @@ module.exports = {
   // 회원정보 관리
   // 회원가입 관련 코드   //테스트 해봐야 함
   clientControl: async (req, res) => {
-    const Client_name = req.body.Client_name
-    const Client_pwd = req.body.Client_pwd
-    const Client_email = req.body.Client_email
-    const Client_phone = req.body.Client_phone
+    const name = req.body.name
+    const pwd = req.body.pwd
+    const email = req.body.email
+    const phone = req.body.phone
+    await using getdb = await con()
+
 
     try {
-      await db.query(
-        `INSERT INTO plogging.CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
-        [Client_email, Client_name, Client_pwd, Client_phone],
-        async (err) => {
-          if (err) {
-            console.log(err)
-            throw err // 오류 발생 시 트랜잭션 롤백을 위해 예외 throw
-          } else {
-            console.log('Insert values successfully!')
-
-            // INSERT 작업이 성공한 경우 SELECT 작업 수행
-            await db.query(
-              `SELECT clientID FROM plogging.client WHERE clientName = ?`,
-              [Client_name],
-              (err, result) => {
-                if (err) {
-                  console.log(err)
-                  throw err // 오류 발생 시 트랜잭션 롤백을 위해 예외 throw
-                } else {
-                  console.log(result)
-                  res.send(result)
-                }
-              }
-            )
-          }
-        }
+      //회원가입 여부확인
+      const [rows, fields] = await getdb.query(
+        `SELECT * FROM client WHERE email = ?`,
+        [email]
       )
+      //회원가입이 이미돼있는경우
+      if (rows.length > 0) {
+        return res.status(401).send('이미 가입된 아이디')
+        //회원가입이 되지 않았다면 회원가입
+      } else if (rows.length === 0) {
+        const [insertUser, fields] = await  getdb.query(
+          `INSERT INTO CLIENT (EMAIL,clientName,pswd,PHONE) VALUES ( ?, ?, ?, ?)`,
+          [email, name, pwd, phone]
+        )
+        console.log(!insertUser)
+
+        if (!insertUser) {
+          //생성이 안된경우
+          return res.status(400).send(' insert Failure')
+        }
+
+        // 생성이 되는경우
+        return res.status(201).send('create login user')
+      }
     } catch (err) {
       console.error('Transaction failed. Rolling back.', err)
-      res.status(500).send('Transaction failed. Rolling back.')
+      return res.status(500).send('Transaction failed. Rolling back.')
     }
   },
 }

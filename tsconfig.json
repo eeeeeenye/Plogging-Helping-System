@@ -1,4 +1,17 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "ESNext"],
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/Server/index.ts",
+    "src/Server/db.js",
+    "src/Server/routes/auth.js"
+  ],
+  "exclude": ["node_modules"],
   "extends": "expo/tsconfig.base"
 }

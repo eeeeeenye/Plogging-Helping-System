@@ -79,14 +79,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+
   text: {
     fontSize: 20,
+
+    // alignSelf: 'center',
+    lineHeight: 30,
+  },
+
+  s: {
+    flex: 1,
+    // backgroundColor: 'red',
+    // width: 100,
+    justifyContent: 'flex-start',
+    textAlign: 'left',
+  },
+  ProfileText: {
+    flex: 1,
+    fontSize: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
     lineHeight: 30,
   },
 
   settingButton: {
     marginRight: 8,
-    // backgroundColor: 'red',
   },
   centerContainer_label2: {
     // marginBottom: 100,
