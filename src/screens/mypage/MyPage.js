@@ -25,14 +25,12 @@ import { toggleImageClick } from '../../slices/All/footerSlice'
 import StatusManager, { getUser } from '../../helpers/localStorage.js'
 const MyPage = ({ navigation }) => {
   // const navigation = useNavigation()
-  const userInfo = StatusManager.getData('uer')
 
   const dispatch = useDispatch()
   const username = useSelector((state) => state.auth.user?.clientName)
   const email = useSelector((state) => state.auth.user?.email)
   const phone = useSelector((state) => state.auth.user?.phone)
   const [note, setNote] = useState('잘부탁드립니다~~')
-  console.log(userInfo, username, email)
   const handleProfile = () => {
     navigation.navigate('Profile')
   }
@@ -92,14 +90,10 @@ const MyPage = ({ navigation }) => {
       <HeaderBackScroll title={'마이페이지'}>
         <View style={styles.content}>
           <View style={styles.profileContainer}>
-            {/* <View> */}
             <Profile_photo />
-            {/* </View> */}
-            <View>
-              <Text style={styles.ProfileText}>{username}</Text>
-            </View>
-
             <View style={styles.profileInfo}>
+              <Text style={styles.ProfileText}>{username}</Text>
+
               <TouchableOpacity
                 style={styles.profileButton}
                 onPress={handleProfile}

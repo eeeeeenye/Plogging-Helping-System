@@ -1,6 +1,11 @@
 import { StyleSheet } from 'react-native'
 import { theme } from '../../../core/theme'
 
+import { Dimensions } from 'react-native'
+
+// 화면 너비, 높이 구하는 방법
+const width = Dimensions.get('window').width
+const height = Dimensions.get('window').height
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -15,14 +20,34 @@ const styles = StyleSheet.create({
   profileContainer: {
     paddingLeft: 15,
     paddingBottom: 20,
+    // backgroundColor: 'red',
     borderBottomWidth: 0.5,
     borderBottomColor: '#828080',
+  },
+  s: {
+    flex: 2,
+
+    // width: 100,
+    justifyContent: 'flex-start',
+    textAlign: 'left',
+  },
+
+  ProfileText: {
+    fontSize: 20,
+    // marginRight: 0,
+    right: 40,
+    width: width * 0.4,
+
+    textAlign: 'center',
+
+    lineHeight: 30,
   },
 
   profileInfo: {
     flex: 1,
-    marginLeft: 30,
-    marginRight: 20,
+    width: width * 0.9,
+    paddingLeft: 30,
+
     flexDirection: 'row',
     justifyContent: 'space-between',
     // justifyContent: 'flex-start',
@@ -84,21 +109,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
 
     // alignSelf: 'center',
-    lineHeight: 30,
-  },
-
-  s: {
-    flex: 1,
-    // backgroundColor: 'red',
-    // width: 100,
-    justifyContent: 'flex-start',
-    textAlign: 'left',
-  },
-  ProfileText: {
-    flex: 1,
-    fontSize: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
     lineHeight: 30,
   },
 
