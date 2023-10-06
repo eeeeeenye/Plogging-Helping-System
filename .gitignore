@@ -11,7 +11,7 @@ web-build/
 config.env
 src/detect/venv/**/*
 src/detect/runs/**/*
-.env
+/.env
 
 # macOS
 .DS_Store
