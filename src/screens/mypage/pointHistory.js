@@ -17,24 +17,9 @@ import Footer from '../../components/footer'
 import styles from './mypageStyle/pointHistoryStyle'
 import HeaderBack from '../../components/Headerback'
 
-const arr = [
-  { description: '내용', event: '플로깅 완료!', points: '100' },
-  { description: '내용', event: '플로깅 완료!', points: '1000' },
-  { description: '내용', event: '플로깅 완료!', points: '500' },
-  { description: '내용', event: '플로깅 완료!', points: '400' },
-  { description: '내용', event: '플로깅 완료!', points: '500' },
-  { description: '내용', event: '플로깅 완료!', points: '200' },
-  { description: '내용', event: '플로깅 완료!', points: '1100' },
-  { description: '내용', event: '플로깅 완료!', points: '50' },
-  { description: '내용', event: '플로깅 완료!', points: '10' },
-  { description: '내용', event: '플로깅 완료!', points: '400' },
-  { description: '내용', event: '플로깅 완료!', points: '800' },
-  { description: '내용', event: '플로깅 완료!', points: '250' },
-]
-
 export default function PointHistory() {
-  const [dataList, setDataList] = useState(arr)
-  const userID = useSelector((state) => state.auth.user?.clientID)
+  const [dataList, setDataList] = useState([])
+  const clientID = useSelector((state) => state.auth.user?.clientID)
   const ip = Constants.manifest.extra.Local_ip
   const dispatch = useDispatch()
   const pointHistory = useSelector((state) => state.pointHistory)
@@ -48,17 +33,19 @@ export default function PointHistory() {
     }
   }, [])
 
+  console.log(clientID)
+
   const getPointHistory = async () => {
     // 최초 실행 시 데이터 가져오기
 
     try {
       const response = await axios.post(
-        `http://${ip}:3000/point-history/${userID}`
+        `${process.env.REACT_APP_API_URI}/points/info/${clientID}`
       )
       const data = response.data
       console.log(data)
       dispatch(setPointHistory(data))
-      setDataList(data)
+      // setDataList(data)
     } catch (error) {
       console.log('Error fetching point history:', error)
     }

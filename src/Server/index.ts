@@ -47,7 +47,7 @@ app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 서버 실행 중...')
 })
 /*오류 미들웨어 설정*/
-app.use(function (err, req, res) {
-  console.error(err.stack)
-  return res.status(500).send('Something broke!')
-})
+// app.use(function (err, req, res) {
+//   console.error(err.stack)
+//   return res.status(500).send('Something broke!')
+// })

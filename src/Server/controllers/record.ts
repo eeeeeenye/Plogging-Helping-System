@@ -1,3 +1,4 @@
+export {}
 require('dotenv').config()
 
 const db = require('../db')
@@ -46,7 +47,7 @@ module.exports = {
       const clientID = req.params.clientID
 
       db.query(
-        `SELECT * FROM Plogging.record WHERE clientID = ? ORDER BY record_time DESC`,
+        `SELECT * FROM record WHERE clientID = ? ORDER BY record_time DESC`,
         [clientID],
         (err, result) => {
           if (err) {

@@ -14,8 +14,7 @@ module.exports = {
   loginControl: async (req, res) => {
     const { email, password } = req.body
     const sql =
-      'SELECT email,clientName,address,phone  FROM client WHERE email = ? AND pswd = ?'
-      res.header("Access-Control-Allow-Origin", "*");
+      'SELECT clientID,email,clientName,address,phone  FROM client WHERE email = ? AND pswd = ?'
     await using getdb = await con()
 
 
@@ -127,4 +126,13 @@ module.exports = {
       return res.status(500).send('Transaction failed. Rolling back.')
     }
   },
+
+  logoutControl: async(req,res)=>{
+
+    await using getdb = await con()
+    const sql =``
+
+    return res.status(200).send('logout success')
+
+  }
 }
