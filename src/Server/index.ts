@@ -38,7 +38,7 @@ app.use('/auth', authRouter)
 app.use('/community', communityRouter)
 app.use('/mpa', mapRouter)
 app.use('/points', pointsRouter)
-app.use('/record', recordRouter)
+app.use('/records', recordRouter)
 app.use('/store', storeRouter)
 app.use('/user', userRouter)
 

@@ -5,6 +5,10 @@ const db = require('../db')
 const randomstring = require('randomstring')
 const bcrypt = require('bcrypt')
 
+
+require('dotenv').config()
+const con = require('../config/using.ts')
+
 module.exports = {
   // 기록물 관리
   // 기록물 DB 저장코드 // network Error 오류 개선
@@ -43,21 +47,19 @@ module.exports = {
 
   // 기록물 조회코드 (최신순)
   recordInfoControl: async (req, res) => {
-    try {
-      const clientID = req.params.clientID
+const sql =    `SELECT * FROM record WHERE clientID = ? ORDER BY record_time DESC`
+const clientID = req.params.clientID
+await using getdb = await con()
 
-      db.query(
-        `SELECT * FROM record WHERE clientID = ? ORDER BY record_time DESC`,
-        [clientID],
-        (err, result) => {
-          if (err) {
-            console.error(err)
-            res.status(500).json({ error: 'Internal Server Error' })
-          } else {
-            res.json(result)
-          }
+    try {
+  
+        const [rows, fields] = await getdb.connection.execute(sql,[ clientID ])
+    
+        if (rows.length < 0) {
+  return res.status(400).send('nothing')
         }
-      )
+
+        return res.status(200).send(rows)
     } catch (error) {
       console.error('Error while retrieving client data:', error)
       res.status(500).json({ error: 'Internal Server Error' })

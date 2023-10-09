@@ -1,6 +1,12 @@
 import { StyleSheet, Dimensions } from 'react-native'
 
 const { width, height } = Dimensions.get('window')
+
+const viewWidth = 200
+const viewHeight = 100
+
+const left = (width - viewWidth) / 2
+const top = (height - viewHeight) / 2
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -20,11 +26,17 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   date: {
-    position: 'absolute',
+    // top: 20,
+    // zIndex: 50,
+    // top: top,
+
+    left: left,
   },
   dateValue: {
-    top: 130,
-    left: 75,
+    top: 170,
+    left: 105,
+    // backgroundColor: 'red',
+    position: 'absolute',
     lineHeight: 17.45,
     fontSize: 15,
     color: '#FFFFFF',
@@ -40,6 +52,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: width * 0.9,
     borderColor: '#ddd',
+  },
+
+  imageContainer: {
+    flex: 1,
   },
   rowContainer: {
     flexDirection: 'row',

@@ -25,12 +25,13 @@ export default function PointHistory() {
   const pointHistory = useSelector((state) => state.pointHistory)
 
   useEffect(() => {
-    let check = storageCheck() // 리덕스에 데이터가 저장되어 있는지 확인
-    if (!check) {
-      getPointHistory()
-    } else {
-      setDataList(pointHistory)
-    }
+    getPointHistory()
+    // let check = storageCheck() // 리덕스에 데이터가 저장되어 있는지 확인
+    // if (!check) {
+    //   getPointHistory()
+    // } else {
+    //   setDataList(pointHistory)
+    // }
   }, [])
 
   console.log(clientID)
@@ -43,9 +44,8 @@ export default function PointHistory() {
         `${process.env.REACT_APP_API_URI}/points/info/${clientID}`
       )
       const data = response.data
-      console.log(data)
-      dispatch(setPointHistory(data))
-      // setDataList(data)
+      // dispatch(setPointHistory(data))
+      setDataList(data)
     } catch (error) {
       console.log('Error fetching point history:', error)
     }
@@ -72,6 +72,8 @@ export default function PointHistory() {
       return { color: 'green' }
     }
   }
+
+  console.log(dataList)
 
   const renderItem = ({ item }) => {
     return (

@@ -43,17 +43,19 @@ module.exports = {
   // 포인트 데이터 데이터 조회 // 수정완료
   pointHistoryControl: async (req, res) => {
     const clientId = req.params.clientId// 사용자 ID
-
-    let sql = `SELECT * FROM point_history WHERE clientID = ${clientId}`
+//3개월
+    let sql = `SELECT * FROM point_history WHERE clientID = ? AND created_at>=DATE_SUB(NOW(), INTERVAL 3 MONTH) `
     sql += ` ORDER BY created_at DESC` // 최신순으로 정렬
 
     try {
 
 
       await using getdb = await con()
-      const [rows, fields] = await getdb.connection.execute(sql)
+      const [rows, fields] = await getdb.connection.execute(sql,[clientId])
   
-      if (rows.length > 0) {
+console.log(rows)
+
+      if (rows.length < 0) {
 return res.status(400).send('nothing')
       }
 

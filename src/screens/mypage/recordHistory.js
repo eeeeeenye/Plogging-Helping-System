@@ -14,6 +14,7 @@ import Constants from 'expo-constants'
 import HeaderBackScroll from '../../components/HeaderbackScroll'
 import styles from './mypageStyle/recordHistoryStyle'
 import HeaderBack from '../../components/Headerback'
+import ImageWithText from '../../components/ImageWithText'
 
 export default function RecordHistory() {
   const [dataList, setDataList] = useState([
@@ -79,9 +80,10 @@ export default function RecordHistory() {
   }, [])
 
   const getPointHistory = async () => {
-    console.log('실행')
     try {
-      const response = await axios.post(`http://${ip}:3000/Record/${userID}`)
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URI}/records/info/${userID}`
+      )
       const data = response.data
       console.log(data, 'data')
       dispatch(saveRecords(data))
@@ -119,15 +121,15 @@ export default function RecordHistory() {
           {dataList.map((item, index) => (
             <View style={styles.itemContainer} key={index}>
               {item.image && (
+                // <ImageWithText
+                //   imageSource={item.image}
+                //   text=
+                // ></ImageWithText>
                 <Image source={{ uri: item.image }} style={styles.image} />
               )}
-
-              <View style={styles.date}>
-                <Text style={styles.dateValue}>
-                  {formatDate(item.record_time)}
-                </Text>
-              </View>
-
+              <Text style={styles.dateValue}>
+                {formatDate(item.record_time)}
+              </Text>
               <View style={styles.textContent}>
                 <View style={styles.rowContainer}>
                   <Text style={styles.label}>총거리:</Text>

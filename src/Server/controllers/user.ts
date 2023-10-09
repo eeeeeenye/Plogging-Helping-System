@@ -6,24 +6,30 @@ const randomstring = require('randomstring')
 const bcrypt = require('bcrypt')
 const con = require('../config/using.ts')
 module.exports = {
-  // 회원 주소 변경
-  userAddressEditControl: async (req, res) => {
+  // 회원 주소, 닉네임, 재설정
+  userEditControl: async (req, res) => {
     const city = req.body.city
-    const clientName = req.body.ClientName
- 
-    await db.query(
-      `UPDATE plogging.client SET address = ? WHERE clientName = ?;`,
-      [city, clientName],
-      (err, result) => {
-        if (err) {
-          console.log(err)
-        } else {
-          res.send('Updated values successfully!')
-        }
-      }
-    )
-  },
+    const email = req.body.email
+    const clientName = req.body.clientName
+    await using getdb = await con()
+    const sql =  `UPDATE client SET address = ? clientName = ? WHERE email = ?;`
 
+    try {
+  
+        const [rows, fields] = await getdb.connection.execute(sql,      [city,clientName,email])
+
+    
+
+  
+ 
+     return     res.status(200).send('Updated values successfully!')
+        
+      }catch(err){
+
+        console.log(err)
+      }
+    
+  },
   // 사용자 조회
   userInfoControl: async (req, res) => {
     const email = req.body.Client_email

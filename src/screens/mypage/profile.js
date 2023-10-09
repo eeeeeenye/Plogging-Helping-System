@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { useDispatch, useSelector } from 'react-redux'
 import {
   View,
   Text,
@@ -14,6 +14,9 @@ import Footer from '../../components/footer'
 import styles from './mypageStyle/profileStyle'
 import HeaderBack from '../../components/Headerback'
 import HeaderBackScroll from '../../components/HeaderbackScroll'
+import { logout } from '../../slices/All/Authslice'
+import StatusManager from '../../helpers/localStorage'
+import axios from 'axios'
 
 const Profile = ({ navigation }) => {
   const [username, setUsername] = useState('')
@@ -21,13 +24,24 @@ const Profile = ({ navigation }) => {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [note, setNote] = useState('')
-
+  const dispatch = useDispatch()
   const handleProfile = () => {
     navigation.navigate('EditProfile')
   }
 
-  const handleLogout = () => {
-    dispatch(logout())
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URI}/auth/logout`
+      )
+      //로그아웃 성공시
+
+      dispatch(logout())
+      StatusManager.removeData('user')
+      navigation.navigate('LoginScreen')
+    } catch (error) {
+      console.log('Error fetching point history:', error)
+    }
   }
 
   //글자 문제 해결 필요

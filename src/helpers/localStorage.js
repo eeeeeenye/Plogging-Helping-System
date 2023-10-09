@@ -37,6 +37,15 @@ const StatusManager = {
     // example console.log result:
     // ['@MyApp_user', '@MyApp_key']
   },
+
+  async removeData(key) {
+    try {
+      await AsyncStorage.removeItem(key)
+      console.log(`"${key}"가 삭제되었습니다.`)
+    } catch (error) {
+      console.error('데이터 삭제 중 오류 발생:', error)
+    }
+  },
 }
 
 export default StatusManager
