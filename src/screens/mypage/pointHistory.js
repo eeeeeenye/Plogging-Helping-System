@@ -40,11 +40,13 @@ export default function PointHistory() {
     // 최초 실행 시 데이터 가져오기
 
     try {
-      const response = await axios.post(
+      const response = await axios.get(
         `${process.env.REACT_APP_API_URI}/points/info/${clientID}`
       )
       const data = response.data
-      // dispatch(setPointHistory(data))
+
+      console.log(data)
+      dispatch(setPointHistory(data))
       setDataList(data)
     } catch (error) {
       console.log('Error fetching point history:', error)

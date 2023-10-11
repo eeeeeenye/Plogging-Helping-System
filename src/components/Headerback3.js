@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native'
 import styles from './componentStyle/headerBackScrollStyle'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-const HeaderBack = ({ children, title, image }) => {
+const HeaderBack3 = ({ children, title, image }) => {
   const navigation = useNavigation()
 
   const backButton = () => {
@@ -43,12 +43,7 @@ const HeaderBack = ({ children, title, image }) => {
             activeOpacity={0.6}
             underlayColor={'white'}
           >
-            <Icon
-              name={'gear'}
-              size={25}
-              color="black"
-              style={styles.settingButton}
-            />
+            <Image source={require(`../assets/share.png`)}></Image>
           </TouchableHighlight>
         </View>
       </View>
@@ -58,4 +53,4 @@ const HeaderBack = ({ children, title, image }) => {
   )
 }
 
-export default HeaderBack
+export default HeaderBack3

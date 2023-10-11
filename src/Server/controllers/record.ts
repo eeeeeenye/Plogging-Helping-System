@@ -22,10 +22,11 @@ module.exports = {
     const image = req.body.imageURI
     const record_result = req.body.result
 
-    db.query(
-      `INSERT INTO Plogging.record (clientID, latitude, longitude, walking, distance, stopwatch, image, trash_cnt)` +
-        ` VALUES ( ?, ?, ?, ?, ?, ?,?,?)`,
-      [
+    const sql =      `INSERT INTO record (clientID, latitude, longitude, walking, distance, stopwatch, image, trash_cnt)` +
+    ` VALUES ( ?, ?, ?, ?, ?, ?,?,?)`
+    await using getdb = await con()
+    try{
+      const [rows, fields] = await getdb.connection.execute(sql,    [
         Client_id,
         latitude,
         longitude,
@@ -34,21 +35,29 @@ module.exports = {
         stopwatch,
         image,
         record_result,
-      ],
-      (err, result) => {
-        if (err) {
-          console.log(err)
-        } else {
-          res.send('Record : Insert values successfully!')
-        }
+      ],)
+
+
+  
+      if(rows<0){
+        return res.status(400).send('failed')
       }
-    )
+    
+         return  res.status(201).send('Record : Insert values successfully!')
+
+      
+    
+  }catch(err){
+    return res.status(500).send(err)
+  }
+
   },
 
   // 기록물 조회코드 (최신순)
   recordInfoControl: async (req, res) => {
-const sql =    `SELECT * FROM record WHERE clientID = ? ORDER BY record_time DESC`
+const sql = `SELECT * FROM record WHERE clientID = ? ORDER BY record_time DESC`
 const clientID = req.params.clientID
+console.log(clientID)
 await using getdb = await con()
 
     try {

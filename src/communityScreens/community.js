@@ -7,9 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  Button,
 } from 'react-native'
-import styles from './boardStyle/boardStyle'
+import styles from './communityStyles/communityStyle'
 import HeaderScroll3 from '../components/HeaderScroll3'
 import Footer from '../components/footer'
 
@@ -65,7 +64,7 @@ const data = [
   },
 ]
 
-const Board = () => {
+const Community = () => {
   const [dataList, setDataList] = useState(data)
 
   const dateToDays = (day) => {
@@ -78,6 +77,9 @@ const Board = () => {
     //나중에 더추가
   }
 
+  const createCommunity = () => {
+    console.log('s')
+  }
   return (
     <View style={styles.container}>
       <HeaderScroll3 title={'탕정면'}>
@@ -99,10 +101,16 @@ const Board = () => {
           ))}
         </View>
       </HeaderScroll3>
-      <View style={styles.plus}></View>
+      <TouchableOpacity onPress={createCommunity} style={styles.createButton}>
+        {/* <View style={styles.round}></View> */}
+        <Image
+          style={styles.plus}
+          source={require('../assets/plus.png')}
+        ></Image>
+      </TouchableOpacity>
       <Footer></Footer>
     </View>
   )
 }
 
-export default Board
+export default Community

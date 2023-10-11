@@ -28,7 +28,7 @@ const Footer = ({ children }) => {
     dispatch(toggleImageClick({ id: id }))
     if (id === 3) {
       console.log('클릭')
-      navigation.navigate('board')
+      navigation.navigate('community')
     }
     if (id === 4) {
       navigation.navigate('MyPage')

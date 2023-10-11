@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native'
-
+import { StyleSheet, Dimensions } from 'react-native'
+const { width, height } = Dimensions.get('window')
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -18,7 +18,10 @@ const styles = StyleSheet.create({
     height: 108,
   },
   board: {
+    width: width * 1,
+
     padding: 16,
+    paddingLeft: 30,
     flexDirection: 'row',
     borderBottomWidth: 0.5,
     borderBottomColor: 'gray',
@@ -28,15 +31,34 @@ const styles = StyleSheet.create({
     lineHeight: 20.8,
     fontSize: 12,
   },
-  plus: {
-    backgroundColor: '#E1EBFD',
+
+  createButton: {
     zIndex: 5,
+    backgroundColor: '#E1EBFD',
     position: 'absolute',
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 52,
     height: 52,
-    top: 580,
-    left: 280,
+    left: 123,
+    top: 150,
+  },
+  //   plus:{}
+  //   round: {
+  //
+
+  //   },
+  plus: {
+    width: 28,
+    height: 22,
+    resizeMode: 'contain',
+  },
+  touch: {
+    width: 52,
+    height: 52,
     borderRadius: 50,
+    // backgroundColor: 'red',
   },
 })
 

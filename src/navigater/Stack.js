@@ -27,7 +27,7 @@ import TermsAndConditions from '../screens/mypage/TermsAndCondition'
 import IssueReport from '../screens/mypage/IssueReport'
 import PostReport from '../screens/mypage/PostReport'
 import ReportHistory from '../screens/mypage/ReportsHistory'
-import Board from '../boardScreens/board'
+import Community from '../communityScreens/community'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -52,8 +52,8 @@ function StackNav() {
           }}
         />
         <Stack.Screen
-          name="board"
-          component={Board}
+          name="community"
+          component={Community}
           options={{
             headerShown: false,
             headerStyle: {

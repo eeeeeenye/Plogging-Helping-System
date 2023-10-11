@@ -17,71 +17,27 @@ import HeaderBack from '../../components/Headerback'
 import ImageWithText from '../../components/ImageWithText'
 
 export default function RecordHistory() {
-  const [dataList, setDataList] = useState([
-    {
-      image: 'https://i.ibb.co/9sFdg4r/image-10.png',
-      distance: '10',
-      stopwatch: '110',
-      walking: '10 걸음',
-      trash_cnt: '100%',
-      longitude: '서초구',
-      record_time: '2023-09-19',
-    },
-
-    {
-      image: 'https://i.ibb.co/QXtfSgy/image-9.png',
-      distance: '10',
-      stopwatch: '110',
-      walking: '10 걸음',
-      trash_cnt: '100%',
-      longitude: '광진구',
-      record_time: '2023-09-16',
-    },
-    {
-      image: 'https://i.ibb.co/QXtfSgy/image-9.png',
-      distance: '10',
-      stopwatch: '110',
-      walking: '10 걸음',
-      trash_cnt: '100%',
-      longitude: '용산구',
-      record_time: '2023-09-16',
-    },
-    {
-      image: 'https://i.ibb.co/QXtfSgy/image-9.png',
-      distance: '10',
-      stopwatch: '110',
-      walking: '10 걸음',
-      trash_cnt: '100%',
-      longitude: '용산구',
-      record_time: '2023-09-16',
-    },
-    {
-      image: 'https://i.ibb.co/QXtfSgy/image-9.png',
-      distance: '10',
-      stopwatch: '110',
-      walking: '10 걸음',
-      trash_cnt: '100%',
-      longitude: '용산구',
-      record_time: '2023-09-16',
-    },
-  ])
+  const [dataList, setDataList] = useState([])
   const userID = useSelector((state) => state.auth.user?.clientID)
+
+  console.log(userID)
   const ip = Constants.manifest.extra.Local_ip
   const dispatch = useDispatch()
   const recordHistory = useSelector((state) => state.record)
 
   useEffect(() => {
-    let check = storageCheck()
-    if (!check) {
-      getPointHistory()
-    } else {
-      setDataList(recordHistory)
-    }
+    // let check = storageCheck()
+    // if (!check) {
+
+    // } else {
+    //   setDataList(recordHistory)
+    // }
+    getRecordHistory()
   }, [])
 
-  const getPointHistory = async () => {
+  const getRecordHistory = async () => {
     try {
-      const response = await axios.post(
+      const response = await axios.get(
         `${process.env.REACT_APP_API_URI}/records/info/${userID}`
       )
       const data = response.data
@@ -106,6 +62,14 @@ export default function RecordHistory() {
       .toString()
       .padStart(2, '0')}.${currentDate.getDate().toString().padStart(2, '0')}`
     return formattedDate
+  }
+
+  const convertToKilometers = (distance) => {
+    const metersValue = parseFloat(distance)
+
+    const kilometersValue = metersValue / 1000
+    console.log(kilometersValue)
+    return Number(kilometersValue)
   }
 
   return (
@@ -133,7 +97,10 @@ export default function RecordHistory() {
               <View style={styles.textContent}>
                 <View style={styles.rowContainer}>
                   <Text style={styles.label}>총거리:</Text>
-                  <Text style={styles.value}>{item.distance} km</Text>
+                  <Text style={styles.value}>
+                    {' '}
+                    {convertToKilometers(item.distance)} km
+                  </Text>
                 </View>
                 <View style={styles.rowContainer}>
                   <Text style={styles.label}>시 간:</Text>
@@ -145,7 +112,7 @@ export default function RecordHistory() {
                 </View>
                 <View style={styles.rowContainer}>
                   <Text style={styles.label}>쓰레기양:</Text>
-                  <Text style={styles.value}>{item.trash_cnt}</Text>
+                  <Text style={styles.value}>{item.trash_cnt} %</Text>
                 </View>
                 <View style={styles.rowContainer}>
                   <Text style={styles.label}>위치:</Text>
