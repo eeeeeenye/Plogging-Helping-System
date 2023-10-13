@@ -28,6 +28,8 @@ import IssueReport from '../screens/mypage/IssueReport'
 import PostReport from '../screens/mypage/PostReport'
 import ReportHistory from '../screens/mypage/ReportsHistory'
 import Community from '../communityScreens/community'
+import CommunityInfo from '../communityScreens/CommunityInfo'
+import CreateCommunity from '../communityScreens/CreateCommunity'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -261,6 +263,29 @@ function StackNav() {
         <Stack.Screen name="locationTracking" component={locationTracker} />
         <Stack.Screen name="Camera" component={CameraScreen} />
         <Stack.Screen name="Record" component={RecordScreen} />
+
+        <Stack.Screen
+          name="communityInfo"
+          component={CommunityInfo}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="createCommunity"
+          component={CreateCommunity}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
 
         <Stack.Screen
           name="recordHistory"

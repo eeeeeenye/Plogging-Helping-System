@@ -1,5 +1,8 @@
 import { StyleSheet, Dimensions } from 'react-native'
 const { width, height } = Dimensions.get('window')
+
+const isTallScreen = height > 800
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -9,8 +12,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+
     marginTop: 100,
-    marginBottom: 60,
+    marginBottom: 50,
   },
   image: {
     marginRight: 15,
@@ -22,6 +26,7 @@ const styles = StyleSheet.create({
 
     padding: 16,
     paddingLeft: 30,
+    marginRight: 20,
     flexDirection: 'row',
     borderBottomWidth: 0.5,
     borderBottomColor: 'gray',
@@ -33,16 +38,20 @@ const styles = StyleSheet.create({
   },
 
   createButton: {
-    zIndex: 5,
+    // zIndex: 5,
+
+    // flex: 0.08,
     backgroundColor: '#E1EBFD',
-    position: 'absolute',
+    // position: 'relative',
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
     width: 52,
     height: 52,
-    left: 123,
-    top: 150,
+    bottom: isTallScreen ? '11%' : '14%',
+    left: '80%',
+    // left: responsiveWidth,
+    // top: 150,
   },
   //   plus:{}
   //   round: {

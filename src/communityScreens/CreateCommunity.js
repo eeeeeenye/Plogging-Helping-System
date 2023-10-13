@@ -8,15 +8,13 @@ import {
   ScrollView,
   Image,
 } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import styles from './communityStyles/communityStyle'
 import HeaderScroll3 from '../components/HeaderScroll3'
 import Footer from '../components/footer'
 
-const Community = () => {
-  const [dataList, setDataList] = useState(data)
+const CreateCommunity = () => {
+  //   const [dataList, setDataList] = useState(data)
 
-  const navigation = useNavigation()
   const dateToDays = (day) => {
     if (day < 30) {
       //30일 이전 이라면
@@ -27,23 +25,15 @@ const Community = () => {
     //나중에 더추가
   }
 
-  const handleCreateCommunity = () => {
-    navigation.navigate('createCommunity')
-  }
-
-  const handleCommunity = () => {
-    navigation.navigate('communityInfo')
+  const createCommunity = () => {
+    console.log('s')
   }
   return (
     <View style={styles.container}>
       <HeaderScroll3 title={'탕정면'}>
         <View style={styles.contents}>
           {dataList.map((el) => (
-            <TouchableOpacity
-              onPress={handleCommunity}
-              style={styles.board}
-              key={el.id}
-            >
+            <TouchableOpacity style={styles.board} key={el.id}>
               <View>
                 {el.image && (
                   <Image style={styles.image} source={{ uri: el.image }} />
@@ -59,10 +49,7 @@ const Community = () => {
           ))}
         </View>
       </HeaderScroll3>
-      <TouchableOpacity
-        onPress={handleCreateCommunity}
-        style={styles.createButton}
-      >
+      <TouchableOpacity onPress={createCommunity} style={styles.createButton}>
         <Image
           style={styles.plus}
           source={require('../assets/plus.png')}
@@ -73,4 +60,4 @@ const Community = () => {
   )
 }
 
-export default Community
+export default CreateCommunity

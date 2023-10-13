@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.5,
     borderTopColor: '#828080',
     backgroundColor: 'white', // 푸터 배경색 설정
-    padding: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
     position: 'absolute', // 푸터를 화면 하단에 고정
     bottom: 0,
     left: 0,
@@ -27,9 +28,6 @@ const styles = StyleSheet.create({
     // zIndex: 2,
   },
 
-  element: {
-    flex: 1,
-  },
   image: {
     resizeMode: 'contain',
     // backgroundColor: 'gray',
@@ -38,12 +36,17 @@ const styles = StyleSheet.create({
     height: 30,
   },
   footer_container: {
-    paddingLeft: 40,
+    // paddingLeft: 40,
     flex: 1,
+    // backgroundColor:
     // paddinRight: 10,
     flexDirection: 'row',
+  },
+
+  element: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
 
   footer_text: {
