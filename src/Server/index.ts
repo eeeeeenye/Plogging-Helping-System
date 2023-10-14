@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRouter)
 app.use('/community', communityRouter)
-app.use('/mpa', mapRouter)
+app.use('/map', mapRouter)
 app.use('/points', pointsRouter)
 app.use('/records', recordRouter)
 app.use('/store', storeRouter)

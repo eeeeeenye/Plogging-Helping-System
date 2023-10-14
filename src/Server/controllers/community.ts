@@ -9,39 +9,44 @@ const con = require('../config/using.ts')
 module.exports = {
 
 
-saveBoardControl:async(req,res) =>{
+// saveBoardControl:async(req,res) =>{
 
 
 
 
-    try {
+//     try {
 
 
-      await using getdb = await con
-      const [rows, fields] = await getdb.connection.execute(sql)
+//       await using getdb = await con
+//       const [rows, fields] = await getdb.connection.execute(sql)
   
-      if (rows.length < 0) {
-return res.status(400).send('nothing')
-      }
+//       if (rows.length < 0) {
+// return res.status(400).send('nothing')
+//       }
 
-      return res.status(201).send(rows)
+//       return res.status(201).send(rows)
 
-    }
-catch(err){
-    return res.status(500).send(err)
-}
-},
-BoardInfo:async(req,res) =>{
+//     }
+// catch(err){
+//     return res.status(500).send(err)
+// }
+// },
+BoardInfo:async (req,res) =>{
 
-const sql = `SELECT * from board`
+const sql = `SELECT board_id,city,title,image ,TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minute FROM board ORDER BY created_at DESC;`
 
-
+await using getdb = await con()
 try {
 
 
-  await using getdb = await con
-  const [rows, fields] = await getdb.connection.execute(sql)
 
+  const [rows, fields] = await getdb.connection.execute(sql)
+//날짜 계산 필요 client에서 createdAt를 가져와서 계산하기
+//분으로 계산해서 가져오기
+// 분으로 계산된걸 => 시 일 월 년 으로 
+//분 시 일 년 으로 나타내려면 가져와서 client에서 처리하는게 효율적으로 보임
+  console.log(rows)
+ 
   if (rows.length < 0) {
 return res.status(400).send('nothing')
   }

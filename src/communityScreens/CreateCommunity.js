@@ -28,36 +28,7 @@ const CreateCommunity = () => {
   const createCommunity = () => {
     console.log('s')
   }
-  return (
-    <View style={styles.container}>
-      <HeaderScroll3 title={'탕정면'}>
-        <View style={styles.contents}>
-          {dataList.map((el) => (
-            <TouchableOpacity style={styles.board} key={el.id}>
-              <View>
-                {el.image && (
-                  <Image style={styles.image} source={{ uri: el.image }} />
-                )}
-              </View>
-              <View>
-                <Text>{el.title}</Text>
-                <Text style={styles.text}>
-                  {el.location} {dateToDays(el.date)}전{' '}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </HeaderScroll3>
-      <TouchableOpacity onPress={createCommunity} style={styles.createButton}>
-        <Image
-          style={styles.plus}
-          source={require('../assets/plus.png')}
-        ></Image>
-      </TouchableOpacity>
-      <Footer></Footer>
-    </View>
-  )
+  return <View style={styles.container}></View>
 }
 
 export default CreateCommunity

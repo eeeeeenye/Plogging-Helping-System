@@ -44,8 +44,8 @@ module.exports = {
   pointHistoryControl: async (req, res) => {
     const clientId = req.params.clientId// 사용자 ID
 //3개월
-    let sql = `SELECT * FROM point_history WHERE clientID = ? AND created_at>=DATE_SUB(NOW(), INTERVAL 3 MONTH) `
-    sql += ` ORDER BY created_at DESC` // 최신순으로 정렬
+    const  sql = `SELECT * FROM point_history WHERE clientID = ? AND created_at>=DATE_SUB(NOW(), INTERVAL 3 MONTH) ORDER BY created_at DESC; `
+   // 최신순으로 정렬
 
     try {
 
@@ -53,13 +53,11 @@ module.exports = {
       await using getdb = await con()
       const [rows, fields] = await getdb.connection.execute(sql,[clientId])
   
-console.log(rows)
-
       if (rows.length < 0) {
 return res.status(400).send('nothing')
       }
 
-      return res.status(200).send(rows)
+      return res.status(200).send(rows) 
 
     } catch (error) {
      return res.status(500).json({ error: 'Internal Server Error' }) // 예외 처리 시 JSON 형태의 오류 응답 전송
