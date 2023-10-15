@@ -43,12 +43,10 @@ const HeaderBackScroll = ({ children, title }) => {
             activeOpacity={0.6}
             underlayColor={'white'}
           >
-            <Icon
-              name={'gear'}
-              size={25}
-              color="black"
+            <Image
               style={styles.settingButton}
-            />
+              source={require(`../assets/web-settings.png`)}
+            ></Image>
           </TouchableHighlight>
         </View>
       </View>

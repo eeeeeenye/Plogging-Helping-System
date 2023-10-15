@@ -19,7 +19,7 @@ import HeaderBack from '../../components/Headerback'
 
 export default function PointHistory() {
   const [dataList, setDataList] = useState([])
-  const clientID = useSelector((state) => state.auth.user?.clientID)
+  const clientID = useSelector((state) => state.auth.user.clientID)
   const ip = Constants.manifest.extra.Local_ip
   const dispatch = useDispatch()
   const pointHistory = useSelector((state) => state.pointHistory)
@@ -45,7 +45,6 @@ export default function PointHistory() {
       )
       const data = response.data
 
-      console.log(data)
       dispatch(setPointHistory(data))
       setDataList(data)
     } catch (error) {

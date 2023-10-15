@@ -10,14 +10,19 @@ import {
 } from 'react-native'
 
 // import moment from 'moment'
-
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import styles from './communityStyles/communityStyle'
 import HeaderScroll3 from '../components/HeaderScroll3'
 import Footer from '../components/footer'
 import axios from 'axios'
 
+import { saveCommunity } from '../slices/All/communityslice'
 const Community = () => {
+  const dispatch = useDispatch()
+
+  const community = useSelector((state) => state.community)
+
   const [dataList, setDataList] = useState([])
   const [minutes, setMinutes] = useState([])
 
@@ -29,6 +34,8 @@ const Community = () => {
         `${process.env.REACT_APP_API_URI}/community/info`
       )
 
+      dispatch(saveCommunity(response.data))
+      console.log(community, 'community')
       setDataList(response.data)
     } catch (error) {
       console.log('Error fetching community:', error)
@@ -53,10 +60,8 @@ const Community = () => {
     } else if (date < day) {
       return Math.floor(date / hour) + '시' + ' '
     } else if (date < month) {
-      console.log(Math.floor(date / day), '일')
       return Math.floor(date / day) + '일' + ' '
     } else if (date < year) {
-      console.log(Math.floor(date / month) + '달')
       return Math.floor(date / month) + '달' + ' '
     } else if (date >= year) {
       return Math.floor(date / year) + '년' + ' '
@@ -71,8 +76,10 @@ const Community = () => {
     navigation.navigate('createCommunity')
   }
 
-  const handleCommunity = () => {
-    // navigation.navigate('communityInfo')
+  const handleCommunity = (id) => {
+    navigation.navigate('communityInfo', { id })
+
+    console.log(id)
   }
   return (
     <View style={styles.container}>
@@ -80,9 +87,9 @@ const Community = () => {
         <View style={styles.contents}>
           {dataList.map((el) => (
             <TouchableOpacity
-              onPress={handleCommunity}
+              onPress={() => handleCommunity(el.community_id)}
               style={styles.board}
-              key={el.board_id}
+              key={el.community_id}
             >
               <View>
                 {el.image && (

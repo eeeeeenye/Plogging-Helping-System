@@ -54,6 +54,29 @@ function StackNav() {
           }}
         />
         <Stack.Screen
+          name="communityInfo"
+          component={CommunityInfo}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="createCommunity"
+          component={CreateCommunity}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
           name="community"
           component={Community}
           options={{
@@ -263,29 +286,6 @@ function StackNav() {
         <Stack.Screen name="locationTracking" component={locationTracker} />
         <Stack.Screen name="Camera" component={CameraScreen} />
         <Stack.Screen name="Record" component={RecordScreen} />
-
-        <Stack.Screen
-          name="communityInfo"
-          component={CommunityInfo}
-          options={{
-            headerShown: false,
-            headerStyle: {
-              shadowColor: '#000',
-              elevation: 25,
-            },
-          }}
-        />
-        <Stack.Screen
-          name="createCommunity"
-          component={CreateCommunity}
-          options={{
-            headerShown: false,
-            headerStyle: {
-              shadowColor: '#000',
-              elevation: 25,
-            },
-          }}
-        />
 
         <Stack.Screen
           name="recordHistory"

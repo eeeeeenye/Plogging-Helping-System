@@ -6,6 +6,7 @@ import uriReducer from './All/urislice'
 import pointsReducer from './All/point_historyslice'
 import recordReducer from './All/Recordslice'
 import footerReducer from './All/footerSlice'
+import communityReducer from './All/communityslice'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   pointHistory: pointsReducer,
   record: recordReducer,
   footer: footerReducer,
+  community: communityReducer,
   // 다른 리듀서들도 필요한 경우 여기에 추가
 })
 

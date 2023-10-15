@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
   View,
@@ -8,23 +8,24 @@ import {
   ScrollView,
   Image,
 } from 'react-native'
-import styles from './communityStyles/communityStyle'
+import { useDispatch, useSelector } from 'react-redux'
+
+import styles from './communityStyles/CommunityInfoStyle'
 import HeaderScroll3 from '../components/HeaderScroll3'
 import Footer from '../components/footer'
+import HeaderBackScroll3 from '../components/HeaderbackScroll3'
+import axios from 'axios'
 
-
-const CommunityInfo = ({ navigation }) => {
+const CommunityInfo = ({ navigation, route }) => {
   const [dataList, setDataList] = useState([])
 
-  const dateToDays = (day) => {
-    if (day < 30) {
-      //30일 이전 이라면
-      return day + '일'
-    } else if (day >= 30) {
-      return '한 달'
-    }
-    //나중에 더추가
-  }
+  const receivedData = route.params.id
+  const community = useSelector((state) => state.community)
+  console.log(receivedData)
+  const communityBoard = community.filter(
+    (el) => el.community_id === receivedData
+  )
+  console.log(communityBoard[0].image)
 
   const handleCreateCommunity = () => {
     navigation.navigate('createCommunity')
@@ -35,7 +36,16 @@ const CommunityInfo = ({ navigation }) => {
   }
   return (
     <View style={styles.container}>
-    
+      <HeaderBackScroll3 title={'소셜 액티비티'}>
+        <View style={styles.content}>
+          <View style={styles.image_box}>
+            <Image
+              style={styles.image}
+              source={{ uri: communityBoard[0].image }}
+            ></Image>
+          </View>
+        </View>
+      </HeaderBackScroll3>
     </View>
   )
 }

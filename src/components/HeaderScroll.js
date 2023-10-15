@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   SafeAreaView,
   FlatList,
+  Image,
 } from 'react-native'
 import styles from './componentStyle/headerScrollStyle.js'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -20,17 +21,15 @@ const HeaderScroll = ({ children, title }) => {
         </View>
         <View style={styles.header_right}>
           <TouchableHighlight
-            style={styles.settingButton}
+            style={styles.setting_button}
             onPress={() => alert('Pressed!')}
             activeOpacity={0.6}
             underlayColor={'white'}
           >
-            <Icon
-              name={'gear'}
-              size={25}
-              color="black"
-              style={styles.settingButton}
-            />
+            <Image
+              style={styles.setting}
+              source={require(`../assets/web-settings.png`)}
+            ></Image>
           </TouchableHighlight>
 
           {/* style={styles.profileHeader_text_right}> */}

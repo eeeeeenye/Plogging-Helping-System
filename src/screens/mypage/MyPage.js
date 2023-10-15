@@ -23,6 +23,7 @@ import Footer from '../../components/footer.js'
 import HeaderBackScroll from '../../components/HeaderbackScroll'
 import { toggleImageClick } from '../../slices/All/footerSlice'
 import StatusManager, { getUser } from '../../helpers/localStorage.js'
+import HeaderScroll from '../../components/HeaderScroll.js'
 const MyPage = ({ navigation }) => {
   // const navigation = useNavigation()
 
@@ -87,7 +88,7 @@ const MyPage = ({ navigation }) => {
   return (
     // <Footer>
     <View style={styles.container}>
-      <HeaderBackScroll title={'마이페이지'}>
+      <HeaderScroll title={'마이페이지'}>
         <View style={styles.content}>
           <View style={styles.profileContainer}>
             <Profile_photo />
@@ -172,7 +173,7 @@ const MyPage = ({ navigation }) => {
             </View>
           </View>
         </View>
-      </HeaderBackScroll>
+      </HeaderScroll>
       <Footer></Footer>
     </View>
   )

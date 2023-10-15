@@ -10,10 +10,10 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
-import styles from './componentStyle/headerBackScrollStyle'
+import styles from './componentStyle/headerBackScrollStyle3'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-const HeaderBack3 = ({ children, title, image }) => {
+const HeaderBackScroll3 = ({ children, title, image }) => {
   const navigation = useNavigation()
 
   const backButton = () => {
@@ -38,19 +38,22 @@ const HeaderBack3 = ({ children, title, image }) => {
 
         <View style={styles.header_right}>
           <TouchableHighlight
-            // style={styles.settingButton}
+            style={styles.setting_button}
             onPress={() => alert('Pressed!')}
             activeOpacity={0.6}
             underlayColor={'white'}
           >
-            <Image source={require(`../assets/share.png`)}></Image>
+            <Image
+              style={styles.setting}
+              source={require(`../assets/share.png`)}
+            ></Image>
           </TouchableHighlight>
         </View>
       </View>
 
-      {/* <ScrollView>{children}</ScrollView> */}
+      <ScrollView>{children}</ScrollView>
     </View>
   )
 }
 
-export default HeaderBack3
+export default HeaderBackScroll3
