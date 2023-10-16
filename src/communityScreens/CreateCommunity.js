@@ -11,6 +11,7 @@ import {
 import styles from './communityStyles/communityStyle'
 import HeaderScroll3 from '../components/HeaderScroll3'
 import Footer from '../components/footer'
+import HeaderBackScroll4 from '../components/HeaderBackScroll4'
 
 const CreateCommunity = () => {
   //   const [dataList, setDataList] = useState(data)
@@ -28,7 +29,11 @@ const CreateCommunity = () => {
   const createCommunity = () => {
     console.log('s')
   }
-  return <View style={styles.container}></View>
+  return (
+    <View style={styles.container}>
+      <HeaderBackScroll4 title={'모임 작성'}></HeaderBackScroll4>
+    </View>
+  )
 }
 
 export default CreateCommunity

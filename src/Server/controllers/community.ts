@@ -33,7 +33,7 @@ module.exports = {
 // },
 communityInfo:async (req,res) =>{
 
-const sql = `SELECT community_id,city,title,image ,TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minute FROM community ORDER BY created_at DESC;`
+const sql = `SELECT * ,TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minute FROM community ORDER BY created_at DESC;`
 
 await using getdb = await con()
 try {
