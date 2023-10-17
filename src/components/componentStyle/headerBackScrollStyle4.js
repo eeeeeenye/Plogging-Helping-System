@@ -34,6 +34,9 @@ const styles = StyleSheet.create({
     // paddingLeft: 20,
     alignItems: 'center',
   },
+  header_right: {
+    flex: 1,
+  },
   header_center_text: {
     fontSize: 18,
   },
