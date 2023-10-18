@@ -9,28 +9,35 @@ const con = require('../config/using.ts')
 module.exports = {
 
 
-// saveBoardControl:async(req,res) =>{
+saveBoardControl:async(req,res) =>{
 
 
+  const clientID = req.body.clientID
+    const title = req.body.title
+    const city = req.body.city
+    const date = req.body.date
+    const description = req.body.description
+    const people= req.body.people
+
+const sql = "INSERT INTO CLIENT (title,city,date,description,people) VALUES(?,?,?,?,?,?)"
+
+    try {
 
 
-//     try {
-
-
-//       await using getdb = await con
-//       const [rows, fields] = await getdb.connection.execute(sql)
+      await using getdb = await con
+      const [rows, fields] = await getdb.connection.execute(sql,[clientID,title,city,date,description,people])
   
-//       if (rows.length < 0) {
-// return res.status(400).send('nothing')
-//       }
+      if (rows.length < 0) {
+return res.status(400).send('nothing')
+      }
 
-//       return res.status(201).send(rows)
+      return res.status(201).send(rows)
 
-//     }
-// catch(err){
-//     return res.status(500).send(err)
-// }
-// },
+    }
+catch(err){
+    return res.status(500).send(err)
+}
+},
 communityInfo:async (req,res) =>{
 
 const sql = `SELECT * ,TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minute FROM community ORDER BY created_at DESC;`
