@@ -30,6 +30,7 @@ import ReportHistory from '../screens/mypage/ReportsHistory'
 import Community from '../communityScreens/community'
 import CommunityInfo from '../communityScreens/CommunityInfo'
 import CreateCommunity from '../communityScreens/CreateCommunity'
+import Menu from '../communityScreens/menu'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -266,6 +267,15 @@ function StackNav() {
         <Stack.Screen
           name="recordHistory"
           component={RecordHistory}
+          options={{
+            headerShown: false,
+            headerTitle: '플로깅 내역 조회',
+          }}
+        />
+
+        <Stack.Screen
+          name="menu"
+          component={Menu}
           options={{
             headerShown: false,
             headerTitle: '플로깅 내역 조회',

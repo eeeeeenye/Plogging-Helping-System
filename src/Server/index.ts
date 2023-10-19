@@ -10,7 +10,7 @@ const dotenv = require('dotenv')
 
 const authRouter = require('./routes/auth.ts')
 const pointsRouter = require('./routes/points.js')
-const communityRouter = require('./routes/community.js')
+const communityRouter = require('./routes/community.ts')
 const recordRouter = require('./routes/record.js')
 const storeRouter = require('./routes/store.js')
 const mapRouter = require('./routes/map.js')
@@ -24,11 +24,7 @@ app.set('port', process.env.PORT || 3000)
 /*공통 미들웨어 */
 app.use(logger('dev'))
 app.use(express.json())
-app.use(
-  cors({
-    origin: ['http://localhost:19006'],
-  })
-)
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.status(200).send('hello world....!!')

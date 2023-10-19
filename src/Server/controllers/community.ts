@@ -9,8 +9,9 @@ const con = require('../config/using.ts')
 module.exports = {
 
 
-saveBoardControl:async(req,res) =>{
+saveCommunityControl:async(req,res) =>{
 
+  
 
   const clientID = req.body.clientID
     const title = req.body.title
@@ -19,13 +20,13 @@ saveBoardControl:async(req,res) =>{
     const description = req.body.description
     const people= req.body.people
 
-const sql = "INSERT INTO CLIENT (title,city,date,description,people) VALUES(?,?,?,?,?,?)"
+const sql = "INSERT INTO COMMUNITY (clientID,title,city,description,people) VALUES(?,?,?,?,?)"
 
+await using getdb = await con()
     try {
 
 
-      await using getdb = await con
-      const [rows, fields] = await getdb.connection.execute(sql,[clientID,title,city,date,description,people])
+      const [rows, fields] = await getdb.connection.execute(sql,[clientID,title,city,description,people])
   
       if (rows.length < 0) {
 return res.status(400).send('nothing')

@@ -35,7 +35,6 @@ const Community = () => {
       )
 
       dispatch(saveCommunity(response.data))
-      console.log(community, 'community')
       setDataList(response.data)
     } catch (error) {
       console.log('Error fetching community:', error)
@@ -78,8 +77,6 @@ const Community = () => {
 
   const handleCommunity = (id) => {
     navigation.navigate('communityInfo', { id })
-
-    console.log(id)
   }
   return (
     <View style={styles.container}>

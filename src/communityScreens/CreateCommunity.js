@@ -34,16 +34,12 @@ const CreateCommunity = () => {
   console.log(title)
 
   const createCommunity = async () => {
+    console.log(process.env.REACT_APP_API_URI)
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URI}/community/save`,
-        {
-          title: title,
-        }
-      )
+      await axios.post(`${process.env.REACT_APP_API_URI}/community/save`)
       navigation.navigate('community')
     } catch (error) {
-      console.log('Error fetching community:', error)
+      console.log(error)
     }
   }
 
