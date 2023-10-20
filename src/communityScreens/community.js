@@ -69,6 +69,8 @@ const Community = () => {
 
   useEffect(() => {
     getCommunityBoard()
+
+    return
   }, [])
 
   const handleCreateCommunity = () => {

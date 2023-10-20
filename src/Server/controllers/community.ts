@@ -71,7 +71,7 @@ communitySelectInfo:async (req,res) => {
 
 
   const community_id = req.params.community_id
-const sql = `SELECT * from community where community_id = ?`
+const sql = `SELECT * from posting where community_id = ?`
 
   await using getdb = await con()
 

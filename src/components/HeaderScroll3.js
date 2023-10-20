@@ -20,7 +20,7 @@ const HeaderScroll3 = ({ children, title }) => {
   console.log('몇번 실행하는지 체크', '리렌더링')
 
   const dispatch = useDispatch()
-  let item = useSelector((state) => state.toggle.menuToggle)
+  let item = useSelector((state) => state.toggle)
   const navigation = useNavigation()
 
   const handleMenu = () => {
@@ -28,12 +28,18 @@ const HeaderScroll3 = ({ children, title }) => {
     if (item === false) {
       navigation.navigate('menu')
       dispatch(menuToggle(true))
+      console.log(item, '1')
+
+      return
     } else {
       navigation.push('community')
       dispatch(menuToggle(false))
+
+      console.log(item, '2')
+      return
     }
-    // console.log(menuToggle, '2')
   }
+  console.log(item)
 
   return (
     <View style={styles.container}>
@@ -98,4 +104,4 @@ const HeaderScroll3 = ({ children, title }) => {
   )
 }
 
-export default HeaderScroll3
+export default React.memo(HeaderScroll3)
