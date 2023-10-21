@@ -17,9 +17,9 @@ import { useNavigation } from '@react-navigation/native'
 import { toggleImageClick } from '../slices/All/footerSlice'
 
 const Footer = ({ children }) => {
-  const dispatch = useDispatch()
+  console.log('리렌더링')
   const [isClicked, setIsClicked] = useState(false)
-
+  const dispatch = useDispatch()
   let item = useSelector((state) => state.footer.FooterImages)
 
   const navigation = useNavigation()
@@ -40,6 +40,7 @@ const Footer = ({ children }) => {
       <View style={styles.footer_container}>
         <View style={styles.element}>
           <TouchableOpacity
+            // style={styles.}
             disabled={item[0].clicked}
             onPress={() => handleFooterButton(1)}
           >
@@ -151,4 +152,4 @@ const Footer = ({ children }) => {
   )
 }
 
-export default Footer
+export default React.memo(Footer)

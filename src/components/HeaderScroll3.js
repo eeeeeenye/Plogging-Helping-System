@@ -27,12 +27,14 @@ const HeaderScroll3 = ({ children, title }) => {
     console.log('몇번 실행하는지 체크')
     if (item === false) {
       navigation.navigate('menu')
+
       dispatch(menuToggle(true))
       console.log(item, '1')
 
       return
     } else {
       navigation.push('community')
+
       dispatch(menuToggle(false))
 
       console.log(item, '2')

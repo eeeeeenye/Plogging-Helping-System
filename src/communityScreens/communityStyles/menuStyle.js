@@ -9,13 +9,34 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   content: {
+    flex: 2,
+    // flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 90,
+    height: height * 0.6,
+
+    backgroundColor: 'blue',
+
+    // width: '100%',
+  },
+  content2: {
     flex: 1,
 
-    marginTop: 70,
-    marginBottom: 60,
-    // width: '100%',
+    height: height * 0.1,
+    backgroundColor: 'red',
+    marginHorizontal: 'auto',
 
-    // width: '100%',
+    width: width * 0.5,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  wrap: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })
 
