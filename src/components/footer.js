@@ -17,7 +17,6 @@ import { useNavigation } from '@react-navigation/native'
 import { toggleImageClick } from '../slices/All/footerSlice'
 
 const Footer = ({ children }) => {
-  console.log('리렌더링')
   const [isClicked, setIsClicked] = useState(false)
   const dispatch = useDispatch()
   let item = useSelector((state) => state.footer.FooterImages)
@@ -27,7 +26,6 @@ const Footer = ({ children }) => {
   const handleFooterButton = (id) => {
     dispatch(toggleImageClick({ id: id }))
     if (id === 3) {
-      console.log('클릭')
       navigation.navigate('community')
     }
     if (id === 4) {

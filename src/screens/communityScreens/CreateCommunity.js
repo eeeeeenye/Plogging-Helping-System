@@ -10,10 +10,10 @@ import {
   Image,
 } from 'react-native'
 import styles from './communityStyles/CreateCommunityStyle'
-import HeaderScroll3 from '../components/HeaderScroll3'
-import Footer from '../components/footer'
-import HeaderBackScroll4 from '../components/HeaderBackScroll4'
-import TextInput from '../components/TextInput'
+import HeaderScroll3 from '../../components/HeaderScroll3'
+import Footer from '../../components/footer'
+import HeaderBackScroll4 from '../../components/HeaderBackScroll4'
+import TextInput from '../../components/TextInput'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 
@@ -53,7 +53,7 @@ const CreateCommunity = () => {
               <View style={styles.image_box}>
                 <Image
                   style={styles.image}
-                  source={require('../assets/logo.png')}
+                  source={require('../../assets/logo.png')}
                 ></Image>
               </View>
 

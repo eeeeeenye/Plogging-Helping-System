@@ -11,9 +11,9 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './communityStyles/CommunityInfoStyle'
-import HeaderScroll3 from '../components/HeaderScroll3'
-import Footer from '../components/footer'
-import HeaderBackScroll3 from '../components/HeaderbackScroll3'
+import HeaderScroll3 from '../../components/HeaderScroll3'
+import Footer from '../../components/footer'
+import HeaderBackScroll3 from '../../components/HeaderbackScroll3'
 import axios from 'axios'
 
 const CommunityInfo = ({ navigation, route }) => {
@@ -98,7 +98,7 @@ const CommunityInfo = ({ navigation, route }) => {
               <View style={styles.small_box}>
                 <Image
                   style={styles.small_image}
-                  source={require('../assets/map.png')}
+                  source={require('../../assets/map.png')}
                 ></Image>
                 <Text>{communityBoard[0].city}</Text>
               </View>
@@ -108,7 +108,7 @@ const CommunityInfo = ({ navigation, route }) => {
               <View style={styles.small_box}>
                 <Image
                   style={styles.small_image}
-                  source={require('../assets/weekly-calendar.png')}
+                  source={require('../../assets/weekly-calendar.png')}
                 ></Image>
                 <Text>{getTime(communityBoard[0].date)}</Text>
               </View>
@@ -120,7 +120,7 @@ const CommunityInfo = ({ navigation, route }) => {
               <View style={styles.small_box}>
                 <Image
                   style={styles.small_image}
-                  source={require('../assets/users.png')}
+                  source={require('../../assets/users.png')}
                 ></Image>
                 <Text>{communityBoard[0].people} 명</Text>
               </View>
@@ -137,60 +137,44 @@ const CommunityInfo = ({ navigation, route }) => {
               showsHorizontalScrollIndicator={false}
             >
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>Sally</Text>
                 <Text>모임장</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>Sally</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../..assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
-                <Text>미정</Text>
-              </View>
-              <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
-                <Text>미정</Text>
-              </View>
-              <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
-                <Text>미정</Text>
-              </View>
-              <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
-                <Text>미정</Text>
-              </View>
-              <View style={styles.human}>
-                <Image source={require('../assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
             </ScrollView>
@@ -201,14 +185,14 @@ const CommunityInfo = ({ navigation, route }) => {
               <TouchableOpacity style={styles.button}>
                 <Image
                   style={styles.image2}
-                  source={require('../assets/like.png')}
+                  source={require('../../assets/like.png')}
                 ></Image>
                 <Text>좋아요</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.button}>
                 <Image
                   style={styles.image2}
-                  source={require('../assets/chat.png')}
+                  source={require('../../assets/chat.png')}
                 ></Image>
                 <Text>댓글</Text>
               </TouchableOpacity>

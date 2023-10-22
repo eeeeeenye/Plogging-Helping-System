@@ -25,7 +25,6 @@ const HeaderScroll3 = ({ children, title }) => {
   const navigation = useNavigation()
 
   const handleMenu = () => {
-    console.log('몇번 실행하는지 체크')
     if (item === false) {
       navigation.navigate('menu')
 

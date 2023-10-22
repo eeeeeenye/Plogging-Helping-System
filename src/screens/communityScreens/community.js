@@ -11,15 +11,16 @@ import {
 } from 'react-native'
 
 // import moment from 'moment'
+
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import styles from './communityStyles/communityStyle'
-import HeaderScroll3 from '../components/HeaderScroll3'
-import Footer from '../components/footer'
+import HeaderScroll3 from '../../components/HeaderScroll3'
+import Footer from '../../components/footer'
 import axios from 'axios'
 
-import { saveCommunity } from '../slices/All/communityslice'
-import toggle, { menuToggle } from '../slices/All/toggle'
+import { saveCommunity } from '../../slices/All/communityslice'
+import { menuToggle } from '../../slices/All/toggle'
 const Community = () => {
   const dispatch = useDispatch()
 
@@ -74,6 +75,24 @@ const Community = () => {
   }, [])
   //뒤로가기해도 변화를줘야된다.
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        console.log('이동', 'community')
+        dispatch(menuToggle(false))
+        // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
+        // return true // 기본 뒤로 가기 동작을 막음
+      }
+
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction
+      )
+      return () => backHandler.remove()
+      // dispatch(toggleImageClick({ id: 4, clicked: true }))
+    }, [])
+  )
+
   const handleCreateCommunity = () => {
     navigation.navigate('createCommunity')
   }
@@ -112,7 +131,7 @@ const Community = () => {
       >
         <Image
           style={styles.plus}
-          source={require('../assets/plus.png')}
+          source={require('../../assets/plus.png')}
         ></Image>
       </TouchableOpacity>
       <Footer></Footer>

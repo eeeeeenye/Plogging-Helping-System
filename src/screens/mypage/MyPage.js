@@ -72,7 +72,7 @@ const MyPage = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
-        console.log('이동')
+        console.log('이동', 'mypage', 'sdfadsfsdfsf')
         dispatch(toggleImageClick({ id: 4, clicked: true }))
         // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
         // return true // 기본 뒤로 가기 동작을 막음
@@ -82,7 +82,7 @@ const MyPage = ({ navigation }) => {
         'hardwareBackPress',
         backAction
       )
-      // return () => backHandler.remove()
+      return () => backHandler.remove()
       // dispatch(toggleImageClick({ id: 4, clicked: true }))
     }, [])
   )
