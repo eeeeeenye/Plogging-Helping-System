@@ -23,27 +23,23 @@ const Menu = () => {
     <View style={styles.container}>
       <HeaderScroll3 title={'탕정면'}>
         <View style={styles.content}>
-          <View style={styles.content2}>
-            <View style={styles.wrap}>
+          <View style={styles.row}>
+            <TouchableOpacity style={styles.wrap}>
               <Image source={require('../assets/edit.png')}></Image>
               <Text>참여모임 목록</Text>
-            </View>
-            <View style={styles.wrap}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.wrap}>
               <Image source={require('../assets/global-ranking.png')}></Image>
               <Text>랭킹 조회</Text>
-            </View>
+            </TouchableOpacity>
           </View>
           {/* <View style={styles.wrap}> */}
-          <View style={styles.content2}>
-            <View style={styles.wrap}>
+          <View style={styles.row2}>
+            <TouchableOpacity style={styles.wrap}>
               <Image source={require('../assets/약속미리알림.png')}></Image>
               <Text>알림설정</Text>
               {/* </View> */}
-            </View>
-            <View style={styles.wrap}>
-              <Image source={require('../assets/약속미리알림.png')}></Image>
-              <Text>알림설정</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* </View> */}

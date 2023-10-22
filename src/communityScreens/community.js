@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  BackHandler,
   Image,
 } from 'react-native'
 
@@ -18,6 +19,7 @@ import Footer from '../components/footer'
 import axios from 'axios'
 
 import { saveCommunity } from '../slices/All/communityslice'
+import toggle, { menuToggle } from '../slices/All/toggle'
 const Community = () => {
   const dispatch = useDispatch()
 
@@ -69,9 +71,8 @@ const Community = () => {
 
   useEffect(() => {
     getCommunityBoard()
-
-    return
   }, [])
+  //뒤로가기해도 변화를줘야된다.
 
   const handleCreateCommunity = () => {
     navigation.navigate('createCommunity')

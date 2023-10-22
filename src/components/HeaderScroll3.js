@@ -21,6 +21,7 @@ const HeaderScroll3 = ({ children, title }) => {
 
   const dispatch = useDispatch()
   let item = useSelector((state) => state.toggle)
+  console.log(item)
   const navigation = useNavigation()
 
   const handleMenu = () => {
@@ -41,7 +42,6 @@ const HeaderScroll3 = ({ children, title }) => {
       return
     }
   }
-  console.log(item)
 
   return (
     <View style={styles.container}>
@@ -75,7 +75,6 @@ const HeaderScroll3 = ({ children, title }) => {
           >
             {item ? (
               <Image
-                color={'black'}
                 style={styles.image2}
                 source={require('../assets/menu-black.png')}
               ></Image>

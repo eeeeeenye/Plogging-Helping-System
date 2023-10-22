@@ -9,32 +9,44 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   content: {
-    flex: 2,
+    flex: 1,
     // flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 90,
-    height: height * 0.6,
-
-    backgroundColor: 'blue',
+    height: height * 0.45,
 
     // width: '100%',
   },
-  content2: {
-    flex: 1,
+  row: {
+    // flex: 1,
+    // backgroundColor: 'blue',
 
-    height: height * 0.1,
-    backgroundColor: 'red',
-    marginHorizontal: 'auto',
+    height: height * 0.13,
+    paddingLeft: 'auto',
 
-    width: width * 0.5,
+    width: width * 0.6,
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  row2: {
+    paddingLeft: 12,
+
+    // backgroundColor: 'blue',
+
+    height: height * 0.13,
+
+    width: width * 0.6,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
   wrap: {
     // flex: 1,
+
     justifyContent: 'center',
     alignItems: 'center',
   },

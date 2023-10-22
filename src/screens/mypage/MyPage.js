@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {
@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   BackHandler,
 } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
 import styles from './mypageStyle/MyPageStyle.js'
 
 import axios from 'axios'
@@ -68,23 +69,23 @@ const MyPage = ({ navigation }) => {
   }
 
   // toggleImageClick
-  useEffect(() => {
-    // const backAction = () => {
-    //   dispatch(toggleImageClick({ id: 4, clicked: true }))
-    //   // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
-    //   // return true // 기본 뒤로 가기 동작을 막음
-    // }
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        console.log('이동')
+        dispatch(toggleImageClick({ id: 4, clicked: true }))
+        // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
+        // return true // 기본 뒤로 가기 동작을 막음
+      }
 
-    // const backHandler = BackHandler.addEventListener(
-    //   'hardwareBackPress',
-    //   backAction
-    // )
-
-    dispatch(toggleImageClick({ id: 4, clicked: true }))
-
-    // return () => backHandler.remove() // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
-  }, [navigation])
-
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction
+      )
+      // return () => backHandler.remove()
+      // dispatch(toggleImageClick({ id: 4, clicked: true }))
+    }, [])
+  )
   return (
     // <Footer>
     <View style={styles.container}>

@@ -56,12 +56,15 @@ const styles = StyleSheet.create({
   // },
   image2: {
     marginRight: 15,
-    // resizeMode: 'cover',
     resizeMode: 'contain',
     width: 25,
     height: 25,
-    // backgroundColor: '#999999',
-    opacity: 0.3,
+  },
+  image_black: {
+    width: 25,
+    height: 25,
+    marginRight: 15,
+    resizeMode: 'contain',
   },
 })
 
