@@ -150,7 +150,7 @@ const CommunityInfo = ({ navigation, route }) => {
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>
-                <Image source={require('../..assets/Ellipse6.png')}></Image>
+                <Image source={require('../../assets/Ellipse6.png')}></Image>
                 <Text>미정</Text>
               </View>
               <View style={styles.human}>

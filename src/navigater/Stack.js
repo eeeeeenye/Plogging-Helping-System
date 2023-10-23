@@ -31,6 +31,8 @@ import Community from '../screens/communityScreens/community'
 import CommunityInfo from '../screens/communityScreens/CommunityInfo'
 import CreateCommunity from '../screens/communityScreens/CreateCommunity'
 import Menu from '../screens/communityScreens/menu'
+import CommunityRanking from '../screens/communityScreens/CommunityRanking'
+import CommunityMyList from '../screens/communityScreens/CommunityMyList'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -54,6 +56,31 @@ function StackNav() {
             },
           }}
         />
+
+        <Stack.Screen
+          name="communityRanking"
+          component={CommunityRanking}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="communityMyList"
+          component={CommunityMyList}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
         <Stack.Screen
           name="communityInfo"
           component={CommunityInfo}

@@ -20,10 +20,11 @@ const Footer = ({ children }) => {
   const [isClicked, setIsClicked] = useState(false)
   const dispatch = useDispatch()
   let item = useSelector((state) => state.footer.FooterImages)
-
+  console.log(item)
   const navigation = useNavigation()
 
   const handleFooterButton = (id) => {
+    console.log('qlalf')
     dispatch(toggleImageClick({ id: id }))
     if (id === 3) {
       navigation.navigate('community')

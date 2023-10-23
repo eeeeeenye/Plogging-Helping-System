@@ -18,6 +18,7 @@ import styles from './communityStyles/communityStyle'
 import HeaderScroll3 from '../../components/HeaderScroll3'
 import Footer from '../../components/footer'
 import axios from 'axios'
+import { toggleImageClick } from '../../slices/All/footerSlice'
 
 import { saveCommunity } from '../../slices/All/communityslice'
 import { menuToggle } from '../../slices/All/toggle'
@@ -25,6 +26,7 @@ const Community = () => {
   const dispatch = useDispatch()
 
   const community = useSelector((state) => state.community)
+  let item = useSelector((state) => state.footer.FooterImages)
 
   const [dataList, setDataList] = useState([])
   const [minutes, setMinutes] = useState([])
@@ -75,23 +77,43 @@ const Community = () => {
   }, [])
   //뒤로가기해도 변화를줘야된다.
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const backAction = () => {
-        console.log('이동', 'community')
-        dispatch(menuToggle(false))
-        // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
-        // return true // 기본 뒤로 가기 동작을 막음
-      }
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const backAction = () => {
+  //       console.log('이동', 'community')
+  //       dispatch(menuToggle(false))
+  //       // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
+  //       // return true // 기본 뒤로 가기 동작을 막음
+  //     }
 
-      const backHandler = BackHandler.addEventListener(
-        'hardwareBackPress',
-        backAction
-      )
-      return () => backHandler.remove()
-      // dispatch(toggleImageClick({ id: 4, clicked: true }))
-    }, [])
-  )
+  //     const backHandler = BackHandler.addEventListener(
+  //       'hardwareBackPress',
+  //       backAction
+  //     )
+  //     return () => backHandler.remove()
+  //     // dispatch(toggleImageClick({ id: 4, clicked: true }))
+  //   }, [navigation])
+  // )
+  console.log(item[3].clicked, '이동')
+  useEffect(() => {
+    // console.log(, 'mypage clicked')
+
+    const backAction = () => {
+      console.log(item[3].clicked, '이동', 'community')
+
+      dispatch(menuToggle(false))
+
+      // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
+      // return true // 기본 뒤로 가기 동작을 막음
+    }
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    )
+    return () => backHandler.remove()
+    // dispatch(toggleImageClick({ id: 4, clicked: true }))
+  }, [])
 
   const handleCreateCommunity = () => {
     navigation.navigate('createCommunity')

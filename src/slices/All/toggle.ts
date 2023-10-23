@@ -12,8 +12,8 @@ const toggleSlice = createSlice({
   name: 'toggle',
   initialState,
   reducers: {
-    menuToggle(state, action: PayloadAction<Toggle>) {
-      return action.payload
+    menuToggle(state, action: PayloadAction<boolean>) {
+      state.menuToggle = action.payload
     },
   },
 })

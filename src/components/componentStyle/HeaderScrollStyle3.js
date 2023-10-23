@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   title: {
-    fontWeight: '700',
+    fontWeight: 'bold',
     fontSize: 6 * pixelRatio,
   },
 
@@ -60,11 +60,17 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  image_black: {
-    width: 25,
-    height: 25,
-    marginRight: 15,
-    resizeMode: 'contain',
+  topText_box: {
+    // flexDirection: 'column',
+    position: 'absolute',
+    top: 68,
+    marginLeft: 30,
+    // lineHeight: 38,
+    zIndex: 10,
+  },
+  topText: {
+    color: 'gray',
+    fontSize: pixelRatio * 3,
   },
 })
 

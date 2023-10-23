@@ -25,9 +25,13 @@ import HeaderBackScroll from '../../components/HeaderbackScroll'
 import { toggleImageClick } from '../../slices/All/footerSlice'
 import StatusManager, { getUser } from '../../helpers/localStorage.js'
 import HeaderScroll from '../../components/HeaderScroll.js'
+import { useEffect } from 'react'
 const MyPage = ({ navigation }) => {
-  // const navigation = useNavigation()
+  let item = useSelector((state) => state.footer.FooterImages)
 
+  const [condition, setCondition] = useState(false)
+  // const navigation = useNavigation()
+  // console.log('mypage 리렌더링', condition)
   const dispatch = useDispatch()
   const username = useSelector((state) => state.auth.user?.clientName)
   const email = useSelector((state) => state.auth.user?.email)
@@ -68,12 +72,14 @@ const MyPage = ({ navigation }) => {
     navigation.navigate('ReportHistory')
   }
 
-  // toggleImageClick
-  useFocusEffect(
-    React.useCallback(() => {
+  // mypage로 뒤로가기할때만 반응하게 만들고 싶다.
+  useEffect(() => {
+    if (item[3].clicked) {
+      //   setCondition(true)
+      console.log(item[3].clicked, 'mypage clicked')
+
       const backAction = () => {
-        console.log('이동', 'mypage', 'sdfadsfsdfsf')
-        dispatch(toggleImageClick({ id: 4, clicked: true }))
+        // dispatch(toggleImageClick({ id: 4, clicked: true }))
         // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
         // return true // 기본 뒤로 가기 동작을 막음
       }
@@ -82,10 +88,16 @@ const MyPage = ({ navigation }) => {
         'hardwareBackPress',
         backAction
       )
-      return () => backHandler.remove()
       // dispatch(toggleImageClick({ id: 4, clicked: true }))
-    }, [])
-  )
+
+      return () => backHandler.remove()
+    }
+  }, [item[3].clicked])
+
+  // useEffect(() => {
+  //   dispatch(toggleImageClick({ id: 4, clicked: true }))
+  // }, [navigation])
+
   return (
     // <Footer>
     <View style={styles.container}>

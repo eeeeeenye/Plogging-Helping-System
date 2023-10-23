@@ -19,16 +19,25 @@ import axios from 'axios'
 
 import { saveCommunity } from '../../slices/All/communityslice'
 const Menu = () => {
+  const navigation = useNavigation()
+
+  const handleRanking = () => {
+    navigation.navigate('communityRanking')
+  }
+  const handleMyList = () => {
+    navigation.navigate('communityMyList')
+  }
+
   return (
     <View style={styles.container}>
       <HeaderScroll3 title={'탕정면'}>
         <View style={styles.content}>
           <View style={styles.row}>
-            <TouchableOpacity style={styles.wrap}>
+            <TouchableOpacity onPress={handleMyList} style={styles.wrap}>
               <Image source={require('../../assets/edit.png')}></Image>
               <Text>참여모임 목록</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.wrap}>
+            <TouchableOpacity onPress={handleRanking} style={styles.wrap}>
               <Image
                 source={require('../../assets/global-ranking.png')}
               ></Image>
