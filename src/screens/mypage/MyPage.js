@@ -9,7 +9,7 @@ import {
   TouchableHighlight,
   BackHandler,
 } from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import styles from './mypageStyle/MyPageStyle.js'
 
 import axios from 'axios'
@@ -26,9 +26,9 @@ import { toggleImageClick } from '../../slices/All/footerSlice'
 import StatusManager, { getUser } from '../../helpers/localStorage.js'
 import HeaderScroll from '../../components/HeaderScroll.js'
 import { useEffect } from 'react'
-const MyPage = ({ navigation }) => {
+const MyPage = () => {
   let item = useSelector((state) => state.footer.FooterImages)
-
+  const navigation = useNavigation()
   const [condition, setCondition] = useState(false)
   // const navigation = useNavigation()
   // console.log('mypage 리렌더링', condition)
@@ -74,12 +74,14 @@ const MyPage = ({ navigation }) => {
 
   // mypage로 뒤로가기할때만 반응하게 만들고 싶다.
   useEffect(() => {
-    if (item[3].clicked) {
-      //   setCondition(true)
-      console.log(item[3].clicked, 'mypage clicked')
-
+    // if (item[3].clicked) {
+    //   setCondition(true)
+    // console.log(item[3].clicked, 'mypage clicked')
+    if (navigation.isFocused()) {
+      console.log(navigation.isFocused(), 'focus')
       const backAction = () => {
-        // dispatch(toggleImageClick({ id: 4, clicked: true }))
+        console.log('백액션')
+        dispatch(toggleImageClick({ id: 4, clicked: true }))
         // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
         // return true // 기본 뒤로 가기 동작을 막음
       }
@@ -90,9 +92,13 @@ const MyPage = ({ navigation }) => {
       )
       // dispatch(toggleImageClick({ id: 4, clicked: true }))
 
-      return () => backHandler.remove()
+      return () => {
+        console.log('안떨어졋어')
+        backHandler.remove()
+      }
     }
-  }, [item[3].clicked])
+    // }
+  }, [])
 
   // useEffect(() => {
   //   dispatch(toggleImageClick({ id: 4, clicked: true }))
