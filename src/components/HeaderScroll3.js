@@ -16,8 +16,6 @@ import { useNavigation } from '@react-navigation/native'
 import { menuToggle } from '../slices/All/toggle'
 //헤더에서 메뉴를 클릭햇을때 왓다갓다 하도록 만드는경우
 const HeaderScroll3 = ({ children, title, content }) => {
-  console.log('heder3 리렌더링')
-
   const dispatch = useDispatch()
   let item = useSelector((state) => state.toggle.menuToggle)
   const navigation = useNavigation()
@@ -37,7 +35,6 @@ const HeaderScroll3 = ({ children, title, content }) => {
       return
     }
   }
-  console.log(item, 'item')
   return (
     <View style={styles.container}>
       <View style={styles.header}>

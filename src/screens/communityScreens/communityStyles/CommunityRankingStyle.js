@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'silver',
   },
   third: {
-    backgroundColor: 'bronze',
+    backgroundColor: ' #CD7F32',
   },
   ss: {
     borderWidth: 1,

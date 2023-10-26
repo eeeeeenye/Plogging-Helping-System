@@ -74,31 +74,42 @@ const MyPage = () => {
 
   // mypage로 뒤로가기할때만 반응하게 만들고 싶다.
   useEffect(() => {
+    console.log('focus')
+
     // if (item[3].clicked) {
     //   setCondition(true)
     // console.log(item[3].clicked, 'mypage clicked')
-    if (navigation.isFocused()) {
-      console.log(navigation.isFocused(), 'focus')
-      const backAction = () => {
-        console.log('백액션')
-        dispatch(toggleImageClick({ id: 4, clicked: true }))
-        // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드 작성
-        // return true // 기본 뒤로 가기 동작을 막음
-      }
 
-      const backHandler = BackHandler.addEventListener(
-        'hardwareBackPress',
-        backAction
-      )
-      // dispatch(toggleImageClick({ id: 4, clicked: true }))
+    // }
 
-      return () => {
-        console.log('안떨어졋어')
-        backHandler.remove()
-      }
-    }
     // }
   }, [])
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // 화면에 진입할 때 실행할 코드
+  //     console.log('화면에 진입함')
+
+  //     return () => {
+  //       // 화면을 떠날 때 실행할 코드
+  //       console.log('화면을 떠남')
+  //     }
+  //   }, [])
+  // )
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // 화면에 진입할 때 실행할 코드
+
+      dispatch(toggleImageClick({ id: 4, clicked: true }))
+
+      // return () => {
+      //   console.log('안떨어졋어')
+
+      return () => {
+        // 화면을 떠날 때 실행할 코드
+      }
+    }, [])
+  )
 
   // useEffect(() => {
   //   dispatch(toggleImageClick({ id: 4, clicked: true }))
