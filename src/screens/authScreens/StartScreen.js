@@ -39,6 +39,30 @@ export default function StartScreen({ navigation }) {
       >
         임시 로그인 버튼
       </Button>
+      <Button
+        mode="contained"
+        onPress={() => {
+          navigation.navigate('ResetPassword')
+        }}
+      >
+        비밀번호 찾기
+      </Button>
+      <Button
+        mode="contained"
+        onPress={() => {
+          navigation.navigate('EditPassword')
+        }}
+      >
+        비밀번호 변경
+      </Button>
+      <Button
+        mode="contained"
+        onPress={() => {
+          navigation.navigate('ResidenceSetting')
+        }}
+      >
+        거주지 설정
+      </Button>
     </Background2>
   )
 }

@@ -20,11 +20,14 @@ saveCommunityControl:async(req,res) =>{
     const content = req.body.content
     const member_num =  req.body.member_num
     const time = req.body.time
+    const img_name =req.body.img_name
+    const img_path = req.body.img_path
 
 const sql = "INSERT INTO POSTING (ClientID,title,content,member_num,Region_Name,time) VALUES(?,?,?,?,?,?,?)"
-
+// const idFindSql = "SELECT clientID from Client WHERE email VALUES (?)"
 await using getdb = await con()
     try {
+      // const [client,fields] =  await getdb.connection.execute(idFindSql,[email])
 
 
       const [rows, fields] = await getdb.connection.execute(sql,[clientID,title,Region_Name,content,member_num,time])
@@ -32,6 +35,7 @@ await using getdb = await con()
       if (rows.length < 0) {
 return res.status(400).send('nothing')
       }
+
 
       return res.status(201).send(rows)
 

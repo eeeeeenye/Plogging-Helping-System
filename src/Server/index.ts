@@ -15,7 +15,7 @@ const recordRouter = require('./routes/record.js')
 const storeRouter = require('./routes/store.js')
 const mapRouter = require('./routes/map.js')
 const userRouter = require('./routes/user.js')
-const pictureRouter = require('./routes/picture')
+const pictureRouter = require('./routes/picture.ts')
 
 dotenv.config({ path: path.resolve(__dirname, '../../config.env') })
 
@@ -39,6 +39,7 @@ app.use('/records', recordRouter)
 app.use('/store', storeRouter)
 app.use('/user', userRouter)
 app.use('/pictures', pictureRouter)
+
 /*서버와 포트와 연결*/
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 서버 실행 중...')

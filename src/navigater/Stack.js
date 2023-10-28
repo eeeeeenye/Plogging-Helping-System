@@ -33,6 +33,8 @@ import CreateCommunity from '../screens/communityScreens/CreateCommunity'
 import Menu from '../screens/communityScreens/menu'
 import CommunityRanking from '../screens/communityScreens/CommunityRanking'
 import CommunityMyList from '../screens/communityScreens/CommunityMyList'
+import EditPasswordScreen from '../screens/authScreens/EditPasswordScreen'
+import ResidenceSettingScreen from '../screens/authScreens/ResidenceSettingScreen'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -48,6 +50,42 @@ function StackNav() {
         <Stack.Screen
           name="StartScreen"
           component={StartScreen}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPasswordScreen}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="EditPassword"
+          component={EditPasswordScreen}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="ResidenceSetting"
+          component={ResidenceSettingScreen}
           options={{
             headerShown: false,
             headerStyle: {
