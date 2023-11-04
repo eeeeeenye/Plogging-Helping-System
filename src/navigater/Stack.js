@@ -35,6 +35,7 @@ import CommunityRanking from '../screens/communityScreens/CommunityRanking'
 import CommunityMyList from '../screens/communityScreens/CommunityMyList'
 import EditPasswordScreen from '../screens/authScreens/EditPasswordScreen'
 import ResidenceSettingScreen from '../screens/authScreens/ResidenceSettingScreen'
+import PostCode from '../screens/authScreens/PostCode'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -86,6 +87,18 @@ function StackNav() {
         <Stack.Screen
           name="ResidenceSetting"
           component={ResidenceSettingScreen}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              shadowColor: '#000',
+              elevation: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="PostCode"
+          component={PostCode}
           options={{
             headerShown: false,
             headerStyle: {
