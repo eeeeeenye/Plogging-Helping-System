@@ -5,7 +5,7 @@ import Logo from '../../components/Logo'
 import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
-import styles from './authScreensStyles/ResidenceStyle'
+import styles from './authScreensStyles/ResidenceStyle.js'
 
 import { WebView } from 'react-native-webview'
 import { TouchableOpacity, StyleSheet, View, Image, Text } from 'react-native'
@@ -16,7 +16,7 @@ const ResidenceSettingScreen = ({ navigation }) => {
   // DaumPostcodeEmbed
   const handlePostCode = (data) => {
     // 선택된 주소 정보는 'data' 객체에 담겨 옵니다.
-    console.log(data)
+    // console.log(data)
     navigation.navigate('PostCode')
   }
 

@@ -73,28 +73,6 @@ const MyPage = () => {
   }
 
   // mypage로 뒤로가기할때만 반응하게 만들고 싶다.
-  useEffect(() => {
-    console.log('focus')
-
-    // if (item[3].clicked) {
-    //   setCondition(true)
-    // console.log(item[3].clicked, 'mypage clicked')
-
-    // }
-
-    // }
-  }, [])
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // 화면에 진입할 때 실행할 코드
-  //     console.log('화면에 진입함')
-
-  //     return () => {
-  //       // 화면을 떠날 때 실행할 코드
-  //       console.log('화면을 떠남')
-  //     }
-  //   }, [])
-  // )
 
   useFocusEffect(
     React.useCallback(() => {
