@@ -359,6 +359,9 @@ function StackNav() {
             headerTitle: '플로깅 내역 조회',
           }}
         />
+        <Stack.Screen name="locationSetting" component={LocationSettings} />
+
+        <Stack.Screen name="locationTracking" component={locationTracker} />
       </Stack.Navigator>
     )
   } else {
@@ -371,7 +374,6 @@ function StackNav() {
             headerShown: false,
           }}
         />
-        <Stack.Screen name="locationTracking" component={locationTracker} />
         <Stack.Screen name="Camera" component={CameraScreen} />
         <Stack.Screen name="Record" component={RecordScreen} />
 

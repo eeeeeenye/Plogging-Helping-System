@@ -30,6 +30,12 @@ const styles = StyleSheet.create({
     width: width * 1,
     height: height * 1,
   },
+  mylocation: {
+    width: '100%',
+    height: 40,
+    justifyContent: 'center',
+    paddingLeft: 16,
+  },
 })
 
 export default styles

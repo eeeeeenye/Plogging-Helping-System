@@ -6,20 +6,22 @@ import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import styles from './authScreensStyles/ResidenceStyle.js'
-
+import Constants from 'expo-constants'
 import { WebView } from 'react-native-webview'
 import { TouchableOpacity, StyleSheet, View, Image, Text } from 'react-native'
-
+const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
 import { emailValidator } from '../../helpers/emailValidator'
-const ResidenceSettingScreen = ({ navigation }) => {
+const ResidenceSettingScreen = ({ navigation, route }) => {
   // Geolocation.requestAuthorization()
   // DaumPostcodeEmbed
   const handlePostCode = (data) => {
     // 선택된 주소 정보는 'data' 객체에 담겨 옵니다.
     // console.log(data)
+
     navigation.navigate('PostCode')
   }
 
+  console.log(route.params)
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -28,7 +30,13 @@ const ResidenceSettingScreen = ({ navigation }) => {
           <TouchableOpacity onPress={handlePostCode}>
             <View style={styles.search_box}>
               <Image source={require('../../assets/search.png')}></Image>
-              <Text style={styles.search_text}>주소 검색</Text>
+              {route.params === undefined ? (
+                <Text style={styles.search_text}>{`주소 검색`}</Text>
+              ) : (
+                <Text
+                  style={styles.search_text}
+                >{`${route.params.address}`}</Text>
+              )}
             </View>
             <View style={styles.line}></View>
           </TouchableOpacity>

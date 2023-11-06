@@ -63,6 +63,23 @@ export default function StartScreen({ navigation }) {
       >
         거주지 설정
       </Button>
+
+      <Button
+        mode="contained"
+        onPress={() => {
+          navigation.navigate('locationTracking')
+        }}
+      >
+        맵
+      </Button>
+      <Button
+        mode="contained"
+        onPress={() => {
+          navigation.navigate('locationSetting')
+        }}
+      >
+        location
+      </Button>
     </Background2>
   )
 }
