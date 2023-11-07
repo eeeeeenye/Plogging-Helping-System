@@ -10,6 +10,7 @@ import Constants from 'expo-constants'
 import { WebView } from 'react-native-webview'
 import { TouchableOpacity, StyleSheet, View, Image, Text } from 'react-native'
 const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
+
 import { emailValidator } from '../../helpers/emailValidator'
 const ResidenceSettingScreen = ({ navigation, route }) => {
   // Geolocation.requestAuthorization()

@@ -30,23 +30,17 @@ import ResidenceSettingScreen from './ResidenceSettingScreen.js'
 // import { platform } from 'os'
 const PostCode = ({ navigation }) => {
   const handleMyLocation = async () => {
-    navigation.navigate('locationSetting')
-    // try {
-    //   let { status } = await Location.requestForegroundPermissionsAsync()
-
-    //   console.log(status)
-    //   if (status !== 'granted') {
-    //     console.log('Permission to access location was denied')
-    //     return
-    //   }
-    //   const locationData = await Location.getCurrentPositionAsync({})
-    //   console.log(locationData)
-
-    //   const latitude = locationData['coords']['latitude'] // 위도 가져오기
-    //   const longitude = locationData['coords']['longitude'] // 경도 가져오기
-    // } catch (error) {
-    //   console.error('현재 위치를 가져오는 중 오류 발생:', error)
-    // }
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync()
+      console.log(status)
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied')
+        return
+      }
+      navigation.navigate('myLocationMap')
+    } catch (error) {
+      console.error('현재 위치를 가져오는 중 오류 발생:', error)
+    }
   }
 
   const getSearchAddress = (data) => {
@@ -69,14 +63,9 @@ const PostCode = ({ navigation }) => {
           <Text>내 위치 설정하기</Text>
         </View> */}
         <View>
-          <WebView
-            source={{
-              html: daumPostSet(),
-            }}
-          ></WebView>
           <Postcode
             style={styles.postcode}
-            jsOptions={{ animation: true }}
+            // jsOptions={{ animation: true }}
             onSelected={(data) => {
               getSearchAddress(data)
             }}

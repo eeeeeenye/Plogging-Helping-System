@@ -36,6 +36,7 @@ import CommunityMyList from '../screens/communityScreens/CommunityMyList'
 import EditPasswordScreen from '../screens/authScreens/EditPasswordScreen'
 import ResidenceSettingScreen from '../screens/authScreens/ResidenceSettingScreen'
 import PostCode from '../screens/authScreens/PostCode'
+import MylocationMap from '../screens/map/myLocationMap'
 
 // import ProfileScreen from '../screens/mypage/ProfileScrren'
 
@@ -360,6 +361,14 @@ function StackNav() {
           }}
         />
         <Stack.Screen name="locationSetting" component={LocationSettings} />
+        <Stack.Screen
+          name="myLocationMap"
+          component={MylocationMap}
+          options={{
+            // headerShown: false,
+            headerTitle: '지도에서 위치 확인 ',
+          }}
+        />
 
         <Stack.Screen name="locationTracking" component={locationTracker} />
       </Stack.Navigator>
