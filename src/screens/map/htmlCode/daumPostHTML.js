@@ -8,10 +8,7 @@ const daumPostSet = (url, position) => {
             <body>
 
               <div id="map" style="width:100%;height:100%;"></div>
-              <div class="hAddr">
-              <span class="title">지도중심기준 행정동 주소정보</span>
-              <span id="centerAddr"></span>
-          </div>
+         
     </div>
               <script>
 
@@ -37,24 +34,12 @@ const daumPostSet = (url, position) => {
      
   
     });  
- 
-  
-    kakao.maps.event.addListener(marker, 'click', function() {
-  
-        // 마커 위치를 주소로 변환
-        geocoder.coord2Address(markerPosition.getLng(), markerPosition.getLat(), function(result, status) {
-          if (status === kakao.maps.services.Status.OK) {
-            var address = result[0].address.address_name;
-            console.log('마커 주소:', address);
-          } else {
-            console.log('주소 변환 실패');
-          }
 
-        });
-
-      });
+    function searchAddrFromCoords(coords, callback) {
+      // 좌표로 행정동 주소 정보를 요청합니다
+      geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+  }
  
-      
 </script>
     
             </body>

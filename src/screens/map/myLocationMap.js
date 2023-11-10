@@ -11,6 +11,7 @@ import LocationSet from './htmlCode/LocationHTML'
 import { useSelector, useDispatch } from 'react-redux'
 import { addAdress } from '../../slices/All/Authslice'
 import daumPostSet from './htmlCode/daumPostHTML'
+
 const MylocationMap = ({ navigation }) => {
   const [position, setPosition] = useState(null)
   const [city, setCity] = useState(null)
@@ -33,12 +34,13 @@ const MylocationMap = ({ navigation }) => {
         { latitude, longitude },
         { useGoogleMaps: false }
       )
+
       setPosition({ lat: latitude, lng: longitude })
       setCity(location[0])
 
       axios
         .get(
-          `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${longitude}&y=${latitude}`,
+          ` https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}&input_coord=WGS84`,
           {
             headers: {
               Authorization: `KakaoAK ${process.env.REST_API_KEY}`,
@@ -83,20 +85,20 @@ const MylocationMap = ({ navigation }) => {
       Alert.alert(error)
     }
   }
-  const onPressButton = async () => {
-    // 버튼을 누르면 작동하는 기능들 (회원 상태값 업데이트, 화면전환)
-    try {
-      console.log(city, name, '----------------->>>>')
-      await axios.put(`http://${ip}:3000/plogging/:params`, {
-        ClientName: name,
-        city: city,
-      })
-      dispatch(addAdress({ adress: city, status: true }))
-      navigation.navigate('HomeMain')
-    } catch (event) {
-      console.log(event)
-    }
-  }
+  // const onPressButton = async () => {
+  //   // 버튼을 누르면 작동하는 기능들 (회원 상태값 업데이트, 화면전환)
+  //   try {
+  //     console.log(city, name, '----------------->>>>')
+  //     await axios.put(`http://${ip}:3000/plogging/:params`, {
+  //       ClientName: name,
+  //       city: city,
+  //     })
+  //     dispatch(addAdress({ adress: city, status: true }))
+  //     navigation.navigate('HomeMain')
+  //   } catch (event) {
+  //     console.log(event)
+  //   }
+  // }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,9 +130,7 @@ const MylocationMap = ({ navigation }) => {
       />
       <View style={{ flex: 0.4 }}>
         <Text>대전 유성구 은구비서로 </Text>
-        <Button mode="outlined" onPress={onPressButton}>
-          주소 설정
-        </Button>
+        <Button mode="outlined">주소 설정</Button>
       </View>
     </View>
   )
