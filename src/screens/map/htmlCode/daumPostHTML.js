@@ -53,7 +53,6 @@ const daumPostSet = (url, position) => {
     window.ReactNativeWebView.postMessage(JSON.stringify({ lng:  latlng.getLng(),lat:latlng.getLat() }));
     
 });
-  console.log('console')
 </script>
 
 
