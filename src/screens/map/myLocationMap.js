@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { WebView } from 'react-native-webview'
-import { View, Alert, Text } from 'react-native'
+import { View, Alert, Text, TouchableOpacity } from 'react-native'
 import Constants from 'expo-constants'
 import * as Location from 'expo-location'
 import StatusManager from '../../helpers/localStorage'
@@ -11,11 +11,11 @@ import LocationSet from './htmlCode/LocationHTML'
 import { useSelector, useDispatch } from 'react-redux'
 import { addAdress } from '../../slices/All/Authslice'
 import daumPostSet from './htmlCode/daumPostHTML'
+import { position } from '../../slices/All/locationslice.ts'
 
 const MylocationMap = ({ navigation }) => {
-  const [position, setPosition] = useState({})
   const [city, setCity] = useState(null)
-  // const [address, setAddress] = useState(null)
+  const [address, setAddress] = useState(null)
   const ip = Constants.manifest.extra.Local_ip
   const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
@@ -36,11 +36,10 @@ const MylocationMap = ({ navigation }) => {
         { useGoogleMaps: false }
       )
       console.log(latitude, longitude)
-      setPosition({ lat: latitude, lng: longitude })
       setCity(location[0])
 
       const myLoc = await axios.get(
-        ` https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}&input_coord=WGS84`,
+        `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}&input_coord=WGS84`,
         {
           headers: {
             Authorization: `KakaoAK ${process.env.REST_API_KEY}`,
@@ -51,7 +50,8 @@ const MylocationMap = ({ navigation }) => {
       const data = myLoc.data
       if (data.documents && data.documents.length > 0) {
         const firstDocument = data.documents[0]
-        console.log(firstDocument.address.address_name, 'firstDocu')
+        console.log(data.documents)
+        setAddress(firstDocument.address.address_name)
       } else {
         //   setAddress('주소를 찾을 수 없습니다.')
       }
@@ -82,18 +82,11 @@ const MylocationMap = ({ navigation }) => {
     }
   }
   const onPressButton = async () => {
+    //주소 설정, 주소 설정 페이지로 넘어가고, 값 업데이트
     // 버튼을 누르면 작동하는 기능들 (회원 상태값 업데이트, 화면전환)
-    try {
-      console.log(city, name, '----------------->>>>')
-      await axios.put(`http://${ip}:3000/plogging/:params`, {
-        ClientName: name,
-        city: city,
-      })
-      dispatch(addAdress({ adress: city, status: true }))
-      navigation.navigate('HomeMain')
-    } catch (event) {
-      console.log(event)
-    }
+
+    dispatch(position(address))
+    navigation.navigate('ResidenceSetting')
   }
 
   useEffect(() => {
@@ -124,30 +117,84 @@ const MylocationMap = ({ navigation }) => {
           // top: ,
         }}
         onMessage={async (event) => {
-          // const latitude = JSON.parse(event.nativeEvent.data).lat
-          // const longitude = JSON.parse(event.nativeEvent.data).lng
-          // const myLoc = await axios.get(
-          //   ` https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}&input_coord=WGS84`,
-          //   {
-          //     headers: {
-          //       Authorization: `KakaoAK ${process.env.REST_API_KEY}`,
-          //     },
-          //   }
-          // )
-          // const data = myLoc.data
-          // console.log(data)
-          // if (data.documents && data.documents.length > 0) {
-          //   const firstDocument = data.documents[0]
-          //   setAddress(firstDocument.address.address_name)
-          //   // console.log(address)
-          // } else {
-          //   //   setAddress('주소를 찾을 수 없습니다.')
-          // }
+          const latitude = JSON.parse(event.nativeEvent.data).lat
+          const longitude = JSON.parse(event.nativeEvent.data).lng
+          const myLoc = await axios.get(
+            ` https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}&input_coord=WGS84`,
+            {
+              headers: {
+                Authorization: `KakaoAK ${process.env.REST_API_KEY}`,
+              },
+            }
+          )
+          const data = myLoc.data
+          if (data.documents && data.documents.length > 0) {
+            const firstDocument = data.documents[0]
+            console.log(data.documents)
+            setAddress(firstDocument.address.address_name)
+          } else {
+            //   setAddress('주소를 찾을 수 없습니다.')
+          }
         }}
       />
       <View style={{ flex: 0.4 }}>
-        {/* <Text>{address}</Text> */}
-        <Button mode="outlined">주소 설정</Button>
+        <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 16 }}>
+          {address}
+        </Text>
+        {/* <TouchableOpacity
+          style={{
+            marginLeft: 16,
+            marginBottom: 16,
+            width: '30%',
+            height: 30,
+            backgroundColor: '#848484',
+            borderRadius: 10,
+            justifyContent: 'center',
+            alignContent: 'center',
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+            }}
+          >
+            지번으로 보기
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            marginLeft: 16,
+            marginBottom: 16,
+            width: '30%',
+            height: 30,
+            backgroundColor: '#848484',
+            borderRadius: 10,
+            justifyContent: 'center',
+            alignContent: 'center',
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+            }}
+          >
+            도로명으로 보기
+          </Text>
+        </TouchableOpacity> */}
+
+        <Button
+          onPress={onPressButton}
+          style={{
+            width: '95%',
+            marginLeft: 10,
+            borderRadius: 10,
+          }}
+          mode="outlined"
+        >
+          주소 설정
+        </Button>
       </View>
     </View>
   )

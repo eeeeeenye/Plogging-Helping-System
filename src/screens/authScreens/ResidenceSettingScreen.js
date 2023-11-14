@@ -8,13 +8,14 @@ import Button from '../../components/Button'
 import styles from './authScreensStyles/ResidenceStyle.js'
 import Constants from 'expo-constants'
 import { WebView } from 'react-native-webview'
+import { useSelector, useDispatch } from 'react-redux'
 import { TouchableOpacity, StyleSheet, View, Image, Text } from 'react-native'
-const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
+// import {  } from '../../slices/All/locationslice.js'
 
 import { emailValidator } from '../../helpers/emailValidator'
 const ResidenceSettingScreen = ({ navigation, route }) => {
-  // Geolocation.requestAuthorization()
-  // DaumPostcodeEmbed
+  const positionAddress = useSelector((state) => state.slice.position)
+
   const handlePostCode = (data) => {
     // 선택된 주소 정보는 'data' 객체에 담겨 옵니다.
     // console.log(data)
@@ -32,7 +33,7 @@ const ResidenceSettingScreen = ({ navigation, route }) => {
             <View style={styles.search_box}>
               <Image source={require('../../assets/search.png')}></Image>
               {route.params === undefined ? (
-                <Text style={styles.search_text}>{`주소 검색`}</Text>
+                <Text style={styles.search_text}>{positionAddress}</Text>
               ) : (
                 <Text
                   style={styles.search_text}
