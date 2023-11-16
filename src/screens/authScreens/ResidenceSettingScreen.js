@@ -1,20 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Background from '../../components/Background'
 import BackButton from '../../components/BackButton'
 import Logo from '../../components/Logo'
 import Header from '../../components/Header'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
+import { useFocusEffect } from '@react-navigation/native'
 import styles from './authScreensStyles/ResidenceStyle.js'
 import Constants from 'expo-constants'
 import { WebView } from 'react-native-webview'
 import { useSelector, useDispatch } from 'react-redux'
 import { TouchableOpacity, StyleSheet, View, Image, Text } from 'react-native'
-// import {  } from '../../slices/All/locationslice.js'
-
+import { resetPosition, location } from '../../slices/All/locationslice.ts'
 import { emailValidator } from '../../helpers/emailValidator'
 const ResidenceSettingScreen = ({ navigation, route }) => {
-  const positionAddress = useSelector((state) => state.slice.position)
+  const positionAddress = useSelector((state) => state.slice.location)
+
+  const dispatch = useDispatch()
 
   const handlePostCode = (data) => {
     // 선택된 주소 정보는 'data' 객체에 담겨 옵니다.
@@ -23,6 +25,11 @@ const ResidenceSettingScreen = ({ navigation, route }) => {
     navigation.navigate('PostCode')
   }
 
+  useEffect(() => {
+    console.log('asdf')
+    dispatch(location('주소 검색'))
+    return () => {}
+  }, [dispatch])
   console.log(route.params)
   return (
     <View style={styles.container}>
@@ -32,12 +39,10 @@ const ResidenceSettingScreen = ({ navigation, route }) => {
           <TouchableOpacity onPress={handlePostCode}>
             <View style={styles.search_box}>
               <Image source={require('../../assets/search.png')}></Image>
-              {route.params === undefined ? (
+              {positionAddress !== '' ? (
                 <Text style={styles.search_text}>{positionAddress}</Text>
               ) : (
-                <Text
-                  style={styles.search_text}
-                >{`${route.params.address}`}</Text>
+                <Text style={styles.search_text}>{`주소 검색`}</Text>
               )}
             </View>
             <View style={styles.line}></View>

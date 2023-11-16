@@ -1,22 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface LocationState {
-  position: string
+  location: string
 }
 
 const initialState: LocationState = {
-  position: '주소 검색',
+  location: '',
 }
 
 const locationSlice = createSlice({
-  name: 'position',
+  name: 'location',
   initialState,
   reducers: {
-    position(state, action: PayloadAction<string>) {
-      state.position = action.payload
+    location(state, action: PayloadAction<string>) {
+      state.location = action.payload
+    },
+    resetLocation(state) {
+      state.location = ''
     },
   },
 })
 
-export const { position } = locationSlice.actions
+export const { location } = locationSlice.actions
 export default locationSlice.reducer

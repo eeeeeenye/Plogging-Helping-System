@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { WebView } from 'react-native-webview'
-import { View, Alert, Text, TouchableOpacity } from 'react-native'
+import { View, Alert, Text, TouchableOpacity, Image } from 'react-native'
 import Constants from 'expo-constants'
 import * as Location from 'expo-location'
 import StatusManager from '../../helpers/localStorage'
@@ -11,31 +11,24 @@ import LocationSet from './htmlCode/LocationHTML'
 import { useSelector, useDispatch } from 'react-redux'
 import { addAdress } from '../../slices/All/Authslice'
 import daumPostSet from './htmlCode/daumPostHTML'
-import { position } from '../../slices/All/locationslice.ts'
+import { location } from '../../slices/All/locationslice'
 
 const MylocationMap = ({ navigation }) => {
   const [city, setCity] = useState(null)
   const [address, setAddress] = useState(null)
-  const ip = Constants.manifest.extra.Local_ip
+  const [position, setPosition] = useState({})
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.auth.user)
-  const name = user ? user.name : ''
 
   // console.log(name, '--------LocationSetting')
   const getLocation = async () => {
     try {
-      await Location.requestForegroundPermissionsAsync()
-
       //현재 위치 정보 얻기 -> 시스템 location
       const locationData = await Location.getCurrentPositionAsync()
       const latitude = locationData['coords']['latitude'] // 위도 가져오기
       const longitude = locationData['coords']['longitude'] // 경도 가져오기
-      const location = await Location.reverseGeocodeAsync(
-        // 위도와 경도를 입력하면 자신의 위치를 역으로 변환
-        { latitude, longitude },
-        { useGoogleMaps: false }
-      )
+
       console.log(latitude, longitude)
+      setPosition({ lat: latitude, lng: longitude })
       setCity(location[0])
 
       const myLoc = await axios.get(
@@ -56,24 +49,6 @@ const MylocationMap = ({ navigation }) => {
         //   setAddress('주소를 찾을 수 없습니다.')
       }
 
-      // console.log(position, city)
-
-      //   const response = await axios.get(
-      //     `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}`,
-      //     {
-      //       headers: {
-      //         Authorization: apiKey, // 카카오 API 키를 여기에 추가
-      //       },
-      //     }
-      //   )
-      //   const data = response.data
-      //   console.log(data)
-      //   if (data.results.length > 0) {
-      //     console.log('주소x')
-      //   } else {
-      //     console.log('주소x')
-      //   }
-
       return
     } catch (error) {
       console.error(error)
@@ -85,16 +60,19 @@ const MylocationMap = ({ navigation }) => {
     //주소 설정, 주소 설정 페이지로 넘어가고, 값 업데이트
     // 버튼을 누르면 작동하는 기능들 (회원 상태값 업데이트, 화면전환)
 
-    dispatch(position(address))
+    dispatch(location(address))
     navigation.navigate('ResidenceSetting')
+  }
+  const onBu = async () => {
+    console.log('yourmyboo')
+    const locationData = await Location.getCurrentPositionAsync()
+    const latitude = locationData['coords']['latitude'] // 위도 가져오기
+    const longitude = locationData['coords']['longitude'] // 경도 가져오기
+    setPosition({ lat: latitude, lng: longitude })
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      getLocation()
-    }
-
-    fetchData()
+    getLocation()
   }, [])
   // position이 존재하지 않으면 렌더링하지 않는다.
   if (!position) {
@@ -137,6 +115,34 @@ const MylocationMap = ({ navigation }) => {
           }
         }}
       />
+      <Button
+        onPress={onBu}
+        style={{
+          // bottom: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 40,
+          left: 300,
+          bottom: 70,
+          height: 40,
+          borderRadius: 40,
+          backgroundColor: 'white',
+          zIndex: 3,
+          shadowColor: 'black',
+          // shadowOffset: {
+          //   width: 0,
+          //   height: ,
+          // },
+          // shadowOpacity: 0.2,
+          // shadowRadius: 10,
+          elevation: 7,
+        }}
+      >
+        <Image
+          style={{ width: 20, height: 20 }}
+          source={require('../../assets/gps-location.png')}
+        ></Image>
+      </Button>
       <View style={{ flex: 0.4 }}>
         <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 16 }}>
           {address}
