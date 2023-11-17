@@ -17,6 +17,7 @@ const MylocationMap = ({ navigation }) => {
   const [city, setCity] = useState(null)
   const [address, setAddress] = useState(null)
   const [position, setPosition] = useState({})
+  const [clickGPS, setClickGPS] = useState({})
   const dispatch = useDispatch()
 
   // console.log(name, '--------LocationSetting')
@@ -64,16 +65,14 @@ const MylocationMap = ({ navigation }) => {
     navigation.navigate('ResidenceSetting')
   }
   const onBu = async () => {
-    console.log('yourmyboo')
-    const locationData = await Location.getCurrentPositionAsync()
-    const latitude = locationData['coords']['latitude'] // 위도 가져오기
-    const longitude = locationData['coords']['longitude'] // 경도 가져오기
-    setPosition({ lat: latitude, lng: longitude })
+    setClickGPS(position)
+    console.log(clickGPS)
   }
 
   useEffect(() => {
     getLocation()
   }, [])
+
   // position이 존재하지 않으면 렌더링하지 않는다.
   if (!position) {
     return null
@@ -97,6 +96,9 @@ const MylocationMap = ({ navigation }) => {
         onMessage={async (event) => {
           const latitude = JSON.parse(event.nativeEvent.data).lat
           const longitude = JSON.parse(event.nativeEvent.data).lng
+
+          setPosition({ lat: latitude, lng: longitude })
+
           const myLoc = await axios.get(
             ` https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}&input_coord=WGS84`,
             {
@@ -115,7 +117,8 @@ const MylocationMap = ({ navigation }) => {
           }
         }}
       />
-      <Button
+      <TouchableOpacity
+        activeOpacity={1}
         onPress={onBu}
         style={{
           // bottom: 30,
@@ -142,7 +145,7 @@ const MylocationMap = ({ navigation }) => {
           style={{ width: 20, height: 20 }}
           source={require('../../assets/gps-location.png')}
         ></Image>
-      </Button>
+      </TouchableOpacity>
       <View style={{ flex: 0.4 }}>
         <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 16 }}>
           {address}

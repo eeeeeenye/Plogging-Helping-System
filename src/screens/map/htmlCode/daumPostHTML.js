@@ -9,8 +9,10 @@ const daumPostSet = (url, position) => {
             <body>
 
               <div id="map" style="width:100%;height:100%;"></div>
-  
-
+              <img
+              style={{ width: 20, height: 20 }}
+             src = ('../../assets/gps-location.png')
+            ></img>
               <script  type="text/javascript">
 
                 const container = document.getElementById('map');
