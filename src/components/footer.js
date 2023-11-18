@@ -24,6 +24,9 @@ const Footer = ({ children }) => {
 
   const handleFooterButton = (id) => {
     dispatch(toggleImageClick({ id: id }))
+    if (id === 1) {
+      navigation.navigate('locationTracking')
+    }
     if (id === 3) {
       navigation.navigate('community')
     }
