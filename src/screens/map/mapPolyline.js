@@ -1,20 +1,26 @@
 import React, { useRef, useEffect, useState, useFocusEffect } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { Text } from 'react-native-paper'
 import { WebView } from 'react-native-webview'
 import Constants from 'expo-constants'
 import * as Location from 'expo-location'
+import styles from './mapStyles/mapPolylineStyle'
 
-import mapPolylineHTML from './htmlCode/mapPlylineHTML'
+import mapPolylineHTML from './htmlCode/mapPolylineHTML'
 import { useDispatch, useSelector } from 'react-redux'
 import { distCal } from '../../slices/All/Distanceslice'
 import { toggleImageClick } from '../../slices/All/footerSlice'
 import Footer from '../../components/footer'
+import HeaderScroll3 from '../../components/HeaderScroll3'
+import Header3 from '../../components/Header3'
 const LocationTracker = () => {
   const webViewRef = useRef()
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
   const status = useSelector((state) => state.stopwatch.isRunning)
   const dispatch = useDispatch()
+
+  const [elapsedTime, setElapsedTime] = useState(0)
+  const [isTracking, setIsTracking] = useState(false)
   const [locationSubscription, setLocationSubscription] = useState(null)
   const [path, setPath] = useState([])
   const [distance, setDistance] = useState(0)
@@ -26,7 +32,6 @@ const LocationTracker = () => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
 
     return () => {
-      console.log('떠난다')
       dispatch(toggleImageClick({ id: 1, clicked: false }))
       // 화면을 떠날 때 실행할 코드
     }
@@ -89,6 +94,8 @@ const LocationTracker = () => {
   }
 
   const startLocationTracking = async () => {
+    console.log('iwanut')
+
     try {
       const { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
@@ -144,22 +151,46 @@ const LocationTracker = () => {
       console.log(path)
     }
   }
+  const startTracking = () => {
+    setIsTracking(true)
+  }
 
+  // useEffect(() => {
+  //   let intervalId
+
+  //   if (isTracking) {
+  //     // 1초마다 elapsedTime 상태를 업데이트
+  //     intervalId = setInterval(() => {
+  //       setElapsedTime((prevElapsedTime) => prevElapsedTime + 1000)
+  //     }, 1000)
+  //   }
+
+  //   // 컴포넌트가 언마운트되거나 트래킹이 종료될 때 clearInterval 호출하여 interval 정리
+  //   return () => clearInterval(intervalId)
+  // }, [isTracking])
+  // {
+  //   Math.floor(elapsedTime / 1000)
+  // }
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          position: 'absolute',
-          top: 40,
-          left: 25,
-          right: 300,
-          bottom: 610,
-          zIndex: 1,
-        }}
-      >
-        <Text style={styles.text}>{distance} KM</Text>
+      <Header3 title={'탕정면'}></Header3>
+      <View style={styles.timeTracking}>
+        <View style={styles.area}>
+          <Text style={styles.text}>{Math.floor(elapsedTime / 1000)} s</Text>
+          <Text>시간</Text>
+        </View>
+        <View style={styles.area}>
+          <Text style={styles.text}>{distance}</Text>
+          <Text>거리(km)</Text>
+        </View>
+        <View style={styles.area}>
+          <Text style={styles.text}>0</Text>
+          <Text>걸음</Text>
+        </View>
       </View>
+
       <WebView
+        style={styles.webView}
         ref={webViewRef}
         source={{ html: mapPolylineHTML(apiKey) }}
         onLoad={() => {
@@ -170,20 +201,54 @@ const LocationTracker = () => {
         onMessage={handleMessage}
         javaScriptEnabled={true}
       />
+      <View style={styles.timeControl}>
+        {isTracking ? (
+          <>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{ marginBottom: 10, marginLeft: 10 }}
+            >
+              <Image
+                style={{ width: 50, height: 50 }}
+                source={require('../../assets/shutdown.png')}
+              ></Image>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{ marginBottom: 10, marginLeft: 10 }}
+            >
+              <Image
+                style={{ width: 50, height: 50 }}
+                source={require('../../assets/fcamera.png')}
+              ></Image>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity activeOpacity={1} style={{ marginBottom: 10 }}>
+              <Image
+                style={{ width: 70, height: 70 }}
+                source={require('../../assets/start-button.png')}
+              ></Image>
+            </TouchableOpacity>
+          </>
+        )}
+
+        <TouchableOpacity
+          activeOpacity={1}
+          style={{ marginTop: 10, marginLeft: 10 }}
+        >
+          <Image
+            style={{ width: 50, height: 50 }}
+            source={require('../../assets/walk.png')}
+          ></Image>
+        </TouchableOpacity>
+      </View>
+
       <Footer></Footer>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-})
 
 export default LocationTracker

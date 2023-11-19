@@ -370,7 +370,13 @@ function StackNav() {
           }}
         />
 
-        <Stack.Screen name="locationTracking" component={locationTracker} />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="locationTracking"
+          component={locationTracker}
+        />
       </Stack.Navigator>
     )
   } else {
