@@ -1,5 +1,5 @@
-const mapPolylineHTML=(apiKey)=>{
-return( `
+const mapPolylineHTML = (apiKey) => {
+  return `
     <html>
     <head>
       <meta charset="utf-8">
@@ -156,6 +156,6 @@ return( `
     </script>
   </body>
   </html>`
-)}
+}
 
-  export default mapPolylineHTML;
+export default mapPolylineHTML

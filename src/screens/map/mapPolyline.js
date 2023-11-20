@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useFocusEffect } from 'react'
+import React, { useRef, useEffect, useState, memo, useFocusEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { Text } from 'react-native-paper'
 import { WebView } from 'react-native-webview'
@@ -13,8 +13,10 @@ import { toggleImageClick } from '../../slices/All/footerSlice'
 import Footer from '../../components/footer'
 import HeaderScroll3 from '../../components/HeaderScroll3'
 import Header3 from '../../components/Header3'
+
 const LocationTracker = () => {
   const webViewRef = useRef()
+  const intervalRef = useRef()
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
   const status = useSelector((state) => state.stopwatch.isRunning)
   const dispatch = useDispatch()
@@ -22,12 +24,11 @@ const LocationTracker = () => {
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isTracking, setIsTracking] = useState(false)
   const [locationSubscription, setLocationSubscription] = useState(null)
-  const [path, setPath] = useState([])
   const [distance, setDistance] = useState(0)
-  const haversine = require('haversine')
-  let item = useSelector((state) => state.footer.FooterImages)
-  console.log(item)
 
+  const [path, setPath] = useState([])
+  const [currentLocation, setCurrentLocation] = useState(null)
+  const haversine = require('haversine')
   useEffect(() => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
 
@@ -94,8 +95,6 @@ const LocationTracker = () => {
   }
 
   const startLocationTracking = async () => {
-    console.log('iwanut')
-
     try {
       const { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
@@ -151,9 +150,37 @@ const LocationTracker = () => {
       console.log(path)
     }
   }
-  const startTracking = () => {
+  const startTracking = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      console.error('Permission to access location was denied')
+      return
+    }
+
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    })
+    const { latitude, longitude } = location.coords
+    setPath((prevPath) => [...prevPath, { latitude, longitude }])
+    setCurrentLocation({ latitude, longitude })
+
     setIsTracking(true)
+
+    intervalRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1)
+    }, 1000)
   }
+
+  const stopTracking = () => {
+    console.log('durl')
+    clearInterval(intervalRef.current)
+    setIsTracking(false)
+    setElapsedTime(0)
+  }
+
+  // const start = () =>{
+
+  // }
 
   // useEffect(() => {
   //   let intervalId
@@ -174,20 +201,32 @@ const LocationTracker = () => {
   return (
     <View style={styles.container}>
       <Header3 title={'탕정면'}></Header3>
-      <View style={styles.timeTracking}>
-        <View style={styles.area}>
-          <Text style={styles.text}>{Math.floor(elapsedTime / 1000)} s</Text>
-          <Text>시간</Text>
+
+      {isTracking ? (
+        <View style={styles.timeTracking}>
+          <View style={styles.area}>
+            <Text style={styles.text}>
+              {Math.floor(elapsedTime / 3600)
+                ? String(Math.floor(elapsedTime / 3600)).padStart(1, '0') + ':'
+                : ''}
+              {String(Math.floor((elapsedTime % 3600) / 60)).padStart(2, '0')}:
+              {/* {String(Math.floor(elapsedTime / 10)).padStart(2, '0')} */}
+              {String(Math.floor(elapsedTime % 60)).padStart(2, '0')}
+            </Text>
+            <Text>시간</Text>
+          </View>
+          <View style={styles.area}>
+            <Text style={styles.text}>{distance}</Text>
+            <Text>거리(km)</Text>
+          </View>
+          <View style={styles.area}>
+            <Text style={styles.text}>0</Text>
+            <Text>걸음</Text>
+          </View>
         </View>
-        <View style={styles.area}>
-          <Text style={styles.text}>{distance}</Text>
-          <Text>거리(km)</Text>
-        </View>
-        <View style={styles.area}>
-          <Text style={styles.text}>0</Text>
-          <Text>걸음</Text>
-        </View>
-      </View>
+      ) : (
+        <></>
+      )}
 
       <WebView
         style={styles.webView}
@@ -206,6 +245,7 @@ const LocationTracker = () => {
           <>
             <TouchableOpacity
               activeOpacity={1}
+              onPress={stopTracking}
               style={{ marginBottom: 10, marginLeft: 10 }}
             >
               <Image
@@ -226,7 +266,11 @@ const LocationTracker = () => {
           </>
         ) : (
           <>
-            <TouchableOpacity activeOpacity={1} style={{ marginBottom: 10 }}>
+            <TouchableOpacity
+              onPress={startTracking}
+              activeOpacity={1}
+              style={{ marginBottom: 10 }}
+            >
               <Image
                 style={{ width: 70, height: 70 }}
                 source={require('../../assets/start-button.png')}
