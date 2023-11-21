@@ -19,13 +19,33 @@ const mapPolylineHTML = (apiKey) => {
     
       <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}"></script>
       <script>
+
+        
+//           center: new kakao.maps.LatLng(position[0].latitude, position[0].longitude), // 지도의 중심 좌표
+// 
+
+alert('한마루')
+
+window.addEventListener('message', function (event) {
+  event.data에 React Native에서 전송한 메시지가 포함됨
+  const receivedMessage = event.data;
+  alert(receivedMessage)
+
+});
+
+
+        // const position = JSON.parse(event.data);
+// const position = event.data
+        // window.ReactNativeWebView.postMessage(position)
         var mapContainer = document.getElementById('map'); // 지도를 표시할 div  
+
         var mapOption = {
-          center: new kakao.maps.LatLng(37.541, 126.986), // 지도의 중심 좌표
+          center: new kakao.maps.LatLng(36.374256, 127.3206123), // 지도의 중심 좌표
           level: 1 // 지도의 확대 레벨
         };
-    
         var map = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
+
+         
     
         var path = []; // 이동 경로를 저장할 배열
         var polyline = null; // 선을 표시할 변수
@@ -39,7 +59,6 @@ const mapPolylineHTML = (apiKey) => {
           } else {
             var position = message.position;
             updatePath(position);
-            console.log(position);
           }
         });
 
@@ -51,10 +70,10 @@ const mapPolylineHTML = (apiKey) => {
           }
   
         // 마커 제거
-        if (marker) {
-          marker.setMap(null);
-          marker = null;
-        }
+        // if (marker) {
+        //   marker.setMap(null);
+        //   marker = null;
+        // }
   
         // 경로 초기화
         path = [];

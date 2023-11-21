@@ -25,6 +25,7 @@ const LocationTracker = () => {
   const [isTracking, setIsTracking] = useState(false)
   const [locationSubscription, setLocationSubscription] = useState(null)
   const [distance, setDistance] = useState(0)
+  // const [position, setPosition] = useState({})
 
   const [path, setPath] = useState([])
   const [currentLocation, setCurrentLocation] = useState(null)
@@ -37,22 +38,6 @@ const LocationTracker = () => {
       // 화면을 떠날 때 실행할 코드
     }
   }, [])
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // 화면에 진입할 때 실행할 코드
-
-  //     //
-
-  //     // return () => {
-  //     //   console.log('안떨어졋어')
-
-  //     return () => {
-  //       dispatch(toggleImageClick({ id: 1, clicked: false }))
-  //       // 화면을 떠날 때 실행할 코드
-  //     }
-  //   }, [])
-  // )
-
   //status가 변경될 때마다 실행
   useEffect(() => {
     if (status) {
@@ -62,15 +47,15 @@ const LocationTracker = () => {
     }
   }, [status])
 
-  useEffect(() => {
-    if (webViewRef.current) {
-      webViewRef.current.postMessage(JSON.stringify({}))
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (webViewRef.current) {
+  //     webViewRef.current.postMessage(JSON.stringify({}))
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (path.length == 2) {
-      updateDistance(path)
+      // updateDistance(path)
       setPath([])
     }
   }, [path])
@@ -81,10 +66,6 @@ const LocationTracker = () => {
   }, [distance])
 
   // 웹뷰에 보낼 메시지를 관리 (position)
-  const handleMessage = (event) => {
-    const position = JSON.parse(event.nativeEvent.data)
-    console.log('Received position:', position)
-  }
 
   // status가 false일 경우에 실행
   const stopLocationTracking = () => {
@@ -108,7 +89,9 @@ const LocationTracker = () => {
           longitude: location.coords.longitude,
         }
         setPath((prevPath) => [...prevPath, position])
-        sendPositionToWebView(position)
+
+        // setPosition(locationData)
+        sendPositionToWebView('잠깐만')
       }
 
       if (!locationSubscription) {
@@ -117,7 +100,7 @@ const LocationTracker = () => {
           // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
           {
             accuracy: Location.Accuracy.High,
-            timeInterval: 3000,
+            timeInterval: 10000,
             distanceInterval: 0,
           },
           listener
@@ -129,41 +112,45 @@ const LocationTracker = () => {
     }
   }
 
+  const handleSetRef = (_ref) => {
+    webViewRef.current = _ref
+  }
   // webViewRef를 사용하여 웹뷰와 통신
   const sendPositionToWebView = (position) => {
-    const message = JSON.stringify(position)
-    if (webViewRef.current) {
-      webViewRef.current.postMessage(message)
-    }
+    // const message = JSON.stringify(position)
+    // console.log(message, 'message')
+    // if (webViewRef.current) {
+    //   // console.log(position, 'position')
+    // }
   }
 
-  const updateDistance = (path) => {
-    if (path.length > 0) {
-      const lastPosition = path[path.length - 1]
-      const distanceInMeters = haversine(
-        { latitude: lastPosition.latitude, longitude: lastPosition.longitude },
-        { latitude: path[0].latitude, longitude: path[0].longitude },
-        { unit: 'meter' }
-      )
-      const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
-      setDistance(distance + distanceInkilometers)
-      console.log(path)
-    }
-  }
-  const startTracking = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync()
-    if (status !== 'granted') {
-      console.error('Permission to access location was denied')
-      return
-    }
-
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Highest,
+  const send = () => {
+    const sendData = JSON.stringify({
+      id: 1,
+      type: '',
+      name: 'ssilook',
+      content: 'WebView_Test',
     })
-    const { latitude, longitude } = location.coords
-    setPath((prevPath) => [...prevPath, { latitude, longitude }])
-    setCurrentLocation({ latitude, longitude })
-
+    webViewRef.current.postMessage(sendData)
+  }
+  const handleMessage = (event) => {
+    const message = event.nativeEvent.data
+    console.log('Received position:', message)
+  }
+  // const updateDistance = (path) => {
+  //   if (path.length > 0) {
+  //     const lastPosition = path[path.length - 1]
+  //     const distanceInMeters = haversine(
+  //       { latitude: lastPosition.latitude, longitude: lastPosition.longitude },
+  //       { latitude: path[0].latitude, longitude: path[0].longitude },
+  //       { unit: 'meter' }
+  //     )
+  //     const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
+  //     setDistance(distance + distanceInkilometers)
+  //     // console.log(path)
+  //   }
+  // }
+  const startTracking = async () => {
     setIsTracking(true)
 
     intervalRef.current = setInterval(() => {
@@ -172,7 +159,6 @@ const LocationTracker = () => {
   }
 
   const stopTracking = () => {
-    console.log('durl')
     clearInterval(intervalRef.current)
     setIsTracking(false)
     setElapsedTime(0)
@@ -230,10 +216,10 @@ const LocationTracker = () => {
 
       <WebView
         style={styles.webView}
-        ref={webViewRef}
+        ref={handleSetRef}
         source={{ html: mapPolylineHTML(apiKey) }}
         onLoad={() => {
-          if (status) {
+          if (!status) {
             startLocationTracking()
           }
         }}
@@ -280,6 +266,7 @@ const LocationTracker = () => {
         )}
 
         <TouchableOpacity
+          onPress={send}
           activeOpacity={1}
           style={{ marginTop: 10, marginLeft: 10 }}
         >
