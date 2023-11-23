@@ -21,7 +21,6 @@ import daumPostSet from './htmlCode/daumPostHTML'
 import { location } from '../../slices/All/locationslice'
 
 const MylocationMap = ({ navigation }) => {
-  const webViewRef = useRef(null)
   const [city, setCity] = useState(null)
   const [address, setAddress] = useState(null)
   const [position, setPosition] = useState({})

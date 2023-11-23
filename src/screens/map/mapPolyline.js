@@ -17,15 +17,15 @@ import Header3 from '../../components/Header3'
 const LocationTracker = () => {
   const webViewRef = useRef()
   const intervalRef = useRef()
-  const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
   const status = useSelector((state) => state.stopwatch.isRunning)
   const dispatch = useDispatch()
+  const [webViewKey, setWebViewKey] = useState(1)
 
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isTracking, setIsTracking] = useState(false)
   const [locationSubscription, setLocationSubscription] = useState(null)
   const [distance, setDistance] = useState(0)
-  // const [position, setPosition] = useState({})
+  const [position, setPosition] = useState({})
 
   const [path, setPath] = useState([])
   const [currentLocation, setCurrentLocation] = useState(null)
@@ -83,55 +83,60 @@ const LocationTracker = () => {
         return
       }
 
-      const listener = (location) => {
-        const position = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        }
-        setPath((prevPath) => [...prevPath, position])
+      const locationData = await Location.getCurrentPositionAsync()
+      console.log(locationData)
+      const latitude = locationData['coords']['latitude'] // 위도 가져오기
+      const longitude = locationData['coords']['longitude'] // 경도 가져오기
+      setPosition({ lat: latitude, lng: longitude })
 
-        // setPosition(locationData)
-        sendPositionToWebView('잠깐만')
-      }
+      // const listener = (location) => {
+      //   const position = {
+      //     latitude: location.coords.latitude,
+      //     longitude: location.coords.longitude,
+      //   }
+      //   setPath((prevPath) => [...prevPath, position])
 
-      if (!locationSubscription) {
-        // 구독이 존재하는 경우 만들지 않음 (중복방지)
-        const newSubscription = Location.watchPositionAsync(
-          // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
-          {
-            accuracy: Location.Accuracy.High,
-            timeInterval: 10000,
-            distanceInterval: 0,
-          },
-          listener
-        )
-        setLocationSubscription(newSubscription)
-      }
+      //   // setPosition(locationData)
+      //   sendPositionToWebView(position)
+      // }
+
+      // if (!locationSubscription) {
+      //   // 구독이 존재하는 경우 만들지 않음 (중복방지)
+      //   const newSubscription = Location.watchPositionAsync(
+      //     // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
+      //     {
+      //       accuracy: Location.Accuracy.High,
+      //       timeInterval: 10000,
+      //       distanceInterval: 0,
+      //     },
+      //     listener
+      //   )
+      //   setLocationSubscription(newSubscription)
+      // }
     } catch (error) {
       console.log('Location tracking error:', error)
     }
   }
 
-  const handleSetRef = (_ref) => {
-    webViewRef.current = _ref
-  }
   // webViewRef를 사용하여 웹뷰와 통신
   const sendPositionToWebView = (position) => {
-    // const message = JSON.stringify(position)
-    // console.log(message, 'message')
-    // if (webViewRef.current) {
-    //   // console.log(position, 'position')
-    // }
+    const message = JSON.stringify(position)
+    console.log(message, 'message')
+    if (webViewRef.current) {
+      webViewRef.current.postMessage(message, '*')
+      // console.log(position, 'position')
+    }
   }
 
   const send = () => {
+    console.log('walkclick')
     const sendData = JSON.stringify({
       id: 1,
       type: '',
       name: 'ssilook',
       content: 'WebView_Test',
     })
-    webViewRef.current.postMessage(sendData)
+    webViewRef.current.postMessage(sendData, '*')
   }
   const handleMessage = (event) => {
     const message = event.nativeEvent.data
@@ -184,6 +189,12 @@ const LocationTracker = () => {
   // {
   //   Math.floor(elapsedTime / 1000)
   // }
+  const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
+
+  const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`
+
+  console.log(position, 'position')
+
   return (
     <View style={styles.container}>
       <Header3 title={'탕정면'}></Header3>
@@ -213,11 +224,23 @@ const LocationTracker = () => {
       ) : (
         <></>
       )}
-
+      {/* 
+      <View
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 20,
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          padding: 10,
+          borderRadius: 8,
+        }}
+      >
+        <Text></Text>
+      </View> */}
       <WebView
         style={styles.webView}
-        ref={handleSetRef}
-        source={{ html: mapPolylineHTML(apiKey) }}
+        ref={webViewRef}
+        source={{ html: mapPolylineHTML(url, position) }}
         onLoad={() => {
           if (!status) {
             startLocationTracking()
