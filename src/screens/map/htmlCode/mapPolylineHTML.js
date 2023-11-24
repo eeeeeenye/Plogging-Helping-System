@@ -7,8 +7,8 @@ const mapPolylineHTML = (url, position) => {
       <script type="text/javascript" src="${url}"></script>
 
       <style>
-        .dot {overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
-        .dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
+        .dot {z-index:-100,overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
+        // .dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
         // .dotOverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
         // .number {font-weight:bold;color:#ee6152;}
         // .dotOverlay:after {content:'';position:absolute;margin-left:-6px;left:50%;bottom:-8px;width:11px;height:8px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white_small.png')}
@@ -21,24 +21,24 @@ const mapPolylineHTML = (url, position) => {
 
       <div id="map" style="width:100%;height:100%;"></div>  
     
+
+
       <script  type="text/javascript">
 
       const container = document.getElementById('map');
       const options = {
-        center: new kakao.maps.LatLng(36.3741900, 127.3205920 ),
+        // center: new kakao.maps.LatLng(36.3741900, 127.3205920 ),
 
-        // center: new kakao.maps.LatLng(${position.lat}, ${position.lng}), // 현재 위치를 기준으로 지도를 보여준다.
+        center: new kakao.maps.LatLng(${position.lat}, ${position.lng}), // 현재 위치를 기준으로 지도를 보여준다.
         level: 1,
       };
-      // const geocoder = new kakao.maps.services.Geocoder();
 
       const map = new kakao.maps.Map(container, options);
 
-
-
-      var imageSrc = 'https://i.ibb.co/pyF1VKY/Pngtree-vector-planet-earth-icon-3985755.png', // 마커이미지의 주소입니다    
-      imageSize = new kakao.maps.Size(30, 30), // 마커이미지의 크기입니다
-      imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+    
+      var imageSrc = "https://i.ibb.co/VWM1283/free-icon-earth-5695068.png" , // 마커이미지의 주소입니다    
+      imageSize = new kakao.maps.Size(25, 25), // 마커이미지의 크기입니다
+      imageOption = {offset: new kakao.maps.Point(13, 30)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
         
   // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
   var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
@@ -47,50 +47,60 @@ const mapPolylineHTML = (url, position) => {
   // 마커를 생성합니다
   var marker = new kakao.maps.Marker({
       position: markerPosition, 
-      image: markerImage // 마커이미지 설정 
-  });
-      marker.setMap(map); // 현재 위치에 마커를 찍는다.
-      //
-      //   kakao.maps.event.addListener(map, 'center_changed', function() {
-      //     var newCenter = map.getCenter(); // 지도의 새 중심 좌표 가져오기
-      //  marker.setPosition(newCenter); // 마커의 위치를 새 중심으로 설정
-  
-    
-      // });  
+      image: markerImage // 마커이미지 설정 ,
+    });
+
+      marker.setMap(map); // 현재 위치에 마커를 찍는다.    
         
+      
+      // 지도에 표시합니다
+      var circleOverlay = new kakao.maps.CustomOverlay({
+          content: '<span class="dot"></span>',
+          position:  markerPosition,
+        });
+  
+      // 지도에 표시합니다
+      circleOverlay.setMap(map);
+        
+    kakao.maps.event.addListener(map, 'center_changed', function() {
+      var newCenter = map.getCenter(); // 지도의 새 중심 좌표 가져오기
+   marker.setPosition(newCenter); // 지구본 마커의 위치를
+   circleOverlay.setPosition(newCenter)// 마커의 위치를 새중심
+
+  });  
         // var path = []; // 이동 경로를 저장할 배열
         // var polyline = null; // 선을 표시할 변수
         // var marker = null; // 사용자 위치를 표시할 마커
         // var lastPosition = null; // 마지막 위치
     
-        // window.addEventListener('message', function (event) {
-        //   var position = JSON.parse(event.data);
-        //   if (message.reset) {
-        //     resetPath();
-        //   } else {
-        //     var position = message.position;
-        //     updatePath(position);
-        //   }
-        // });
+  //       document.addEventListener('message', function (event) {
+  //         var position = JSON.parse(event.data);
+  //         if (message.reset) {
+  //           resetPath();
+  //         } else {
+  //           var position = message.position;
+  //           updatePath(position);
+  //         }
+  //       });
 
-        // function resetPath() {
-        // // 선 제거
-        //   if (polyline) {
-        //     polyline.setMap(null);
-        //     polyline = null;
-        //   }
+  //       function resetPath() {
+  //       // 선 제거
+  //         if (polyline) {
+  //           polyline.setMap(null);
+  //           polyline = null;
+  //         }
   
-        // 마커 제거
-        // if (marker) {
-        //   marker.setMap(null);
-        //   marker = null;
-        // }
+  //       마커 제거
+  //       if (marker) {
+  //         marker.setMap(null);
+  //         marker = null;
+  //       }
   
-        // 경로 초기화
-        // path = [];
-      // }
+  //       경로 초기화
+  //       path = [];
+  //     }
 
-      // 사용자의 위치 변경을 감지하여 이동 경로를 업데이트하고 선과 마커 그림
+  //     사용자의 위치 변경을 감지하여 이동 경로를 업데이트하고 선과 마커 그림
   //     function updatePath(position) {
   //       var latLng = new kakao.maps.LatLng(position.latitude, position.longitude);
   

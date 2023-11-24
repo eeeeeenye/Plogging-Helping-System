@@ -13,6 +13,8 @@ import { toggleImageClick } from '../../slices/All/footerSlice'
 import Footer from '../../components/footer'
 import HeaderScroll3 from '../../components/HeaderScroll3'
 import Header3 from '../../components/Header3'
+import { Camera } from 'expo-camera'
+import TrackingModal from '../../components/trackingModal'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
@@ -26,6 +28,7 @@ const LocationTracker = () => {
   const [locationSubscription, setLocationSubscription] = useState(null)
   const [distance, setDistance] = useState(0)
   const [position, setPosition] = useState({})
+  const [cameraRef, setCameraRef] = useState(null)
 
   const [path, setPath] = useState([])
   const [currentLocation, setCurrentLocation] = useState(null)
@@ -142,19 +145,19 @@ const LocationTracker = () => {
     const message = event.nativeEvent.data
     console.log('Received position:', message)
   }
-  // const updateDistance = (path) => {
-  //   if (path.length > 0) {
-  //     const lastPosition = path[path.length - 1]
-  //     const distanceInMeters = haversine(
-  //       { latitude: lastPosition.latitude, longitude: lastPosition.longitude },
-  //       { latitude: path[0].latitude, longitude: path[0].longitude },
-  //       { unit: 'meter' }
-  //     )
-  //     const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
-  //     setDistance(distance + distanceInkilometers)
-  //     // console.log(path)
-  //   }
-  // }
+  const updateDistance = (path) => {
+    if (path.length > 0) {
+      const lastPosition = path[path.length - 1]
+      const distanceInMeters = haversine(
+        { latitude: lastPosition.latitude, longitude: lastPosition.longitude },
+        { latitude: path[0].latitude, longitude: path[0].longitude },
+        { unit: 'meter' }
+      )
+      const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
+      setDistance(distance + distanceInkilometers)
+      // console.log(path)
+    }
+  }
   const startTracking = async () => {
     setIsTracking(true)
 
@@ -169,9 +172,22 @@ const LocationTracker = () => {
     setElapsedTime(0)
   }
 
-  // const start = () =>{
+  const startCamera = async () => {
+    //camera 하면 modal
 
-  // }
+    const { status } = await Camera.requestCameraPermissionsAsync()
+    console.log(status)
+    if (status !== 'granted') {
+      console.log('Location permission denied')
+      return
+    }
+
+    if (cameraRef) {
+      const photo = await cameraRef.takePictureAsync()
+      console.log(photo)
+      // Handle the captured photo as needed
+    }
+  }
 
   // useEffect(() => {
   //   let intervalId
@@ -237,6 +253,14 @@ const LocationTracker = () => {
       >
         <Text></Text>
       </View> */}
+
+      <Camera
+        // style={{ flex: 1 }}
+        type={Camera.Constants.Type.back}
+        ref={(ref) => setCameraRef(ref)}
+      ></Camera>
+      <TrackingModal></TrackingModal>
+
       <WebView
         style={styles.webView}
         ref={webViewRef}
@@ -249,6 +273,7 @@ const LocationTracker = () => {
         onMessage={handleMessage}
         javaScriptEnabled={true}
       />
+
       <View style={styles.timeControl}>
         {isTracking ? (
           <>
@@ -264,6 +289,7 @@ const LocationTracker = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={startCamera}
               activeOpacity={1}
               style={{ marginBottom: 10, marginLeft: 10 }}
             >
@@ -300,7 +326,7 @@ const LocationTracker = () => {
         </TouchableOpacity>
       </View>
 
-      <Footer></Footer>
+      {/* <Footer></Footer> */}
     </View>
   )
 }
