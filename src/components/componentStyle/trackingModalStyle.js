@@ -3,10 +3,17 @@ import { StyleSheet, PixelRatio } from 'react-native'
 const pixelRatio = PixelRatio.get()
 const styles = StyleSheet.create({
   container: {
+    height: '100%',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    // opacity: 0.1,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     zIndex: 2,
+    top: 0,
+    right: 0,
+
+    // marginLeft: 30,
     // flex: 1,
   },
 
@@ -14,15 +21,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '80%',
     position: 'absolute',
-
+    padding: 16,
     borderRadius: 15,
     height: 155,
     justifyContent: 'center',
     alignItems: 'center',
-    top: 100,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    // top: 50,
+    // right: 0,
+
+    zIndex: 2,
   },
   button_box: {
     flexDirection: 'row',

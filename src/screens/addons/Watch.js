@@ -1,66 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableHighlight, Alert, StyleSheet } from 'react-native';
-import { Stopwatch } from 'react-native-stopwatch-timer';
-import { useDispatch } from 'react-redux';
-import { start, stop, reset,updateElapsedTime } from '../../slices/All/Watchslice';
+import React, { useState, useEffect } from 'react'
+import { Text, View, TouchableHighlight, Alert, StyleSheet } from 'react-native'
+import { Stopwatch } from 'react-native-stopwatch-timer'
+import { useDispatch } from 'react-redux'
+import {
+  start,
+  stop,
+  reset,
+  updateElapsedTime,
+} from '../../slices/All/Watchslice'
 
 const StopWatchAPI = ({ navigation }) => {
-  const [isRunning, setIsRunning] = useState(null);
-  const [resetStatus, setResetStatus] = useState(false);
-  const dispatch = useDispatch();
+  const [isRunning, setIsRunning] = useState(null)
+  const [resetStatus, setResetStatus] = useState(false)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (isRunning) {
-      dispatch(start());
+      dispatch(start())
     }
 
     if (isRunning === false) {
-      dispatch(stop());
-      Alert.alert(
-        '기록종료',
-        '기록을 종료하시겠습니까?',
-        [
-          {
-            text: '예',
-            onPress: () => {
-              navigation.navigate('Camera');
-            },
+      dispatch(stop())
+      Alert.alert('기록종료', '기록을 종료하시겠습니까?', [
+        {
+          text: '예',
+          onPress: () => {
+            navigation.navigate('Camera')
           },
-          {
-            text: '아니오',
-            onPress: () => {
-              dispatch(stop());
-            },
+        },
+        {
+          text: '아니오',
+          onPress: () => {
+            dispatch(stop())
           },
-        ],
-      );
+        },
+      ])
     }
-  }, [isRunning]);
+  }, [isRunning])
 
   useEffect(() => {
     if (resetStatus) {
-      dispatch(reset());
+      dispatch(reset())
     }
-  }, [resetStatus]);
+  }, [resetStatus])
 
   const toggleStopwatch = () => {
-    setIsRunning(!isRunning);
-    setResetStatus(false);
-  };
+    setIsRunning(!isRunning)
+    setResetStatus(false)
+  }
 
   const resetStopwatch = () => {
-    setIsRunning(false);
-    setResetStatus(true);
-  };
+    setIsRunning(false)
+    setResetStatus(true)
+  }
 
   const handleTimeElapsed = (time) => {
-    const str = time;
-    const result = str.replace(/:/g, "");
-    const number = parseInt(result);
-    const seconds = number / 1000;
+    const str = time
+    const result = str.replace(/:/g, '')
+    const number = parseInt(result)
+    const seconds = number / 1000
 
-    if(!isRunning){dispatch(updateElapsedTime(seconds))}
-  };
+    if (!isRunning) {
+      dispatch(updateElapsedTime(seconds))
+    }
+  }
 
   return (
     <View>
@@ -70,19 +73,27 @@ const StopWatchAPI = ({ navigation }) => {
         start={isRunning}
         reset={resetStatus}
         options={options}
-        getTime={(time) => {handleTimeElapsed(time)}}
+        getTime={(time) => {
+          handleTimeElapsed(time)
+        }}
       />
-      <View style={{position:'absolute', top:480, left:180}}>
-      <TouchableHighlight style={styles.circleButton} onPress={toggleStopwatch}>
-        <Text style={styles.buttonText}>{!isRunning ? 'Start' : 'Stop'}</Text>
-      </TouchableHighlight>
-      <TouchableHighlight style={styles.circleButton} onPress={resetStopwatch}>
-        <Text style={styles.buttonText}>Reset</Text>
-      </TouchableHighlight>
+      <View style={{ position: 'absolute', top: 480, left: 180 }}>
+        <TouchableHighlight
+          style={styles.circleButton}
+          onPress={toggleStopwatch}
+        >
+          <Text style={styles.buttonText}>{!isRunning ? 'Start' : 'Stop'}</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={styles.circleButton}
+          onPress={resetStopwatch}
+        >
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableHighlight>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const options = {
   container: {
@@ -96,14 +107,14 @@ const options = {
     color: '#FFF',
     marginLeft: 10,
   },
-};
+}
 
 const styles = StyleSheet.create({
   circleButton: {
     width: 70,
     height: 70,
-    marginLeft:30,
-    marginTop:10,
+    marginLeft: 30,
+    marginTop: 10,
     borderRadius: 40,
     backgroundColor: 'purple',
     justifyContent: 'center',
@@ -114,6 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#FFF',
   },
-});
+})
 
-export default StopWatchAPI;
+export default StopWatchAPI

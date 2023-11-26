@@ -1,22 +1,22 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-interface uri{
-    uri: string;
+interface uri {
+  uri: string
 }
 
 const initialState: uri = {
-    uri:''
+  uri: '',
 }
 
 const uriSlice = createSlice({
-    name:'uriState',
-    initialState,
-    reducers: {
-        save(state,action: PayloadAction<string>){
-            state.uri = action.payload;
-        }
-    }
+  name: 'uriState',
+  initialState,
+  reducers: {
+    save(state, action: PayloadAction<string>) {
+      state.uri = action.payload
+    },
+  },
 })
 
-export const {save} = uriSlice.actions;
-export default uriSlice.reducer;
+export const { save } = uriSlice.actions
+export default uriSlice.reducer

@@ -1,6 +1,12 @@
-import React, { useState,useEffect } from 'react'
-import { View, StyleSheet, TouchableOpacity, ScrollView,Image } from 'react-native'
-import { Text,Checkbox } from 'react-native-paper'
+import React, { useState, useEffect } from 'react'
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native'
+import { Text, Checkbox } from 'react-native-paper'
 import Background from '../../components/Background'
 import Button from '../../components/Button'
 import TextInput from '../../components/TextInput'
@@ -16,7 +22,6 @@ import Constants from 'expo-constants'
 import { useDispatch } from 'react-redux'
 import { authorize } from '../../slices/All/Authslice'
 
-
 // phone 설정, id 자동 설정 해야함, phone validation 코드작성
 
 export default function RegisterScreen({ navigation }) {
@@ -24,125 +29,137 @@ export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
   const [passwordConfirm, setPasswordCF] = useState({ value: '', error: '' })
-  const [checked1, setChecked1] = useState(false);
-  const [checked2, setChecked2] = useState(false);
+  const [checked1, setChecked1] = useState(false)
+  const [checked2, setChecked2] = useState(false)
   const [phone, setPhone] = useState({ value: '', error: '' })
-  const ip = Constants.manifest.extra.Local_ip;
-  const [check,clientCheck] = useState(false)
+  const ip = Constants.manifest.extra.Local_ip
+  const [check, clientCheck] = useState(false)
   const dispatch = useDispatch()
 
   //console.log(ip)
   const [client, setClient] = useState({
-    Client_name : '',
-    Client_pwd : '',
-    Client_email : '',
-    Client_phone : ''
+    Client_name: '',
+    Client_pwd: '',
+    Client_email: '',
+    Client_phone: '',
   })
 
   const [clientDB, getClient] = useState({
     Client_name: '',
-    Client_email:'',
-    dupCheck: false
+    Client_email: '',
+    dupCheck: false,
   })
 
   useEffect(() => {
-    setClient(prevClient => ({
+    setClient((prevClient) => ({
       ...prevClient,
       Client_name: name.value,
       Client_pwd: password.value,
       Client_email: email.value,
-      Client_phone: phone.value
-    }));
-  }, [name.value, password.value, email.value, phone.value]);
+      Client_phone: phone.value,
+    }))
+  }, [name.value, password.value, email.value, phone.value])
 
   useEffect(() => {
-    if(check){                   // dup, valid check
-      if(clientDB.Client_name === client.Client_name){
-        setName({ ...name, error: "already exist!!" })
+    if (check) {
+      // dup, valid check
+      if (clientDB.Client_name === client.Client_name) {
+        setName({ ...name, error: 'already exist!!' })
         return
-      }else if(clientDB.Client_email === client.Client_email){
-        setEmail({ ...email, error: "already exist!!" })
+      } else if (clientDB.Client_email === client.Client_email) {
+        setEmail({ ...email, error: 'already exist!!' })
         return
-      }else if(check === true && clientDB.dupCheck === true){
+      } else if (check === true && clientDB.dupCheck === true) {
         addClient()
       }
 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'LocationSetting'}],
+        routes: [{ name: 'LocationSetting' }],
       })
     }
-  }, [clientDB]);
+  }, [clientDB])
 
-  const addClient = async()=>{             // 사용자 DB 구축
+  const addClient = async () => {
+    // 사용자 DB 구축
     let clientData
-    const id = await axios.post(`http://${ip}:3000/clients`,client)
-    .then(res => {
-      const data = res.data
+    const id = await axios
+      .post(`http://${ip}:3000/clients`, client)
+      .then((res) => {
+        const data = res.data
 
-      clientData = {
-        clientID : data[0].clientID,
-        email: client.Client_email,
-        ClientName: client.Client_name,
-        phone: client.Client_phone
-      }
-      console.log(clientData.clientID,"===========")
-    })
-    .catch(error => console.log(error));
+        clientData = {
+          clientID: data[0].clientID,
+          email: client.Client_email,
+          ClientName: client.Client_name,
+          phone: client.Client_phone,
+        }
+        console.log(clientData.clientID, '===========')
+      })
+      .catch((error) => console.log(error))
 
     dispatch(authorize(clientData))
-  };
+  }
 
-  const pullClient =  async() =>{            // 사용자 DB 조회
-    await axios.post(`http://${ip}:3000/plogging/client`,{Client_email:client.Client_email,Client_name:client.Client_name})
-    .then(res => {
-      if(res.data.length !== 0){
-        if(res.data[0].EMAIL === email.value){
-          getClient((prevState)=>{
-            return{
+  const pullClient = async () => {
+    // 사용자 DB 조회
+    await axios
+      .post(`http://${ip}:3000/plogging/client`, {
+        Client_email: client.Client_email,
+        Client_name: client.Client_name,
+      })
+      .then((res) => {
+        if (res.data.length !== 0) {
+          if (res.data[0].EMAIL === email.value) {
+            getClient((prevState) => {
+              return {
+                ...prevState,
+                Client_email: res.data[0].EMAIL,
+              }
+            })
+          }
+
+          if (res.data[0].clientName === name.value) {
+            getClient((prevState) => {
+              return {
+                ...prevState,
+                Client_name: res.data[0].clientName,
+              }
+            })
+          }
+        } else {
+          getClient((prevState) => {
+            return {
               ...prevState,
-              Client_email: res.data[0].EMAIL,
+              dupCheck: true,
             }
           })
         }
-
-         if(res.data[0].clientName === name.value){
-              getClient((prevState)=>{
-                return{
-                  ...prevState,
-                  Client_name: res.data[0].clientName
-                }
-              }) 
-        }}else{
-          getClient((prevState)=>{
-            return{
-              ...prevState,
-              dupCheck: true
-            }
-          })
-        }
-    }
-      )
-    .catch((error)=>{
-      console.log(error);
-    })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const onSignUpPressed = () => {
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
-    const passwordCFError = passwordConfirmer(passwordConfirm.value,password.value)
+    const passwordCFError = passwordConfirmer(
+      passwordConfirm.value,
+      password.value
+    )
 
     pullClient()
-    
-    if (emailError || passwordError || nameError || passwordCFError) {              // TextInput이 비어있거나 정해진 글자수를 초과했을 때 오류
+
+    if (emailError || passwordError || nameError || passwordCFError) {
+      // TextInput이 비어있거나 정해진 글자수를 초과했을 때 오류
       setName({ ...name, error: nameError })
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
-      setPasswordCF({...passwordConfirm,error: passwordCFError})
+      setPasswordCF({ ...passwordConfirm, error: passwordCFError })
       return
-    }else{
+    } else {
       clientCheck(true)
       return
     }
@@ -151,86 +168,91 @@ export default function RegisterScreen({ navigation }) {
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
-      <Image source={image} style={{width:100,height:100, marginTop:60, marginBottom:10}}/>
-      <ScrollView style={{width:'100%'}}>
-      <TextInput
-        label="이름"
-        returnKeyType="next"
-        value={name.value}
-        onChangeText={(text) => setName({ value: text, error: '' })}
-        error={!!name.error}
-        errorText={name.error}
+      <Image
+        source={image}
+        style={{ width: 100, height: 100, marginTop: 60, marginBottom: 10 }}
       />
+      <ScrollView style={{ width: '100%' }}>
+        <TextInput
+          label="이름"
+          returnKeyType="next"
+          value={name.value}
+          onChangeText={(text) => setName({ value: text, error: '' })}
+          error={!!name.error}
+          errorText={name.error}
+        />
 
-      <TextInput
-        label="비밀번호"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
+        <TextInput
+          label="비밀번호"
+          returnKeyType="done"
+          value={password.value}
+          onChangeText={(text) => setPassword({ value: text, error: '' })}
+          error={!!password.error}
+          errorText={password.error}
+          secureTextEntry
+        />
 
-      <TextInput
-        label="비밀번호 확인"
-        returnKeyType="done"
-        value={passwordConfirm.value}
-        onChangeText={(text) => setPasswordCF({ value: text, error: '' })}
-        error={!!passwordConfirm.error}
-        errorText={passwordConfirm.error}
-        secureTextEntry
-      />
+        <TextInput
+          label="비밀번호 확인"
+          returnKeyType="done"
+          value={passwordConfirm.value}
+          onChangeText={(text) => setPasswordCF({ value: text, error: '' })}
+          error={!!passwordConfirm.error}
+          errorText={passwordConfirm.error}
+          secureTextEntry
+        />
 
-      <TextInput
-        label="이메일"
-        returnKeyType="next"
-        value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
-        autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
-      />
+        <TextInput
+          label="이메일"
+          returnKeyType="next"
+          value={email.value}
+          onChangeText={(text) => setEmail({ value: text, error: '' })}
+          error={!!email.error}
+          errorText={email.error}
+          autoCapitalize="none"
+          autoCompleteType="email"
+          textContentType="emailAddress"
+          keyboardType="email-address"
+        />
 
-      <TextInput
-        label="전화번호"
-        returnKeyType="next"
-        value={phone.value}
-        onChangeText={(text) => setPhone({ value: text, error: '' })}
-        error={!!phone.error}
-        errorText={phone.error}
-      />
+        <TextInput
+          label="전화번호"
+          returnKeyType="next"
+          value={phone.value}
+          onChangeText={(text) => setPhone({ value: text, error: '' })}
+          error={!!phone.error}
+          errorText={phone.error}
+        />
 
-      <Checkbox.Item 
-      label="이용약관동의" 
-      status={checked1 ? 'checked' : 'unchecked'}
-      onPress={() => {
-        setChecked1(!checked1);
-      }} />
+        <Checkbox.Item
+          label="이용약관동의"
+          status={checked1 ? 'checked' : 'unchecked'}
+          onPress={() => {
+            setChecked1(!checked1)
+          }}
+        />
 
-      <Checkbox.Item 
-      label="개인정보 수집 및 이용 동의" 
-      status={checked2 ? 'checked' : 'unchecked'}
-      onPress={() => {
-        setChecked2(!checked2);
-      }} />
-      
-      <Button
-        mode="contained"
-        onPress={onSignUpPressed}
-        style={{ marginTop: 24 }}
-      >
-        회원가입
-      </Button>
-      <View style={styles.row}>
-        <Text>이미 계정이 있으신가요? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
-          <Text style={styles.link}>로그인</Text>
-        </TouchableOpacity>
-      </View>
+        <Checkbox.Item
+          label="개인정보 수집 및 이용 동의"
+          status={checked2 ? 'checked' : 'unchecked'}
+          onPress={() => {
+            setChecked2(!checked2)
+          }}
+        />
+
+        <Button
+          mode="contained"
+          onPress={onSignUpPressed}
+          style={{ marginTop: 24 }}
+        >
+          회원가입
+        </Button>
+        <View style={styles.row}>
+          <Text>이미 계정이 있으신가요? </Text>
+          <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
+            <Text style={styles.link}>로그인</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </Background>
   )

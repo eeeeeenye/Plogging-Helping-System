@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, memo, useFocusEffect } from 'react'
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image, Modal,Animated } from 'react-native'
 import { Text } from 'react-native-paper'
 import { WebView } from 'react-native-webview'
 import Constants from 'expo-constants'
@@ -15,6 +15,7 @@ import HeaderScroll3 from '../../components/HeaderScroll3'
 import Header3 from '../../components/Header3'
 import { Camera } from 'expo-camera'
 import TrackingModal from '../../components/trackingModal'
+import { modalToggle } from '../../slices/All/toggle'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
@@ -29,6 +30,8 @@ const LocationTracker = () => {
   const [distance, setDistance] = useState(0)
   const [position, setPosition] = useState({})
   const [cameraRef, setCameraRef] = useState(null)
+  const [modalCamera,setModalCamera] = useState(false);
+  const [modalWalkTracking,setModalWalkTracking] = useState(false)
 
   const [path, setPath] = useState([])
   const [currentLocation, setCurrentLocation] = useState(null)
@@ -77,6 +80,14 @@ const LocationTracker = () => {
       setLocationSubscription(null)
     }
   }
+
+const  pauseTimer=() => {
+    clearInterval(  intervalRef.current
+    );
+    console.log('타이머 일시정지');
+  }
+  
+  
 
   const startLocationTracking = async () => {
     try {
@@ -182,7 +193,11 @@ const LocationTracker = () => {
       return
     }
 
-    if (cameraRef) {
+
+    setModalCamera(true)
+    setIsTracking(false)
+    pauseTimer()
+    if (cameraRef&&modalCamera) {
       const photo = await cameraRef.takePictureAsync()
       console.log(photo)
       // Handle the captured photo as needed
@@ -205,12 +220,63 @@ const LocationTracker = () => {
   // {
   //   Math.floor(elapsedTime / 1000)
   // }
+
+  
+
+  const closeModal = () => {
+    setModalCamera(false)
+  startTracking()
+
+
+
+  }
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
 
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`
 
   console.log(position, 'position')
 
+
+  const [count, setCount] = useState(4);
+  const animatedValue =useRef(new Animated.Value(3)).current;
+
+  useEffect(() => {
+    useEffect(() => {
+      const countdownInterval = setInterval(() => {
+        // 각 숫자에 대한 애니메이션
+        Animated.sequence([
+          Animated.timing(animatedValue, {
+            toValue: 1.5,
+            duration: 500,
+            // easing: Easing.linear,
+            useNativeDriver: true,
+          }),
+          Animated.timing(animatedValue, {
+            toValue: 1,
+            duration: 500,
+            // easing: Easing.linear,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          // 애니메이션이 끝나면 숫자 감소
+          setCount((prevCount) => prevCount - 1);
+  
+          if (count === 1) {
+            // 1까지 도달하면 타이머 종료
+            clearInterval(countdownInterval);
+            console.log('카운트 다운 종료!');
+          }
+        });
+      }, 1000);
+  
+      // 컴포넌트가 언마운트되면 타이머 정리
+      return () => clearInterval(countdownInterval);
+    }, [count]);
+  
+  }, [animatedValue]);
+
+
+  // console.log(count)
   return (
     <View style={styles.container}>
       <Header3 title={'탕정면'}></Header3>
@@ -240,6 +306,18 @@ const LocationTracker = () => {
       ) : (
         <></>
       )}
+
+<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Animated.Text
+        style={{
+          fontSize: 1,
+          transform: [{scale:animatedValue }],
+          opacity: animatedValue,
+        
+        }}>
+        {count}
+      </Animated.Text>
+    </View>
       {/* 
       <View
         style={{
@@ -259,7 +337,55 @@ const LocationTracker = () => {
         type={Camera.Constants.Type.back}
         ref={(ref) => setCameraRef(ref)}
       ></Camera>
-      <TrackingModal></TrackingModal>
+      {/* <View></View> */}
+      {modalCamera?
+
+      <Modal
+        animationType="slide"
+        onRequestClose={closeModal}
+        transparent={true}
+      >
+        <View style={styles.modal_container}>
+          <View style={styles.modal_content}>
+            <Text>
+              사진 촬영을 하면 플로깅 기록이 중지됩니다.사진 촬영을
+              하시겠습니까?
+            </Text>
+            <View style={styles.button_box}>
+              <TouchableOpacity style={styles.button} >
+                <Text>예</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={closeModal}>
+                <Text>아니오</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+:<></>
+}
+{/* 
+      <Modal
+        animationType="slide"
+        onRequestClose={closeModal}
+        transparent={true}
+      >
+        <View style={styles.modal_container}>
+          <View style={styles.modal_content}>
+            <Text>
+              다른사람을 추적하시겠습니까?
+            </Text>
+            <View style={styles.button_box}>
+              <TouchableOpacity style={styles.button} onPress={closeModal}>
+                <Text>예</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={closeModal}>
+                <Text>아니오</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal> */}
 
       <WebView
         style={styles.webView}

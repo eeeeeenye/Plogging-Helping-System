@@ -1,49 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { WebView } from 'react-native-webview';
-import { View, Alert } from 'react-native';
-import Constants from 'expo-constants';
-import * as Location from 'expo-location';
-import axios from 'axios';
-import Button from '../../components/Button';
-import RestroomSet from './htmlCode/RestroomHTML';
+import React, { useEffect, useState } from 'react'
+import { WebView } from 'react-native-webview'
+import { View, Alert } from 'react-native'
+import Constants from 'expo-constants'
+import * as Location from 'expo-location'
+import axios from 'axios'
+import Button from '../../components/Button'
+import RestroomSet from './htmlCode/RestroomHTML'
 
 const RestroomSettings = ({ navigation }) => {
-  const [position, setPosition] = useState(null);
-  const [city, setCity] = useState(null);
-  const ip = Constants.manifest.extra.Local_ip;
+  const [position, setPosition] = useState(null)
+  const [city, setCity] = useState(null)
+  const ip = Constants.manifest.extra.Local_ip
 
   const getLocation = async () => {
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync()
 
       if (status !== 'granted') {
         // 처리 권한이 부여되지 않음
-        return;
+        return
       }
 
-      const locationData = await Location.getCurrentPositionAsync();
-      const latitude = locationData['coords']['latitude'];
-      const longitude = locationData['coords']['longitude'];
+      const locationData = await Location.getCurrentPositionAsync()
+      const latitude = locationData['coords']['latitude']
+      const longitude = locationData['coords']['longitude']
       const location = await Location.reverseGeocodeAsync(
         { latitude, longitude },
         { useGoogleMaps: false }
-      );
-      setPosition({ lat: latitude, lng: longitude });
-      setCity(location[0].district);
+      )
+      setPosition({ lat: latitude, lng: longitude })
+      setCity(location[0].district)
     } catch (error) {
-      console.error(error);
-      Alert.alert(error);
+      console.error(error)
+      Alert.alert(error)
     }
-  };
+  }
 
   const fetchToiletData = async () => {
     try {
-      const response = await fetch('http://api.data.go.kr/openapi/tn_pubr_public_toilet_api');
-      const data = await response.json();
-      const toiletLocations = data.result;
+      const response = await fetch(
+        'http://api.data.go.kr/openapi/tn_pubr_public_toilet_api'
+      )
+      const data = await response.json()
+      const toiletLocations = data.result
 
       const RestroomSet = (url, position, markers) => {
-        return(`
+        return `
           <html>
             <head>
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +60,9 @@ const RestroomSettings = ({ navigation }) => {
             <body>
               <div id="map"></div>
               <script>
-                const markers = ${JSON.stringify(markers)}; // 가져온 화장실 위치 데이터
+                const markers = ${JSON.stringify(
+                  markers
+                )}; // 가져온 화장실 위치 데이터
 
                 // Kakao 지도 API 초기화 
                 kakao.maps.load(() => {
@@ -81,45 +85,45 @@ const RestroomSettings = ({ navigation }) => {
               </script>
             </body>
           </html>
-        `);
-      };
+        `
+      }
 
       const html = RestroomSet(
         Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY,
         position,
         toiletLocations
-      );
-      return html;
+      )
+      return html
     } catch (error) {
-      console.error(error);
-      Alert.alert(error);
+      console.error(error)
+      Alert.alert(error)
     }
-  };
+  }
 
   const onPressButton = async () => {
     try {
-      console.log(city, '----------------->>>>');
-      await axios.put(`http://${ip}:3000/plogging/:params`, { city: city });
-      navigation.navigate('HomeMain');
+      console.log(city, '----------------->>>>')
+      await axios.put(`http://${ip}:3000/plogging/:params`, { city: city })
+      navigation.navigate('HomeMain')
     } catch (event) {
-      console.log(event);
+      console.log(event)
     }
-  };
+  }
 
   useEffect(() => {
     const fetchData = async () => {
-      await getLocation();
-      const html = await fetchToiletData();
-      setWebViewHtml(html);
-    };
+      await getLocation()
+      const html = await fetchToiletData()
+      setWebViewHtml(html)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
-  const [webViewHtml, setWebViewHtml] = useState(null);
+  const [webViewHtml, setWebViewHtml] = useState(null)
 
   if (!position || !webViewHtml) {
-    return null;
+    return null
   }
 
   return (
@@ -140,7 +144,7 @@ const RestroomSettings = ({ navigation }) => {
 
       {/* <MyComponent /> MyComponent를 렌더링 */}
     </View>
-  );
-};
+  )
+}
 
-export default RestroomSettings;
+export default RestroomSettings

@@ -1,5 +1,5 @@
-const LocationSet =(url,position)=>{ 
-  return(`
+const LocationSet = (url, position) => {
+  return `
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@ const LocationSet =(url,position)=>{
         </script>
       </body>
     </html>
-  `)
+  `
 }
 
-export default LocationSet;
+export default LocationSet

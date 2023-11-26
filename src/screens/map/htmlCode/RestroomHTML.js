@@ -37,7 +37,7 @@ const RestroomSet = (markers) => {
         </script>
       </body>
     </html>
-  `;
-};
+  `
+}
 
-export default RestroomSet;
+export default RestroomSet

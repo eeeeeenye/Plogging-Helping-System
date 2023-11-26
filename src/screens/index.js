@@ -17,5 +17,4 @@ export { default as RestroomSettings } from './map/Restroom'
 export { default as MyPage } from './mypage/MyPage'
 export { default as onlymap } from './map/public'
 export { default as pointHistory } from './mypage/pointHistory'
-export { default as RecordHistory} from './mypage/recordHistory'
-
+export { default as RecordHistory } from './mypage/recordHistory'

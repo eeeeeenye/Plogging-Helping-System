@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import WebView from 'react-native-webview';
-import RestroomSet from './htmlCode/RestroomHTML';
-import axios from 'axios';
-import Constants from 'expo-constants';
+import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
+import WebView from 'react-native-webview'
+import RestroomSet from './htmlCode/RestroomHTML'
+import axios from 'axios'
+import Constants from 'expo-constants'
 
 function Public_toilet({ navigation }) {
-  const [markers, setMarkers] = useState([]); // 정제된 데이터를 저장할 상태 변수
-  const ip = Constants.manifest.extra.Local_ip;
+  const [markers, setMarkers] = useState([]) // 정제된 데이터를 저장할 상태 변수
+  const ip = Constants.manifest.extra.Local_ip
 
   useEffect(() => {
     // 백엔드에서 정제된 데이터를 가져와 markers 상태 변수에 설정
-    getData();
+    getData()
 
-    navigation.navigate('TabNav');
-  }, []);
+    navigation.navigate('TabNav')
+  }, [])
 
   const getData = async () => {
     try {
-      const response = await axios.get(`http://${ip}:3000/publicToilets`);
-      const data = response.data;
-      setMarkers(data);
+      const response = await axios.get(`http://${ip}:3000/publicToilets`)
+      const data = response.data
+      setMarkers(data)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -36,10 +36,7 @@ function Public_toilet({ navigation }) {
         />
       </View>
     </View>
-  );
+  )
 }
 
-export default Public_toilet;
-
-
-
+export default Public_toilet
