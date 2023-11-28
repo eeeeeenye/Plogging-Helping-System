@@ -1,5 +1,12 @@
 import React, { useRef, useEffect, useState, memo, useFocusEffect } from 'react'
-import { View, StyleSheet, TouchableOpacity, Image, Modal,Animated } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Modal,
+  Animated,
+} from 'react-native'
 import { Text } from 'react-native-paper'
 import { WebView } from 'react-native-webview'
 import Constants from 'expo-constants'
@@ -32,16 +39,16 @@ const LocationTracker = () => {
   const [distance, setDistance] = useState(0)
   const [position, setPosition] = useState({})
   const [cameraRef, setCameraRef] = useState(null)
-  const [modalCamera,setModalCamera] = useState(false);
-  const [modalWalkTracking,setModalWalkTracking] = useState(false)
+  const [modalCamera, setModalCamera] = useState(false)
+  const [modalWalkTracking, setModalWalkTracking] = useState(false)
 
   const [path, setPath] = useState([])
   const [currentLocation, setCurrentLocation] = useState(null)
   const haversine = require('haversine')
 
-  const [count, setCount] = useState(4);
-  const [countDown,setCountDown] = useState(false);
-  const animatedValue =useRef(new Animated.Value(1)).current;
+  let [count, setCount] = useState(4)
+  const [countDown, setCountDown] = useState(false)
+  const animatedValue = useRef(new Animated.Value(1)).current
 
   useEffect(() => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
@@ -88,13 +95,11 @@ const LocationTracker = () => {
     }
   }
 
-const  pauseTimer=() => {
-    clearInterval(intervalRef.current);
+  const pauseTimer = () => {
+    clearInterval(intervalRef.current)
     setElapsedTime(0)
-      console.log('타이머 일시정지');
+    console.log('타이머 일시정지')
   }
-  
-  
 
   const startLocationTracking = async () => {
     try {
@@ -160,7 +165,6 @@ const  pauseTimer=() => {
     webViewRef.current.postMessage(sendData, '*')
   }
   const handleMessage = (event) => {
-  
     const message = event.nativeEvent.data
     console.log('Received position:', message)
   }
@@ -177,93 +181,73 @@ const  pauseTimer=() => {
       // console.log(path)
     }
   }
+
   const startCountDown = () => {
+    const countdownInterval = setInterval(() => {
+      // 각 숫자에 대한 애니메이션
 
+      console.log('몇번 반복')
+      Animated.sequence([
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: 0,
+          // easing: Easing.linear,
+          useNativeDriver: false,
+        }),
 
-    // console.log(countDown)
+        Animated.timing(animatedValue, {
+          toValue: 100,
+          duration: 1000,
+          // easing: Easing.linear,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        // 애니메이션이 끝나면 숫자 감소
 
-  const countdownInterval = setInterval(() => {
-    // 각 숫자에 대한 애니메이션
-    
+        setCount((prevCount) => prevCount - 1)
 
+        // console.log('여기')
 
+        console.log(count, 'count ')
+        if (count === 2) {
+          intervalRef.current = setInterval(() => {
+            setElapsedTime((prev) => prev + 1)
+          }, 1000)
+          console.log('카운트 다운 종료!')
+          setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
+          setIsTracking(true)
 
-    Animated.sequence([  
-      
-      Animated.timing(animatedValue, {
-      toValue: 1,
-      duration: 0,
-      // easing: Easing.linear,
-      useNativeDriver: true,
-    }),
- 
+          // clearInterval(countdownInterval);
 
-      Animated.timing(animatedValue, {
-        toValue: 100,
-        duration: 1000,
-        // easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-  
-    ]).start(() => {
-      // 애니메이션이 끝나면 숫자 감소
-      if(count>1){
-        setCount((prevCount) => prevCount - 1);
+          // return
 
-// console.log('여기')
-      }
+          setCount(5)
+        }
+      })
+    }, 1000)
 
-     else if (count ===0) {
-        console.log(count,'count ')
-    
-    
-    // intervalRef.current = setInterval(() => {
-    //   setElapsedTime((prev) => prev + 1)
-    // }, 1000)
-    clearInterval(countdownInterval);
-
-        console.log('카운트 다운 종료!');
-        setCountDown(false); // 카운트 종료 후 버튼을 다시 활성화
-      setIsTracking(true)
-      setCount(4)
-    
-      return 
-    
-      }
-
-    });
-
-  }, 1000);
-
-
-
-  return () => clearInterval(countdownInterval);
-
-
-  // countdownInterval
-
-
-
-  
-    
-  // if (count === 1) {
-
-  //   setIsTracking(true)
-
-  //   // 1까지 도달하면 타이머 종료
-  //   clearInterval(countdownInterval);
-  //   console.log('카운트 다운 종료!');
-  // }
-
-
-  
+    return () => clearInterval(countdownInterval)
   }
 
+  useEffect(() => {
+    if (countDown) {
+      console.log(countDown)
+      // 이전에 설정한 setInterval 제거 후 새로운 setInterval 설정
+      const clearPreviousInterval = startCountDown()
+      // startCountDown()
+      // useEffect가 다시 호출될 때 이전에 설정한 setInterval을 제거
 
-const handleStartButton= () =>{
-setIsTracking(false)
-setCountDown(true)
-}
+
+      return clearPreviousInterval
+    }
+
+    // startTracking()
+  }, [countDown, count])
+
+  const handleStartButton = () => {
+    setIsTracking(false)
+    setCountDown(true)
+  }
 
   const stopTracking = () => {
     clearInterval(intervalRef.current)
@@ -281,58 +265,31 @@ setCountDown(true)
       return
     }
 
-//허용 할지 말지, 허용 이 된경우라면 모달창을띄우고, tracking을 중지한다.
+    //허용 할지 말지, 허용 이 된경우라면 모달창을띄우고, tracking을 중지한다.
 
     setModalCamera(true)
     pauseTimer()
-    if (cameraRef&&modalCamera) {
-
-    
-
+    if (cameraRef && modalCamera) {
       const photo = await cameraRef.takePictureAsync()
       console.log(photo)
       // Handle the captured photo as needed
     }
   }
 
-useEffect(()=>{
-  console.log(countDown)
-  if(countDown){
-    console.log(countDown)
-
-    startCountDown()
-  }
-  // return () => clearInterval(countdownInterval);
-
-
-
-// startTracking()
-},[countDown,count])
-
   const closeModal = () => {
     setModalCamera(false)
-  // startTracking()
-
-
+    // startTracking()
   }
 
-  
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
 
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`
 
+  // const modalYes = () =>{
 
+  // }
 
- 
-
-// const modalYes = () =>{
-
-
-
-// }
-
-
-  console.log(count)
+  console.log(count, '외부 카운트2')
   return (
     <View style={styles.container}>
       <Header3 title={'탕정면'}></Header3>
@@ -363,21 +320,31 @@ useEffect(()=>{
         <></>
       )}
 
-{countDown?
-<View style={{zIndex:10, backgroundColor:'black',width:'100%',height:'100%', justifyContent: 'center', alignItems: 'center' }}>
-      <Animated.Text
-        style={{
-          fontSize: 1,
-          color:'white' ,
-          transform: [{scale:animatedValue }],
-          opacity: animatedValue,
-        
-        }}>
-        {count>3?'':count}
-      </Animated.Text>
-    </View>
-
-:''}
+      {countDown ? (
+        <View
+          style={{
+            zIndex: 10,
+            backgroundColor: 'black',
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Animated.Text
+            style={{
+              fontSize: 1,
+              color: 'white',
+              transform: [{ scale: animatedValue }],
+              opacity: animatedValue,
+            }}
+          >
+            {count > 3 ? '' : count}
+          </Animated.Text>
+        </View>
+      ) : (
+        ''
+      )}
       {/* 
       <View
         style={{
@@ -398,35 +365,36 @@ useEffect(()=>{
         ref={(ref) => setCameraRef(ref)}
       ></Camera>
       {/* <View></View> */}
-      {modalCamera?
-
-      <Modal
-        animationType="slide"
-        onRequestClose={closeModal}
-        transparent={true}
-      >
-        <View style={styles.modal_container}>
-          <View style={styles.modal_content}>
-            <Text>
-              사진 촬영을 하면 플로깅 기록이 중지됩니다.사진 촬영을
-              하시겠습니까?
-            </Text>
-            <View style={styles.button_box}>
-              <TouchableOpacity 
-              // onPress=
-              style={styles.button} >
-                <Text>예</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={closeModal}>
-                <Text>아니오</Text>
-              </TouchableOpacity>
+      {modalCamera ? (
+        <Modal
+          animationType="slide"
+          onRequestClose={closeModal}
+          transparent={true}
+        >
+          <View style={styles.modal_container}>
+            <View style={styles.modal_content}>
+              <Text>
+                사진 촬영을 하면 플로깅 기록이 중지됩니다.사진 촬영을
+                하시겠습니까?
+              </Text>
+              <View style={styles.button_box}>
+                <TouchableOpacity
+                  // onPress=
+                  style={styles.button}
+                >
+                  <Text>예</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={closeModal}>
+                  <Text>아니오</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-:<></>
-}
-{/* 
+        </Modal>
+      ) : (
+        <></>
+      )}
+      {/* 
       <Modal
         animationType="slide"
         onRequestClose={closeModal}
