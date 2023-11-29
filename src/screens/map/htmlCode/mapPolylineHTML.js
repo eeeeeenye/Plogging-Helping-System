@@ -68,12 +68,15 @@ const mapPolylineHTML = (url, position) => {
    circleOverlay.setPosition(newCenter)// 마커의 위치를 새중심
 
   });  
-        // var path = []; // 이동 경로를 저장할 배열
+        var path = []; // 이동 경로를 저장할 배열
         // var polyline = null; // 선을 표시할 변수
         // var marker = null; // 사용자 위치를 표시할 마커
         // var lastPosition = null; // 마지막 위치
     
-  //       document.addEventListener('message', function (event) {
+        document.addEventListener('message', function (event) {
+
+
+        })
   //         var position = JSON.parse(event.data);
   //         if (message.reset) {
   //           resetPath();

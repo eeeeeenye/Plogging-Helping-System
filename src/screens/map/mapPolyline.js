@@ -28,7 +28,7 @@ const LocationTracker = () => {
   const webViewRef = useRef()
   const intervalRef = useRef()
 
-  const countDownRef = useRef()
+  let countDownRef = useRef(0)
   const status = useSelector((state) => state.stopwatch.isRunning)
   const dispatch = useDispatch()
   const [webViewKey, setWebViewKey] = useState(1)
@@ -46,9 +46,9 @@ const LocationTracker = () => {
   const [currentLocation, setCurrentLocation] = useState(null)
   const haversine = require('haversine')
 
-  let [count, setCount] = useState(4)
+  const [count, setCount] = useState(4)
   const [countDown, setCountDown] = useState(false)
-  const animatedValue = useRef(new Animated.Value(1)).current
+  const animatedValue = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
@@ -192,31 +192,32 @@ const LocationTracker = () => {
           toValue: 1,
           duration: 0,
           // easing: Easing.linear,
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
 
         Animated.timing(animatedValue, {
           toValue: 100,
           duration: 1000,
           // easing: Easing.linear,
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
       ]).start(() => {
         // 애니메이션이 끝나면 숫자 감소
 
         setCount((prevCount) => prevCount - 1)
+        countDownRef.current = countDownRef.current + 1
 
         // console.log('여기')
 
-        console.log(count, 'count ')
-        if (count === 2) {
+        console.log(countDownRef.current, 'count ')
+        if (countDownRef.current === 4) {
           intervalRef.current = setInterval(() => {
             setElapsedTime((prev) => prev + 1)
           }, 1000)
           console.log('카운트 다운 종료!')
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
           setIsTracking(true)
-
+          countDownRef.current = -1
           // clearInterval(countdownInterval);
 
           // return
@@ -236,7 +237,6 @@ const LocationTracker = () => {
       const clearPreviousInterval = startCountDown()
       // startCountDown()
       // useEffect가 다시 호출될 때 이전에 설정한 setInterval을 제거
-
 
       return clearPreviousInterval
     }
@@ -289,9 +289,33 @@ const LocationTracker = () => {
 
   // }
 
-  console.log(count, '외부 카운트2')
   return (
     <View style={styles.container}>
+      {countDown ? (
+        <View
+          style={{
+            zIndex: 999,
+            backgroundColor: 'black',
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Animated.Text
+            style={{
+              fontSize: 1,
+              color: 'white',
+              transform: [{ scale: animatedValue }],
+              opacity: animatedValue,
+            }}
+          >
+            {count > 3 ? '' : count}
+          </Animated.Text>
+        </View>
+      ) : (
+        ''
+      )}
       <Header3 title={'탕정면'}></Header3>
 
       {isTracking ? (
@@ -320,31 +344,6 @@ const LocationTracker = () => {
         <></>
       )}
 
-      {countDown ? (
-        <View
-          style={{
-            zIndex: 10,
-            backgroundColor: 'black',
-            width: '100%',
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Animated.Text
-            style={{
-              fontSize: 1,
-              color: 'white',
-              transform: [{ scale: animatedValue }],
-              opacity: animatedValue,
-            }}
-          >
-            {count > 3 ? '' : count}
-          </Animated.Text>
-        </View>
-      ) : (
-        ''
-      )}
       {/* 
       <View
         style={{
