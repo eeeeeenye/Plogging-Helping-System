@@ -7,7 +7,7 @@ const mapPolylineHTML = (url, position) => {
       <script type="text/javascript" src="${url}"></script>
 
       <style>
-        .dot {z-index:-100,overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
+        .dot {overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}
         // .dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
         // .dotOverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
         // .number {font-weight:bold;color:#ee6152;}
@@ -27,10 +27,9 @@ const mapPolylineHTML = (url, position) => {
 
       const container = document.getElementById('map');
       const options = {
-        // center: new kakao.maps.LatLng(36.3741900, 127.3205920 ),
 
         center: new kakao.maps.LatLng(${position.lat}, ${position.lng}), // 현재 위치를 기준으로 지도를 보여준다.
-        level: 1,
+        level: 1
       };
 
       const map = new kakao.maps.Map(container, options);
@@ -50,6 +49,12 @@ const mapPolylineHTML = (url, position) => {
       image: markerImage // 마커이미지 설정 ,
     });
 
+    // document.addEventListener('message', function (event) {
+
+
+    // })
+
+
       marker.setMap(map); // 현재 위치에 마커를 찍는다.    
         
       
@@ -59,24 +64,86 @@ const mapPolylineHTML = (url, position) => {
           position:  markerPosition,
         });
   
-      // 지도에 표시합니다
-      circleOverlay.setMap(map);
-        
-    kakao.maps.event.addListener(map, 'center_changed', function() {
-      var newCenter = map.getCenter(); // 지도의 새 중심 좌표 가져오기
-   marker.setPosition(newCenter); // 지구본 마커의 위치를
-   circleOverlay.setPosition(newCenter)// 마커의 위치를 새중심
 
-  });  
-        var path = []; // 이동 경로를 저장할 배열
+      var path = [markerPosition]; // 이동 경로를 저장할 배열
+     
+
+      var linePath = []; // 위치를 기록할 배열
+      var polyline;
+
+    
+     //center가 변하면 갱신한다 즉, 맵을 움직이면 따라 움직인다.
+
+
+ 
+    const drawPolyline = (path) => {
+      if (polyline) {
+        polyline.setMap(null);
+    }
+
+      polyline = new kakao.maps.Polyline({
+          path: path,
+          strokeWeight: 5,
+          strokeColor: '#FF0000',
+          strokeOpacity: 1,
+          strokeStyle: 'solid'
+      });
+
+      polyline.setMap(map);
+  }
+
+  function startTracking() {
+    // 위치가 변경될 때마다 호출되는 이벤트 핸들러
+    kakao.maps.event.addListener(map, 'center_changed', function() {
+        var currentCenter = map.getCenter();
+
+        linePath.push(currentCenter);
+        marker.setPosition(newCenter); // 지구본 마커의 위치를
+        circleOverlay.setPosition(newCenter)// 마커의 위치를 새중심
+        // 시작점부터 현재 위치까지 라인을 그린다.
+        drawPolyline(linePath);
+    });
+}
+
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+  var clickedPosition = mouseEvent.latLng;
+
+  // 지도 중심을 클릭한 위치로 이동
+  map.setCenter(clickedPosition);
+
+  // 트래킹 시작
+});
+
+
+    document.addEventListener('message', function (event) {
+//시작후 polyline 생성
+
+  
+  
+    
+    if(event.data==='startTracking'){
+      circleOverlay.setMap(map);
+      startTracking();
+      // centerChange()
+      line.setMap(map);
+    }
+    else if(event.data==='stopTracking'){
+      line.setMap(null)
+    }
+
+    
+    })
+
         // var polyline = null; // 선을 표시할 변수
         // var marker = null; // 사용자 위치를 표시할 마커
         // var lastPosition = null; // 마지막 위치
     
-        document.addEventListener('message', function (event) {
+        // document.addEventListener('message', function (event) {
 
+         
 
-        })
+          // }); 
+        // })
   //         var position = JSON.parse(event.data);
   //         if (message.reset) {
   //           resetPath();

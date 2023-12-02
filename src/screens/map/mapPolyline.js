@@ -116,11 +116,12 @@ const LocationTracker = () => {
       setPosition({ lat: latitude, lng: longitude })
 
       // const listener = (location) => {
-      //   const position = {
-      //     latitude: location.coords.latitude,
-      //     longitude: location.coords.longitude,
-      //   }
-      //   setPath((prevPath) => [...prevPath, position])
+      // const position = {
+      //   latitude: location.coords.latitude,
+      //   longitude: location.coords.longitude,
+      // }
+      // setPath((prevPath) => [...prevPath, position])
+      // webViewRef.current.postMessage(path, '*')
 
       //   // setPosition(locationData)
       //   sendPositionToWebView(position)
@@ -218,7 +219,10 @@ const LocationTracker = () => {
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
           setIsTracking(true)
           countDownRef.current = -1
+
           // clearInterval(countdownInterval);
+          // getLocationData()
+          // setWebViewKey((prev)=>prev+1)
 
           // return
 
@@ -246,13 +250,19 @@ const LocationTracker = () => {
 
   const handleStartButton = () => {
     setIsTracking(false)
+
     setCountDown(true)
+    webViewRef.current.postMessage('startTracking')
+    // setWebViewKey((prevKey) => prevKey + 1)
   }
 
   const stopTracking = () => {
     clearInterval(intervalRef.current)
     setIsTracking(false)
     setElapsedTime(0)
+    webViewRef.current.postMessage('stopTracking')
+
+    setWebViewKey((prevKey) => prevKey + 1)
   }
 
   const startCamera = async () => {
@@ -419,12 +429,15 @@ const LocationTracker = () => {
       <WebView
         style={styles.webView}
         ref={webViewRef}
+        key={webViewKey}
         source={{ html: mapPolylineHTML(url, position) }}
         onLoad={() => {
           if (!status) {
             startLocationTracking()
           }
         }}
+        // injectJavaScript={true}
+        // injectedJavaScript={true}
         onMessage={handleMessage}
         javaScriptEnabled={true}
       />
