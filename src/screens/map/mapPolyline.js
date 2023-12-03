@@ -23,6 +23,7 @@ import Header3 from '../../components/Header3'
 import { Camera } from 'expo-camera'
 import TrackingModal from '../../components/trackingModal'
 import { modalToggle } from '../../slices/All/toggle'
+import haversine from 'haversine'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
@@ -38,13 +39,13 @@ const LocationTracker = () => {
   const [locationSubscription, setLocationSubscription] = useState(null)
   const [distance, setDistance] = useState(0)
   const [position, setPosition] = useState({})
+  const [path, setPath] = useState([])
+
   const [cameraRef, setCameraRef] = useState(null)
   const [modalCamera, setModalCamera] = useState(false)
   const [modalWalkTracking, setModalWalkTracking] = useState(false)
 
-  const [path, setPath] = useState([])
   const [currentLocation, setCurrentLocation] = useState(null)
-  const haversine = require('haversine')
 
   const [count, setCount] = useState(4)
   const [countDown, setCountDown] = useState(false)
@@ -75,7 +76,7 @@ const LocationTracker = () => {
 
   useEffect(() => {
     if (path.length == 2) {
-      // updateDistance(path)
+      updateDistance(path)
       setPath([])
     }
   }, [path])
@@ -114,34 +115,44 @@ const LocationTracker = () => {
       const latitude = locationData['coords']['latitude'] // 위도 가져오기
       const longitude = locationData['coords']['longitude'] // 경도 가져오기
       setPosition({ lat: latitude, lng: longitude })
-
-      // const listener = (location) => {
-      // const position = {
-      //   latitude: location.coords.latitude,
-      //   longitude: location.coords.longitude,
-      // }
-      // setPath((prevPath) => [...prevPath, position])
-      // webViewRef.current.postMessage(path, '*')
-
-      //   // setPosition(locationData)
-      //   sendPositionToWebView(position)
-      // }
-
-      // if (!locationSubscription) {
-      //   // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      //   const newSubscription = Location.watchPositionAsync(
-      //     // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
-      //     {
-      //       accuracy: Location.Accuracy.High,
-      //       timeInterval: 10000,
-      //       distanceInterval: 0,
-      //     },
-      //     listener
-      //   )
-      //   setLocationSubscription(newSubscription)
-      // }
+      setPath([{ latitude: latitude, longitude: longitude }])
     } catch (error) {
       console.log('Location tracking error:', error)
+    }
+  }
+
+  const calculateDistance = async () => {
+    //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
+
+    const listener = (location) => {
+      const position = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      }
+      setPath((prevPath) => [...prevPath, position])
+      console.log('작동',path)
+      // setPath([
+      //   { latitude: 36.374241, longitude: 127.32051 },
+      //   { latitude: 36.3742435, longitude: 127.3205796 },
+      // ])
+
+      // setPosition(locationData)
+
+      sendPositionToWebView(position)
+    }
+
+    if (!locationSubscription) {
+      // 구독이 존재하는 경우 만들지 않음 (중복방지)
+      const newSubscription = Location.watchPositionAsync(
+        // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000,
+          distanceInterval: 0,
+        },
+        listener
+      )
+      setLocationSubscription(newSubscription)
     }
   }
 
@@ -177,9 +188,11 @@ const LocationTracker = () => {
         { latitude: path[0].latitude, longitude: path[0].longitude },
         { unit: 'meter' }
       )
+
+      console.log(distanceInMeters, 'disMiters')
       const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
       setDistance(distance + distanceInkilometers)
-      // console.log(path)
+      // console.log(distance)
     }
   }
 
@@ -187,7 +200,6 @@ const LocationTracker = () => {
     const countdownInterval = setInterval(() => {
       // 각 숫자에 대한 애니메이션
 
-      console.log('몇번 반복')
       Animated.sequence([
         Animated.timing(animatedValue, {
           toValue: 1,
@@ -220,6 +232,8 @@ const LocationTracker = () => {
           setIsTracking(true)
           countDownRef.current = -1
 
+          calculateDistance()
+
           // clearInterval(countdownInterval);
           // getLocationData()
           // setWebViewKey((prev)=>prev+1)
@@ -250,7 +264,6 @@ const LocationTracker = () => {
 
   const handleStartButton = () => {
     setIsTracking(false)
-
     setCountDown(true)
     webViewRef.current.postMessage('startTracking')
     // setWebViewKey((prevKey) => prevKey + 1)
@@ -260,6 +273,8 @@ const LocationTracker = () => {
     clearInterval(intervalRef.current)
     setIsTracking(false)
     setElapsedTime(0)
+    setDistance(0)
+
     webViewRef.current.postMessage('stopTracking')
 
     setWebViewKey((prevKey) => prevKey + 1)
@@ -298,6 +313,7 @@ const LocationTracker = () => {
   // const modalYes = () =>{
 
   // }
+  // console.log(path, 'path')
 
   return (
     <View style={styles.container}>
