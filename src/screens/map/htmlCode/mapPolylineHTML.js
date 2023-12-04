@@ -170,10 +170,6 @@ updatePath(position)
       function updatePath(position) {
         var latLng = new kakao.maps.LatLng(position.latitude, position.longitude);
   
-        if (lastPosition) {
-          var lastLatLng = new kakao.maps.LatLng(lastPosition.latitude, lastPosition.longitude);
-          path.push(lastLatLng);
-        }
 
         // 이동 경로에 새로운 위치 추가
         path.push(latLng);
