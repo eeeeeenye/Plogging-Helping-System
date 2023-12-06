@@ -24,7 +24,10 @@ const mapPolylineHTML = (url, position) => {
 
 
       <script  type="text/javascript">
+      const markerPosition = new kakao.maps.LatLng(${position.lat}, ${position.lng}); // 마커가 표시될 위치입니다
+
       var marker = null; // 사용자 위치를 표시할 마커
+      let path = markerPosition; // 이동 경로를 저장할 배열
 
       const container = document.getElementById('map');
       const options = {
@@ -34,8 +37,8 @@ const mapPolylineHTML = (url, position) => {
       };
 
       const map = new kakao.maps.Map(container, options);
+      
   // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
-   var markerPosition = new kakao.maps.LatLng(${position.lat}, ${position.lng}); // 마커가 표시될 위치입니다
   
 
       var markerImage = new kakao.maps.MarkerImage(
@@ -46,38 +49,17 @@ const mapPolylineHTML = (url, position) => {
     
           // 새로운 마커를 생성하고 지도에 표시
           marker = new kakao.maps.Marker({
-            position: markerPosition,
+            position: path,
             // map: map,
             image: markerImage,
           });
         
   
           // 지도 중심을 마커 위치로 이동
-          // map.setCenter(markerPosition);
+          map.setCenter(markerPosition);
 
           marker.setMap(map);
 
- 
-      //마커생성
-        
-      
-   
-
-
-      var path = [markerPosition]; // 이동 경로를 저장할 배열
-     
-
-      var linePath = []; // 위치를 기록할 배열
-      var polyline;
-
-    
-     //center가 변하면 갱신한다 즉, 맵을 움직이면 따라 움직인다.
-
-
-
-
-
-     
     const drawPolyline = (path) => {
       if (polyline) {
         polyline.setMap(null);
@@ -93,120 +75,66 @@ const mapPolylineHTML = (url, position) => {
 
       polyline.setMap(map);
   }
+    
+      var linePath = []; // 위치를 기록할 배열
+      var polyline; //선을 표시할 변수
+      var lastPosition = null; // 마지막 위치
 
-// kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-//   var clickedPosition = mouseEvent.latLng;
+      let circleOverlay;
 
-//   // 지도 중심을 클릭한 위치로 이동
-//   map.setCenter(clickedPosition);
-
-//   // 트래킹 시작
-// });
-
-var circleOverlay = new kakao.maps.CustomOverlay({
-  content: '<span class="dot"></span>',
-  position:  markerPosition,
-});
+ circleOverlay = new kakao.maps.CustomOverlay({
+    content: '<span class="dot"></span>',
+    position:  path,
+  });
 
 
-var polyline; // 선을 표시할 변수
-var lastPosition = null; // 마지막 위치
 
     document.addEventListener('message', function (event) {
 //시작후 polyline 생성
 var position = JSON.parse(event.data);
+updatePath(position)
+window.ReactNativeWebView.postMessage(event.data)
+
 
 // 지도에 표시합니다
+// drawPolyline(])
+    // if(position.data==='startTracking'){
 
 
-
-circleOverlay.setMap(map);
-    // if(event.data==='startTracking'){
-
-
-updatePath(position)
-      startTracking();
-      drawPolyline(position);
-      line.setMap(map);
-
+      // startTracking();
+      // line.setMap(map);
+      // drawPolyline(position);
+      circleOverlay.setMap(map);
 
     // }
-   if(event.data==='stopTracking'){
-      line.setMap(null)
-    }
+   
 
     
     })
-
-     
-        // })
-  //         if (message.reset) {
-  //           resetPath();
-  //         } else {
-  //           var position = message.position;
-  //           updatePath(position);
-  //         }
-  //       });
-
-        // function resetPath() {
-        // // 선 제거
-        //   if (polyline) {
-        //     polyline.setMap(null);
-        //     polyline = null;
-        //   }
-        // }
-  
-  //       마커 제거
-  //       if (marker) {
-  //         marker.setMap(null);
-  //         marker = null;
-  //       }
-  
-  //       경로 초기화
-  //       path = [];
-  //     }
-
-  //     사용자의 위치 변경을 감지하여 이동 경로를 업데이트하고 선과 마커 그림
-      function updatePath(position) {
-        var latLng = new kakao.maps.LatLng(position.latitude, position.longitude);
-  
-
-        // 이동 경로에 새로운 위치 추가
-        path.push(latLng);
-  
-        // 선을 그리고 지도에 표시
-        drawPolyline(latLng);
-  
-        // 지도 중심을 사용자의 위치로 이동
-        map.setCenter(latLng);
-
-
-
-      //   if (path.length === 1) {
-      //    drawMarker(latLng);
-
-      //  }
-
-
-      }
   
  
       // 사용자의 위치 변경을 감지하여 이동 경로를 업데이트하고 선과 마커 그림
-      function updatePath(position) {
+      const updatePath = (position) => {
+
         var latLng = new kakao.maps.LatLng(position.latitude, position.longitude);
 
+        // path.push(latLng);
+        linePath.push(latLng)
+
+        
+
+        map.setCenter(latLng);
+
+        marker.setPosition(latLng);
+        circleOverlay.setPosition(latLng)
         // 이동 경로에 새로운 위치 추가
-        path.push(latLng);
 
        // 선을 그리고 지도에 표시
-        drawPolyline();
+        drawPolyline(linePath);
 
-        if (path.length === 1) {
-        drawMarker(latLng);
-        } else {
+       
           // 이동한 위치로 마커 이동
-          marker.setPosition(latLng);
-        }
+        
       }
 
       const startTracking = () => {
@@ -217,9 +145,8 @@ updatePath(position)
             marker.setPosition(newCenter); // 지구본 마커의 위치를 새중심
             circleOverlay.setPosition(newCenter)// 마커의 위치를 새중심
             
-    
-            // 시작점부터 현재 위치까지 라인을 그린다.
-            drawPolyline(linePath);
+
+            // drawPolyline(newCenter); // 시작점부터 현재 위치까지 라인을 그린다.
         });
     }
     

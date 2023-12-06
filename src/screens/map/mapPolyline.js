@@ -28,9 +28,10 @@ import haversine from 'haversine'
 const LocationTracker = () => {
   const webViewRef = useRef()
   const intervalRef = useRef()
-
+  let newSubscription = null
   let countDownRef = useRef(0)
   const status = useSelector((state) => state.stopwatch.isRunning)
+
   const dispatch = useDispatch()
   const [webViewKey, setWebViewKey] = useState(1)
 
@@ -68,14 +69,10 @@ const LocationTracker = () => {
     }
   }, [status])
 
-  // useEffect(() => {
-  //   if (webViewRef.current) {
-  //     webViewRef.current.postMessage(JSON.stringify({}))
-  //   }
-  // }, [])
-
   useEffect(() => {
     if (path.length == 2) {
+      console.log(path, 'pathUpdate')
+
       updateDistance(path)
       setPath([])
     }
@@ -87,14 +84,6 @@ const LocationTracker = () => {
   }, [distance])
 
   // 웹뷰에 보낼 메시지를 관리 (position)
-
-  // status가 false일 경우에 실행
-  const stopLocationTracking = () => {
-    if (locationSubscription) {
-      locationSubscription._j.remove()
-      setLocationSubscription(null)
-    }
-  }
 
   const pauseTimer = () => {
     clearInterval(intervalRef.current)
@@ -121,16 +110,16 @@ const LocationTracker = () => {
     }
   }
 
-  const calculateDistance = async () => {
+  const calculateDistance = () => {
     //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
 
     const listener = (location) => {
       const position = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location.coords.latitude - Math.random() * 0.001,
+        longitude: location.coords.longitude - Math.random() * 0.001,
       }
       setPath((prevPath) => [...prevPath, position])
-      console.log('작동',path)
+      console.log('작동', path, '오예')
       // setPath([
       //   { latitude: 36.374241, longitude: 127.32051 },
       //   { latitude: 36.3742435, longitude: 127.3205796 },
@@ -143,7 +132,7 @@ const LocationTracker = () => {
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      const newSubscription = Location.watchPositionAsync(
+      newSubscription = Location.watchPositionAsync(
         // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
         {
           accuracy: Location.Accuracy.High,
@@ -160,8 +149,11 @@ const LocationTracker = () => {
   const sendPositionToWebView = (position) => {
     const message = JSON.stringify(position)
     console.log(message, 'message')
+
     if (webViewRef.current) {
-      webViewRef.current.postMessage(message, '*')
+      console.log(message, 'message')
+
+      webViewRef.current.postMessage(message)
       // console.log(position, 'position')
     }
   }
@@ -263,21 +255,33 @@ const LocationTracker = () => {
   }, [countDown, count])
 
   const handleStartButton = () => {
+    const startTracking = { data: 'startTracking' }
     setIsTracking(false)
     setCountDown(true)
-    webViewRef.current.postMessage('startTracking')
+    sendPositionToWebView(startTracking)
     // setWebViewKey((prevKey) => prevKey + 1)
   }
 
   const stopTracking = () => {
+    const stopTracking = { data: 'stopTracking' }
+
     clearInterval(intervalRef.current)
     setIsTracking(false)
     setElapsedTime(0)
     setDistance(0)
 
-    webViewRef.current.postMessage('stopTracking')
-
     setWebViewKey((prevKey) => prevKey + 1)
+
+    stopLocationTracking()
+  }
+
+  // status가 false일 경우에 실행
+  const stopLocationTracking = () => {
+    // if (newSubscription) {
+    //   console.log(newSubscription, 'location')
+    //   locationSubscription._j.remove()
+    //   newSubscription.remove()
+    // }
   }
 
   const startCamera = async () => {
