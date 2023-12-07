@@ -64,8 +64,6 @@ const LocationTracker = () => {
   useEffect(() => {
     if (status) {
       startLocationTracking()
-    } else {
-      stopLocationTracking()
     }
   }, [status])
 
@@ -110,29 +108,29 @@ const LocationTracker = () => {
     }
   }
 
-  const calculateDistance = () => {
-    //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
-
-    const listener = (location) => {
-      const position = {
-        latitude: location.coords.latitude - Math.random() * 0.001,
-        longitude: location.coords.longitude - Math.random() * 0.001,
-      }
-      setPath((prevPath) => [...prevPath, position])
-      console.log('작동', path, '오예')
-      // setPath([
-      //   { latitude: 36.374241, longitude: 127.32051 },
-      //   { latitude: 36.3742435, longitude: 127.3205796 },
-      // ])
-
-      // setPosition(locationData)
-
-      sendPositionToWebView(position)
+  const listener = (location) => {
+    const position = {
+      latitude: location.coords.latitude - Math.random() * 0.001,
+      longitude: location.coords.longitude - Math.random() * 0.001,
     }
+    setPath((prevPath) => [...prevPath, position])
+    console.log('작동', path)
+    // setPath([
+    //   { latitude: 36.374241, longitude: 127.32051 },
+    //   { latitude: 36.3742435, longitude: 127.3205796 },
+    // ])
+
+    // setPosition(locationData)
+
+    sendPositionToWebView(position)
+  }
+
+  const calculateDistance = async () => {
+    //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      newSubscription = Location.watchPositionAsync(
+      newSubscription = await Location.watchPositionAsync(
         // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
         {
           accuracy: Location.Accuracy.High,
@@ -269,6 +267,7 @@ const LocationTracker = () => {
     setIsTracking(false)
     setElapsedTime(0)
     setDistance(0)
+    sendPositionToWebView(stopTracking)
 
     setWebViewKey((prevKey) => prevKey + 1)
 
@@ -278,9 +277,14 @@ const LocationTracker = () => {
   // status가 false일 경우에 실행
   const stopLocationTracking = () => {
     // if (newSubscription) {
-    //   console.log(newSubscription, 'location')
-    //   locationSubscription._j.remove()
-    //   newSubscription.remove()
+    console.log(
+      newSubscription,
+      locationSubscription.remove.remove(),
+      'location'
+    )
+    locationSubscription.remove()
+    setLocationSubscription(null)
+    // newSubscription.remove()
     // }
   }
 

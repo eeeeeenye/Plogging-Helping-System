@@ -61,10 +61,7 @@ const mapPolylineHTML = (url, position) => {
           marker.setMap(map);
 
     const drawPolyline = (path) => {
-      if (polyline) {
-        polyline.setMap(null);
-    }
-
+  
       polyline = new kakao.maps.Polyline({
           path: path,
           strokeWeight: 15,
@@ -82,33 +79,72 @@ const mapPolylineHTML = (url, position) => {
 
       let circleOverlay;
 
+      const resetPath = () =>{
+
+
+
+      }
+
  circleOverlay = new kakao.maps.CustomOverlay({
     content: '<span class="dot"></span>',
     position:  path,
   });
 
 
+  const reset = () => {
+    // 선 제거
+      if (polyline) {
+        polyline.setMap(null);
+        polyline = null;
+      }
+
+    // 마커 제거
+    if (marker) {
+      marker.setMap(null);
+      marker = null;
+    }
+
+    // 경로 초기화
+    path = [];
+    //경로초기화
+    linePath = []
+    //overlay제거
+    if(circleOverlay){
+      circleOverlay.setMap(null);
+      circleOverlay=null;
+
+
+    
+
+    }
+
+  }
+
+  
 
     document.addEventListener('message', function (event) {
 //시작후 polyline 생성
 var position = JSON.parse(event.data);
-updatePath(position)
 window.ReactNativeWebView.postMessage(event.data)
 
-
+       
 // 지도에 표시합니다
 // drawPolyline(])
-    // if(position.data==='startTracking'){
 
+updatePath(position)
+circleOverlay.setMap(map);
+
+    if(position.data==='stopTracking'){
+
+      reset()
 
       // startTracking();
       // line.setMap(map);
       // drawPolyline(position);
-      circleOverlay.setMap(map);
 
-    // }
+    }
+
    
-
     
     })
   
@@ -149,7 +185,8 @@ window.ReactNativeWebView.postMessage(event.data)
             // drawPolyline(newCenter); // 시작점부터 현재 위치까지 라인을 그린다.
         });
     }
-    
+
+
 
     </script>
   </body>
