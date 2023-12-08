@@ -66,7 +66,7 @@ const mapPolylineHTML = (url, position) => {
           path: path,
           strokeWeight: 15,
           strokeColor: '#FF0000',
-          strokeOpacity: 0.5,
+          strokeOpacity: 0.8,
           strokeStyle: 'solid'
       });
 
@@ -113,26 +113,34 @@ const mapPolylineHTML = (url, position) => {
       circleOverlay.setMap(null);
       circleOverlay=null;
 
-
-    
-
     }
 
   }
 
-  
+  linePath.push(markerPosition)
+
 
     document.addEventListener('message', function (event) {
-//시작후 polyline 생성
-var position = JSON.parse(event.data);
-window.ReactNativeWebView.postMessage(event.data)
 
-       
+      var position = JSON.parse(event.data);
+window.ReactNativeWebView.postMessage(event.data)
+// path.push(position);
+circleOverlay.setMap(map);
+ marker.setMap(map);
 // 지도에 표시합니다
 // drawPolyline(])
 
+if(position.data==='startTracking'){
+
+map.setCenter(position);
+
+
+}
 updatePath(position)
-circleOverlay.setMap(map);
+
+
+
+
 
     if(position.data==='stopTracking'){
 

@@ -64,8 +64,10 @@ const LocationTracker = () => {
   useEffect(() => {
     if (status) {
       startLocationTracking()
+    } else {
+      stopLocationTracking()
     }
-  }, [status])
+  }, [])
 
   useEffect(() => {
     if (path.length == 2) {
@@ -98,7 +100,6 @@ const LocationTracker = () => {
       }
 
       const locationData = await Location.getCurrentPositionAsync()
-      console.log(locationData)
       const latitude = locationData['coords']['latitude'] // 위도 가져오기
       const longitude = locationData['coords']['longitude'] // 경도 가져오기
       setPosition({ lat: latitude, lng: longitude })
@@ -107,14 +108,15 @@ const LocationTracker = () => {
       console.log('Location tracking error:', error)
     }
   }
-
   const listener = (location) => {
     const position = {
       latitude: location.coords.latitude - Math.random() * 0.001,
       longitude: location.coords.longitude - Math.random() * 0.001,
     }
-    setPath((prevPath) => [...prevPath, position])
+
     console.log('작동', path)
+
+    setPath((prevPath) => [...prevPath, position])
     // setPath([
     //   { latitude: 36.374241, longitude: 127.32051 },
     //   { latitude: 36.3742435, longitude: 127.3205796 },
@@ -124,13 +126,12 @@ const LocationTracker = () => {
 
     sendPositionToWebView(position)
   }
-
-  const calculateDistance = async () => {
+  const calculateDistance = () => {
     //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      newSubscription = await Location.watchPositionAsync(
+      newSubscription = Location.watchPositionAsync(
         // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
         {
           accuracy: Location.Accuracy.High,
@@ -146,11 +147,8 @@ const LocationTracker = () => {
   // webViewRef를 사용하여 웹뷰와 통신
   const sendPositionToWebView = (position) => {
     const message = JSON.stringify(position)
-    console.log(message, 'message')
 
     if (webViewRef.current) {
-      console.log(message, 'message')
-
       webViewRef.current.postMessage(message)
       // console.log(position, 'position')
     }
@@ -168,19 +166,23 @@ const LocationTracker = () => {
   }
   const handleMessage = (event) => {
     const message = event.nativeEvent.data
-    console.log('Received position:', message)
+    // console.log('Received position:', message)
   }
   const updateDistance = (path) => {
     if (path.length > 0) {
       const lastPosition = path[path.length - 1]
+      console.log(lastPosition, 'lastPosition', path)
+
       const distanceInMeters = haversine(
         { latitude: lastPosition.latitude, longitude: lastPosition.longitude },
         { latitude: path[0].latitude, longitude: path[0].longitude },
         { unit: 'meter' }
       )
 
-      console.log(distanceInMeters, 'disMiters')
+      console.log(distanceInMeters, 'disMeters')
       const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
+
+      console.log(distance, 'dist', distanceInkilometers, 'kilometers')
       setDistance(distance + distanceInkilometers)
       // console.log(distance)
     }
@@ -212,17 +214,18 @@ const LocationTracker = () => {
 
         // console.log('여기')
 
-        console.log(countDownRef.current, 'count ')
         if (countDownRef.current === 4) {
           intervalRef.current = setInterval(() => {
             setElapsedTime((prev) => prev + 1)
           }, 1000)
-          console.log('카운트 다운 종료!')
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
           setIsTracking(true)
           countDownRef.current = -1
 
           calculateDistance()
+          const startTracking = { data: 'startTracking' }
+
+          sendPositionToWebView(startTracking)
 
           // clearInterval(countdownInterval);
           // getLocationData()
@@ -256,7 +259,7 @@ const LocationTracker = () => {
     const startTracking = { data: 'startTracking' }
     setIsTracking(false)
     setCountDown(true)
-    sendPositionToWebView(startTracking)
+    // sendPositionToWebView(startTracking)
     // setWebViewKey((prevKey) => prevKey + 1)
   }
 
@@ -276,16 +279,13 @@ const LocationTracker = () => {
 
   // status가 false일 경우에 실행
   const stopLocationTracking = () => {
-    // if (newSubscription) {
-    console.log(
-      newSubscription,
-      locationSubscription.remove.remove(),
-      'location'
-    )
-    locationSubscription.remove()
-    setLocationSubscription(null)
-    // newSubscription.remove()
-    // }
+    if (locationSubscription) {
+      locationSubscription._j.remove() // Location.clearWatch(newSubscription)
+      setLocationSubscription(null)
+      newSubscription = null
+
+      // newSubscription.remove()
+    }
   }
 
   const startCamera = async () => {
@@ -321,8 +321,7 @@ const LocationTracker = () => {
   // const modalYes = () =>{
 
   // }
-  // console.log(path, 'path')
-
+  // console.log(newSubscription, 'newssssss')
   return (
     <View style={styles.container}>
       {countDown ? (
