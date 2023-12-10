@@ -20,7 +20,7 @@ import { toggleImageClick } from '../../slices/All/footerSlice'
 import Footer from '../../components/footer'
 import HeaderScroll3 from '../../components/HeaderScroll3'
 import Header3 from '../../components/Header3'
-import { Camera } from 'expo-camera'
+import { AutoFocus, Camera, CameraType } from 'expo-camera'
 import TrackingModal from '../../components/trackingModal'
 import { modalToggle } from '../../slices/All/toggle'
 import haversine from 'haversine'
@@ -28,6 +28,7 @@ import haversine from 'haversine'
 const LocationTracker = () => {
   const webViewRef = useRef()
   const intervalRef = useRef()
+  const cameraRef = useRef(null)
   let newSubscription = null
   let countDownRef = useRef(0)
   const status = useSelector((state) => state.stopwatch.isRunning)
@@ -42,7 +43,7 @@ const LocationTracker = () => {
   const [position, setPosition] = useState({})
   const [path, setPath] = useState([])
 
-  const [cameraRef, setCameraRef] = useState(null)
+  // const [cameraRef, setCameraRef] = useState(null)
   const [modalCamera, setModalCamera] = useState(false)
   const [modalWalkTracking, setModalWalkTracking] = useState(false)
 
@@ -70,11 +71,11 @@ const LocationTracker = () => {
   }, [])
 
   useEffect(() => {
-    if (path.length == 2) {
+    if (path.length >= 2) {
       console.log(path, 'pathUpdate')
 
       updateDistance(path)
-      setPath([])
+      // setPath([])
     }
   }, [path])
 
@@ -180,10 +181,13 @@ const LocationTracker = () => {
       )
 
       console.log(distanceInMeters, 'disMeters')
-      const distanceInkilometers = Number((distanceInMeters / 1000).toFixed(2))
+      const distanceInkilometers = parseFloat(
+        (distanceInMeters / 1000).toPrecision(2)
+      )
 
       console.log(distance, 'dist', distanceInkilometers, 'kilometers')
-      setDistance(distance + distanceInkilometers)
+      setDistance(Math.round((distance + distanceInkilometers) * 100) / 100)
+      setPath([{ latitude: path[0].latitude, longitude: path[0].longitude }])
       // console.log(distance)
     }
   }
@@ -300,18 +304,24 @@ const LocationTracker = () => {
 
     //허용 할지 말지, 허용 이 된경우라면 모달창을띄우고, tracking을 중지한다.
 
-    setModalCamera(true)
-    pauseTimer()
-    if (cameraRef && modalCamera) {
-      const photo = await cameraRef.takePictureAsync()
-      console.log(photo)
-      // Handle the captured photo as needed
-    }
+    // setModalCamera(true)
+    // pauseTimer()
+    // if (cameraRef && modalCamera) {
+    //   console.log('시작')
+    //   let photo = await cameraRef.current.takePictureAsync()
+    //   console.log(photo)
+
+    //   // Handle the captured photo as needed
+    // }
   }
 
   const closeModal = () => {
     setModalCamera(false)
     // startTracking()
+  }
+  const openCamera = () => {
+    setModalCamera(false)
+    cameraRef.current = true
   }
 
   const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
@@ -392,14 +402,42 @@ const LocationTracker = () => {
       </View> */}
 
       <Camera
-        // style={{ flex: 1 }}
+        style={{ zIndex: 99, width: '100%', height: '100%' }}
         type={Camera.Constants.Type.back}
-        ref={(ref) => setCameraRef(ref)}
-      ></Camera>
+        ref={cameraRef}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flex: 0.1,
+              alignSelf: 'flex-end',
+              alignItems: 'center',
+            }}
+            // onPress={() => {
+            //   setType(
+            //     type === Camera.Constants.Type.back
+            //       ? Camera.Constants.Type.front
+            //       : Camera.Constants.Type.back
+            //   )
+            // }}
+          >
+            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
+              Flip
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Camera>
+
       {/* <View></View> */}
-      {modalCamera ? (
+      {/* {modalCamera ? (
         <Modal
-          animationType="slide"
+          // animationType="slide"
           onRequestClose={closeModal}
           transparent={true}
         >
@@ -410,10 +448,7 @@ const LocationTracker = () => {
                 하시겠습니까?
               </Text>
               <View style={styles.button_box}>
-                <TouchableOpacity
-                  // onPress=
-                  style={styles.button}
-                >
+                <TouchableOpacity onPress={openCamera} style={styles.button}>
                   <Text>예</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={closeModal}>
@@ -425,7 +460,7 @@ const LocationTracker = () => {
         </Modal>
       ) : (
         <></>
-      )}
+      )} */}
       {/* 
       <Modal
         animationType="slide"
