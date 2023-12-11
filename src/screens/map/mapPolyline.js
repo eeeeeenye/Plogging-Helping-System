@@ -24,6 +24,7 @@ import { AutoFocus, Camera, CameraType } from 'expo-camera'
 import TrackingModal from '../../components/trackingModal'
 import { modalToggle } from '../../slices/All/toggle'
 import haversine from 'haversine'
+import CameraSettings from '../camera/cameraSettings'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
@@ -406,32 +407,7 @@ const LocationTracker = () => {
         type={Camera.Constants.Type.back}
         ref={cameraRef}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              flex: 0.1,
-              alignSelf: 'flex-end',
-              alignItems: 'center',
-            }}
-            // onPress={() => {
-            //   setType(
-            //     type === Camera.Constants.Type.back
-            //       ? Camera.Constants.Type.front
-            //       : Camera.Constants.Type.back
-            //   )
-            // }}
-          >
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-              Flip
-            </Text>
-          </TouchableOpacity>
-        </View>
+         <CameraSettings></CameraSettings>
       </Camera>
 
       {/* <View></View> */}
