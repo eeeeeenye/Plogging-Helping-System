@@ -325,7 +325,7 @@ const LocationTracker = () => {
     cameraRef.current = true
   }
 
-  const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
+  const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`
 
@@ -407,7 +407,7 @@ const LocationTracker = () => {
         type={Camera.Constants.Type.back}
         ref={cameraRef}
       >
-         <CameraSettings></CameraSettings>
+        <CameraSettings></CameraSettings>
       </Camera>
 
       {/* <View></View> */}

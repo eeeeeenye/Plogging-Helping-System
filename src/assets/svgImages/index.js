@@ -1,2 +1,2 @@
-import cameraImage from './cameraImage.svg'
-export { cameraImage }
+// import CameraImage from './CameraImage.svg'
+// export { CameraImage }
