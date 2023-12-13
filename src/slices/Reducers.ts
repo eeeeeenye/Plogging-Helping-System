@@ -9,6 +9,7 @@ import footerReducer from './All/footerSlice'
 import communityReducer from './All/communityslice'
 import toggleReducer from './All/toggle'
 import sliceReducer from './All/locationslice'
+import cameraReducer from './All/cameraSlice'
 const rootReducer = combineReducers({
   auth: authReducer,
   stopwatch: watchReducer,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   community: communityReducer,
   toggle: toggleReducer,
   slice: sliceReducer,
+  camera: cameraReducer,
   // 다른 리듀서들도 필요한 경우 여기에 추가
 })
 

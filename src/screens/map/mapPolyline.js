@@ -20,22 +20,28 @@ import { toggleImageClick } from '../../slices/All/footerSlice'
 import Footer from '../../components/footer'
 import HeaderScroll3 from '../../components/HeaderScroll3'
 import Header3 from '../../components/Header3'
-import { AutoFocus, Camera, CameraType } from 'expo-camera'
+import { AutoFocus, Camera, CameraType, CameraPre } from 'expo-camera'
 import TrackingModal from '../../components/trackingModal'
 import { modalToggle } from '../../slices/All/toggle'
 import haversine from 'haversine'
 import CameraSettings from '../camera/cameraSettings'
+import { setCameraOn, setCameraType } from '../../slices/All/cameraSlice'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
   const intervalRef = useRef()
+  const subscriptionRef = useRef()
   const cameraRef = useRef(null)
   let newSubscription = null
   let countDownRef = useRef(0)
   const status = useSelector((state) => state.stopwatch.isRunning)
+  const cameraType = useSelector((state) => state.camera.cameraType)
+  const cameraOn = useSelector((state) => state.camera.cameraOn)
 
   const dispatch = useDispatch()
   const [webViewKey, setWebViewKey] = useState(1)
+
+  // const [cameraOn, setCameraOn] = useState(false)
 
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isTracking, setIsTracking] = useState(false)
@@ -89,8 +95,13 @@ const LocationTracker = () => {
 
   const pauseTimer = () => {
     clearInterval(intervalRef.current)
-    setElapsedTime(0)
+    // setElapsedTime(0)
     console.log('타이머 일시정지')
+  }
+  const pauseTracking = () => {
+    //시간과 트래킹을 잠시 멈춘다.
+
+    pauseTimer()
   }
 
   const startLocationTracking = async () => {
@@ -116,7 +127,7 @@ const LocationTracker = () => {
       longitude: location.coords.longitude - Math.random() * 0.001,
     }
 
-    console.log('작동', path)
+    // console.log('작동', path)
 
     setPath((prevPath) => [...prevPath, position])
     // setPath([
@@ -128,21 +139,24 @@ const LocationTracker = () => {
 
     sendPositionToWebView(position)
   }
+
   const calculateDistance = () => {
     //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      newSubscription = Location.watchPositionAsync(
-        // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000,
-          distanceInterval: 0,
-        },
-        listener
-      )
-      setLocationSubscription(newSubscription)
+      subscriptionRef.current = setTimeout(async () => {
+        newSubscription = await Location.watchPositionAsync(
+          // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 5000,
+            distanceInterval: 0,
+          },
+          listener
+        )
+        setLocationSubscription(newSubscription)
+      }, 5000)
     }
   }
 
@@ -284,8 +298,12 @@ const LocationTracker = () => {
 
   // status가 false일 경우에 실행
   const stopLocationTracking = () => {
-    if (locationSubscription) {
-      locationSubscription._j.remove() // Location.clearWatch(newSubscription)
+    clearTimeout(subscriptionRef.current)
+    subscriptionRef.current = null
+    console.log(subscriptionRef.current, 'subscription', locationSubscription)
+    if (locationSubscription && !subscriptionRef.current) {
+      console.log('약')
+      locationSubscription.remove() // Location.clearWatch(newSubscription)
       setLocationSubscription(null)
       newSubscription = null
 
@@ -300,39 +318,49 @@ const LocationTracker = () => {
     console.log(status)
     if (status !== 'granted') {
       console.log('Location permission denied')
+      // dispatch(cameraOn(false))
+      // setCameraOn(false)
       return
+    } else {
+      // dispatch(cameraOn(true))
+      setModalCamera(true)
+      pauseTimer()
+      stopLocationTracking()
     }
-
-    //허용 할지 말지, 허용 이 된경우라면 모달창을띄우고, tracking을 중지한다.
-
-    // setModalCamera(true)
-    // pauseTimer()
-    // if (cameraRef && modalCamera) {
-    //   console.log('시작')
-    //   let photo = await cameraRef.current.takePictureAsync()
-    //   console.log(photo)
-
-    //   // Handle the captured photo as needed
-    // }
   }
 
   const closeModal = () => {
     setModalCamera(false)
+
+    intervalRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1)
+    }, 1000)
+    calculateDistance()
     // startTracking()
   }
   const openCamera = () => {
     setModalCamera(false)
-    cameraRef.current = true
+
+    dispatch(setCameraOn(true))
   }
 
+  const takePictureHandler = async () => {
+    // cameraRef가 없으면 해당 함수가 실행되지 않게 가드
+    if (!cameraRef.current) return
+
+    // takePictureAsync를 통해 사진을 찍습니다.
+    // 찍은 사진은 base64 형식으로 저장합니다.
+    await cameraRef.current
+      .takePictureAsync({
+        base64: true,
+      })
+      .then((data) => {
+        console.log(data)
+      })
+  }
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`
-
-  // const modalYes = () =>{
-
-  // }
-  // console.log(newSubscription, 'newssssss')
   return (
     <View style={styles.container}>
       {countDown ? (
@@ -402,16 +430,24 @@ const LocationTracker = () => {
         <Text></Text>
       </View> */}
 
-      <Camera
-        style={{ zIndex: 99, width: '100%', height: '100%' }}
-        type={Camera.Constants.Type.back}
-        ref={cameraRef}
-      >
-        <CameraSettings></CameraSettings>
-      </Camera>
+      {cameraOn ? (
+        <Camera
+          style={{ zIndex: 99, width: '100%', height: '100%' }}
+          type={cameraType}
+          ref={cameraRef}
+          autoFocus={AutoFocus.on}
+        >
+          <CameraSettings
+            takePictureHandler={takePictureHandler}
+            closeModal={closeModal}
+          ></CameraSettings>
+        </Camera>
+      ) : (
+        ''
+      )}
 
       {/* <View></View> */}
-      {/* {modalCamera ? (
+      {modalCamera ? (
         <Modal
           // animationType="slide"
           onRequestClose={closeModal}
@@ -436,7 +472,7 @@ const LocationTracker = () => {
         </Modal>
       ) : (
         <></>
-      )} */}
+      )}
       {/* 
       <Modal
         animationType="slide"
