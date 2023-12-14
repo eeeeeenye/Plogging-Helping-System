@@ -6,11 +6,13 @@ export interface Camera {
   // cameraType: string;
   cameraOn: boolean
   cameraType: string
+  cameraImages:string
 }
 
 const initialState: Camera = {
   cameraOn: false,
   cameraType: CameraType.back,
+  cameraImages:''
 }
 
 const communitySlice = createSlice({
@@ -23,8 +25,11 @@ const communitySlice = createSlice({
     setCameraType: (state, action: PayloadAction<string>) => {
       state.cameraType = action.payload
     },
+    setCameraImage: (state, action: PayloadAction<string>) => {
+      state.cameraType = action.payload
+    },
   },
 })
 
-export const { setCameraOn, setCameraType } = communitySlice.actions
+export const { setCameraOn, setCameraType,setCameraImage } = communitySlice.actions
 export default communitySlice.reducer

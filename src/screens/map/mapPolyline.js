@@ -25,7 +25,11 @@ import TrackingModal from '../../components/trackingModal'
 import { modalToggle } from '../../slices/All/toggle'
 import haversine from 'haversine'
 import CameraSettings from '../camera/cameraSettings'
-import { setCameraOn, setCameraType } from '../../slices/All/cameraSlice'
+import {
+  setCameraImage,
+  setCameraOn,
+  setCameraType,
+} from '../../slices/All/cameraSlice'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
@@ -355,7 +359,11 @@ const LocationTracker = () => {
         base64: true,
       })
       .then((data) => {
-        console.log(data)
+        dispatch(setCameraImage(data.uri))
+        console.log(data.uri)
+      })
+      .catch((e) => {
+        console.log(e)
       })
   }
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
