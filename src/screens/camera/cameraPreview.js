@@ -18,24 +18,41 @@ import Paragraph from '../../components/Paragraph'
 import Background2 from '../../components/Background2'
 import { useEffect } from 'react'
 import axios from 'axios'
-import { setCameraOn, setCameraType } from '../../slices/All/cameraSlice'
-import styles from './cameraStyle/cameraSettingsStyle'
+import {
+  setCameraOn,
+  setCameraType,
+  setPreviewVisible,
+  setCameraImage,
+} from '../../slices/All/cameraSlice'
+import styles from './cameraStyle/cameraPreviewStyle'
 import { Camera, CameraType } from 'expo-camera'
 
-const CameraSettings = ({ navigation, closeModal }) => {
+const CameraPreview = () => {
   const dispatch = useDispatch()
-  const cameraType = useSelector((state) => state.camera.cameraType)
 
-  const backCamera = () => {
-    //backCamera사용시
-    closeModal()
-    dispatch(setCameraOn(false))
-  }
-  const rotateCamera = () => {
-    console.log('카메라타입')
-    dispatch(setCameraType(CameraType.front))
-    if (cameraType === 'front') {
-      dispatch(setCameraType(CameraType.back))
-    }
+  const cameraImage = useSelector((state) => state.camera.cameraImages)
+  console.log(cameraImage, 'cameraIamge')
+  const retakePictureHandler = () => {
+    dispatch(setPreviewVisible(false))
+    dispatch(setCameraImage(null))
   }
 
+  return (
+    <View style={styles.contents}>
+      <Image source={{ uri: cameraImage }} style={styles.image} />
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[styles.button]}
+          onPress={retakePictureHandler}
+        >
+          <Text style={{ fontSize: 15, color: 'white' }}>다시찍기</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.addStyle]}>
+          <Text style={{ fontSize: 15, color: 'white' }}>저장하기</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+export default CameraPreview

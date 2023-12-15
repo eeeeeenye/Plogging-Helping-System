@@ -39,8 +39,6 @@ const CameraSettings = ({ navigation, closeModal, takePictureHandler }) => {
     }
   }
 
-  
-
   return (
     <View style={styles.container}>
       <View style={styles.contents}>

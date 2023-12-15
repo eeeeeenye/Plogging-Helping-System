@@ -29,7 +29,9 @@ import {
   setCameraImage,
   setCameraOn,
   setCameraType,
+  setPreviewVisible,
 } from '../../slices/All/cameraSlice'
+import CameraPreview from '../camera/cameraPreview'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
@@ -41,7 +43,9 @@ const LocationTracker = () => {
   const status = useSelector((state) => state.stopwatch.isRunning)
   const cameraType = useSelector((state) => state.camera.cameraType)
   const cameraOn = useSelector((state) => state.camera.cameraOn)
+  const cameraImage = useSelector((state) => state.camera.cameraImage)
 
+  const previewVisible = useSelector((state) => state.camera.previewVisible)
   const dispatch = useDispatch()
   const [webViewKey, setWebViewKey] = useState(1)
 
@@ -53,6 +57,7 @@ const LocationTracker = () => {
   const [distance, setDistance] = useState(0)
   const [position, setPosition] = useState({})
   const [path, setPath] = useState([])
+  const [] = useState(false)
 
   // const [cameraRef, setCameraRef] = useState(null)
   const [modalCamera, setModalCamera] = useState(false)
@@ -102,12 +107,7 @@ const LocationTracker = () => {
     // setElapsedTime(0)
     console.log('타이머 일시정지')
   }
-  const pauseTracking = () => {
-    //시간과 트래킹을 잠시 멈춘다.
-
-    pauseTimer()
-  }
-
+  
   const startLocationTracking = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync()
@@ -360,12 +360,21 @@ const LocationTracker = () => {
       })
       .then((data) => {
         dispatch(setCameraImage(data.uri))
+        dispatch(setPreviewVisible(true))
         console.log(data.uri)
       })
       .catch((e) => {
         console.log(e)
       })
   }
+
+
+  const pauseTracking = () => {
+    
+
+    pauseTimer()
+  }
+
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`
@@ -437,6 +446,7 @@ const LocationTracker = () => {
       >
         <Text></Text>
       </View> */}
+      {previewVisible ? <CameraPreview></CameraPreview> : ''}
 
       {cameraOn ? (
         <Camera
@@ -445,12 +455,31 @@ const LocationTracker = () => {
           ref={cameraRef}
           autoFocus={AutoFocus.on}
         >
+          {/* <View
+            style={{
+              // zIndex: 99,
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              // width: '100%',
+              // height: '50%',
+              top: 500,
+              backgroundColor: 'red',
+            }}
+          >
+            <Image
+              source={{ uri: cameraImage }}
+              style={{ width: 300, height: 300 }}
+            />
+          </View> */}
+
           <CameraSettings
             takePictureHandler={takePictureHandler}
             closeModal={closeModal}
           ></CameraSettings>
         </Camera>
       ) : (
+        // {cameraImage ? (
         ''
       )}
 
@@ -532,6 +561,72 @@ const LocationTracker = () => {
                 style={{ width: 50, height: 50 }}
                 source={require('../../assets/shutdown.png')}
               ></Image>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderRadius: 50,
+                width: 50,
+                height: 50,
+                backgroundColor: 'black',
+                marginBottom: 10,
+                marginLeft: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}
+            >
+              <View
+                style={{
+                  // transform: [{ rotate: '45deg' }],
+                  backgroundColor: 'white',
+                  width: 5,
+                  height: 25,
+                  marginRight: 10,
+                }}
+              ></View>
+              <View
+                style={{
+                  // transform: [{ rotate: '90deg' }],
+                  backgroundColor: 'white',
+                  width: 5,
+                  height: 25,
+                }}
+              ></View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                borderRadius: 50,
+                width: 50,
+                height: 50,
+                backgroundColor: '#648764',
+                marginBottom: 10,
+                marginLeft: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}
+            >
+              <View
+                style={{
+                  // transform: [{ rotate: '45deg' }],
+
+                  width: 0,
+                  height: 0,
+                  borderTopWidth: 15,
+                  borderLeftWidth: 0,
+                  borderRightWidth: 25,
+                  borderBottomWidth: 15,
+                  borderStyle: 'solid',
+                  backgroundColor: 'transparent',
+                  borderLeftColor: 'transparent',
+                  borderRightColor: 'white',
+                  borderTopColor: 'transparent',
+                  borderBottomColor: 'transparent', // 삼각형 색상을 설정합니다.
+                  transform: [{ rotate: '180deg' }],
+marginLeft:10
+                }}
+              ></View>
             </TouchableOpacity>
 
             <TouchableOpacity
