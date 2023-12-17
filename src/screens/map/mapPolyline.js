@@ -57,7 +57,7 @@ const LocationTracker = () => {
   const [distance, setDistance] = useState(0)
   const [position, setPosition] = useState({})
   const [path, setPath] = useState([])
-  const [] = useState(false)
+  const [isPause, setIsPause] = useState(false)
 
   // const [cameraRef, setCameraRef] = useState(null)
   const [modalCamera, setModalCamera] = useState(false)
@@ -107,7 +107,7 @@ const LocationTracker = () => {
     // setElapsedTime(0)
     console.log('타이머 일시정지')
   }
-  
+
   const startLocationTracking = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync()
@@ -149,18 +149,16 @@ const LocationTracker = () => {
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      subscriptionRef.current = setTimeout(async () => {
-        newSubscription = await Location.watchPositionAsync(
-          // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
-          {
-            accuracy: Location.Accuracy.High,
-            timeInterval: 5000,
-            distanceInterval: 0,
-          },
-          listener
-        )
-        setLocationSubscription(newSubscription)
-      }, 5000)
+      newSubscription = Location.watchPositionAsync(
+        // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000,
+          distanceInterval: 0,
+        },
+        listener
+      )
+      setLocationSubscription(newSubscription)
     }
   }
 
@@ -245,7 +243,9 @@ const LocationTracker = () => {
           setIsTracking(true)
           countDownRef.current = -1
 
-          calculateDistance()
+          subscriptionRef.current = setTimeout(() => {
+            calculateDistance()
+          }, 5000)
           const startTracking = { data: 'startTracking' }
 
           sendPositionToWebView(startTracking)
@@ -368,12 +368,14 @@ const LocationTracker = () => {
       })
   }
 
-
   const pauseTracking = () => {
-    
+    //시간 멈추기, => 인터벌 제거마나고 시간은 건들지 않는다.
 
+    setIsPause(true)
+    stopLocationTracking()
     pauseTimer()
   }
+  const restartTracking = () => {}
 
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
@@ -552,82 +554,88 @@ const LocationTracker = () => {
       <View style={styles.timeControl}>
         {isTracking ? (
           <>
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={stopTracking}
-              style={{ marginBottom: 10, marginLeft: 10 }}
-            >
-              <Image
-                style={{ width: 50, height: 50 }}
-                source={require('../../assets/shutdown.png')}
-              ></Image>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderRadius: 50,
-                width: 50,
-                height: 50,
-                backgroundColor: 'black',
-                marginBottom: 10,
-                marginLeft: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}
-            >
-              <View
-                style={{
-                  // transform: [{ rotate: '45deg' }],
-                  backgroundColor: 'white',
-                  width: 5,
-                  height: 25,
-                  marginRight: 10,
-                }}
-              ></View>
-              <View
-                style={{
-                  // transform: [{ rotate: '90deg' }],
-                  backgroundColor: 'white',
-                  width: 5,
-                  height: 25,
-                }}
-              ></View>
-            </TouchableOpacity>
+            {isPause ? (
+              <>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={stopTracking}
+                  style={{ marginBottom: 10, marginLeft: 10 }}
+                >
+                  <Image
+                    style={{ width: 50, height: 50 }}
+                    source={require('../../assets/shutdown.png')}
+                  ></Image>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{
-                borderRadius: 50,
-                width: 50,
-                height: 50,
-                backgroundColor: '#648764',
-                marginBottom: 10,
-                marginLeft: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}
-            >
-              <View
-                style={{
-                  // transform: [{ rotate: '45deg' }],
+                <TouchableOpacity
+                  style={{
+                    borderRadius: 50,
+                    width: 50,
+                    height: 50,
+                    backgroundColor: '#648764',
+                    marginBottom: 10,
+                    marginLeft: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <View
+                    style={{
+                      // transform: [{ rotate: '45deg' }],
 
-                  width: 0,
-                  height: 0,
-                  borderTopWidth: 15,
-                  borderLeftWidth: 0,
-                  borderRightWidth: 25,
-                  borderBottomWidth: 15,
-                  borderStyle: 'solid',
-                  backgroundColor: 'transparent',
-                  borderLeftColor: 'transparent',
-                  borderRightColor: 'white',
-                  borderTopColor: 'transparent',
-                  borderBottomColor: 'transparent', // 삼각형 색상을 설정합니다.
-                  transform: [{ rotate: '180deg' }],
-marginLeft:10
+                      width: 0,
+                      height: 0,
+                      borderTopWidth: 15,
+                      borderLeftWidth: 0,
+                      borderRightWidth: 25,
+                      borderBottomWidth: 15,
+                      borderStyle: 'solid',
+                      backgroundColor: 'transparent',
+                      borderLeftColor: 'transparent',
+                      borderRightColor: 'white',
+                      borderTopColor: 'transparent',
+                      borderBottomColor: 'transparent', // 삼각형 색상을 설정합니다.
+                      transform: [{ rotate: '180deg' }],
+                      marginLeft: 10,
+                    }}
+                  ></View>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                onPress={pauseTracking}
+                style={{
+                  borderRadius: 50,
+                  width: 50,
+                  height: 50,
+                  backgroundColor: '#1d1d1d',
+                  marginBottom: 10,
+                  marginLeft: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'row',
                 }}
-              ></View>
-            </TouchableOpacity>
+              >
+                <View
+                  style={{
+                    // transform: [{ rotate: '45deg' }],
+                    backgroundColor: 'white',
+                    width: 5,
+                    height: 25,
+                    marginRight: 10,
+                  }}
+                ></View>
+                <View
+                  style={{
+                    // transform: [{ rotate: '90deg' }],
+                    backgroundColor: 'white',
+                    width: 5,
+                    height: 25,
+                  }}
+                ></View>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               onPress={startCamera}
@@ -641,18 +649,16 @@ marginLeft:10
             </TouchableOpacity>
           </>
         ) : (
-          <>
-            <TouchableOpacity
-              onPress={handleStartButton}
-              activeOpacity={1}
-              style={{ marginBottom: 10 }}
-            >
-              <Image
-                style={{ width: 70, height: 70 }}
-                source={require('../../assets/start-button.png')}
-              ></Image>
-            </TouchableOpacity>
-          </>
+          <TouchableOpacity
+            onPress={handleStartButton}
+            activeOpacity={1}
+            style={{ marginBottom: 10 }}
+          >
+            <Image
+              style={{ width: 70, height: 70 }}
+              source={require('../../assets/start-button.png')}
+            ></Image>
+          </TouchableOpacity>
         )}
 
         <TouchableOpacity
@@ -666,8 +672,6 @@ marginLeft:10
           ></Image>
         </TouchableOpacity>
       </View>
-
-      {/* <Footer></Footer> */}
     </View>
   )
 }

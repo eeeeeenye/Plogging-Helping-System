@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 50,
   },
-    addStyle: {
-        backgroundColor: '#648764',
+  addStyle: {
+    backgroundColor: '#1d1d1d',
 
     backgroundColor: '#386c38',
   },
