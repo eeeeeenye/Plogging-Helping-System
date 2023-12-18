@@ -69,6 +69,12 @@ const LocationTracker = () => {
   const [countDown, setCountDown] = useState(false)
   const animatedValue = useRef(new Animated.Value(0)).current
 
+
+
+  useEffect(() => {
+    
+    
+  })
   useEffect(() => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
 
