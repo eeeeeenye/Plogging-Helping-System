@@ -59,6 +59,9 @@ const LocationTracker = () => {
   const [path, setPath] = useState([])
   const [isPause, setIsPause] = useState(false)
 
+  const [updateTime, setUpdateTime] = useState(0)
+  const [distanceTime, setDistanceTime] = useState(0)
+
   // const [cameraRef, setCameraRef] = useState(null)
   const [modalCamera, setModalCamera] = useState(false)
   const [modalWalkTracking, setModalWalkTracking] = useState(false)
@@ -69,12 +72,7 @@ const LocationTracker = () => {
   const [countDown, setCountDown] = useState(false)
   const animatedValue = useRef(new Animated.Value(0)).current
 
-
-
-  useEffect(() => {
-    
-    
-  })
+  useEffect(() => {})
   useEffect(() => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
 
@@ -109,7 +107,19 @@ const LocationTracker = () => {
   // 웹뷰에 보낼 메시지를 관리 (position)
 
   const pauseTimer = () => {
+    const currentTime = Date.now()
+    console.log(distanceTime, 'dist')
+    const elapsedSinceLastUpdate = currentTime - distanceTime
+    console.log('현재 시간: ' + currentTime)
+    console.log(
+      '마지막 업데이트 이후 경과 시간: ' +
+        elapsedSinceLastUpdate / 1000 +
+        ' seconds'
+    )
+
     clearInterval(intervalRef.current)
+
+    setUpdateTime(elapsedSinceLastUpdate)
     // setElapsedTime(0)
     console.log('타이머 일시정지')
   }
@@ -149,22 +159,28 @@ const LocationTracker = () => {
 
     sendPositionToWebView(position)
   }
+  console.log(Date.now() - 5000, elapsedTime)
 
   const calculateDistance = () => {
     //움직이면 내위치를 계산하는데, 5초마다 갱신하도록 한다.
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      newSubscription = Location.watchPositionAsync(
-        // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000,
-          distanceInterval: 0,
-        },
-        listener
-      )
-      setLocationSubscription(newSubscription)
+      setDistanceTime(Date.now())
+
+      subscriptionRef.current = setTimeout(() => {
+        newSubscription = Location.watchPositionAsync(
+          // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 5000,
+            distanceInterval: 0,
+          },
+          listener
+        )
+
+        setLocationSubscription(newSubscription)
+      }, 5000)
     }
   }
 
@@ -249,9 +265,8 @@ const LocationTracker = () => {
           setIsTracking(true)
           countDownRef.current = -1
 
-          subscriptionRef.current = setTimeout(() => {
-            calculateDistance()
-          }, 5000)
+          calculateDistance()
+
           const startTracking = { data: 'startTracking' }
 
           sendPositionToWebView(startTracking)
@@ -312,8 +327,7 @@ const LocationTracker = () => {
     subscriptionRef.current = null
     console.log(subscriptionRef.current, 'subscription', locationSubscription)
     if (locationSubscription && !subscriptionRef.current) {
-      console.log('약')
-      locationSubscription.remove() // Location.clearWatch(newSubscription)
+      locationSubscription._j.remove() // Location.clearWatch(newSubscription)
       setLocationSubscription(null)
       newSubscription = null
 
@@ -374,6 +388,7 @@ const LocationTracker = () => {
       })
   }
 
+  //start를하면 시간을 저장
   const pauseTracking = () => {
     //시간 멈추기, => 인터벌 제거마나고 시간은 건들지 않는다.
 
@@ -381,7 +396,17 @@ const LocationTracker = () => {
     stopLocationTracking()
     pauseTimer()
   }
-  const restartTracking = () => {}
+  const restartTracking = () => {
+    //다시 시작 ,  시간
+    setIsPause(false)
+    intervalRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1)
+    }, 1000)
+
+    // calculateDistance()
+  }
+
+  console.log(updateTime, 'Update')
 
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
@@ -574,6 +599,7 @@ const LocationTracker = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                  onPress={restartTracking}
                   style={{
                     borderRadius: 50,
                     width: 50,
