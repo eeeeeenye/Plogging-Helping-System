@@ -35,10 +35,14 @@ import CameraPreview from '../camera/cameraPreview'
 
 const LocationTracker = () => {
   const webViewRef = useRef()
-  const intervalRef = useRef()
-  const subscriptionRef = useRef()
+  let intervalRef
+
+  const [startTime, setStartTime] = useState(0)
+
+  let subscriptionRef
   const cameraRef = useRef(null)
   let newSubscription = null
+
   let countDownRef = useRef(0)
   const status = useSelector((state) => state.stopwatch.isRunning)
   const cameraType = useSelector((state) => state.camera.cameraType)
@@ -59,7 +63,6 @@ const LocationTracker = () => {
   const [path, setPath] = useState([])
   const [isPause, setIsPause] = useState(false)
 
-  const [updateTime, setUpdateTime] = useState(0)
   const [distanceTime, setDistanceTime] = useState(0)
 
   // const [cameraRef, setCameraRef] = useState(null)
@@ -107,8 +110,11 @@ const LocationTracker = () => {
   // 웹뷰에 보낼 메시지를 관리 (position)
 
   const pauseTimer = () => {
+
+    //pause하면 remainingTime
     const currentTime = Date.now()
-    console.log(distanceTime, 'dist')
+    
+    
     const elapsedSinceLastUpdate = currentTime - distanceTime
     console.log('현재 시간: ' + currentTime)
     console.log(
@@ -117,9 +123,8 @@ const LocationTracker = () => {
         ' seconds'
     )
 
-    clearInterval(intervalRef.current)
+    clearInterval(intervalRef)
 
-    setUpdateTime(elapsedSinceLastUpdate)
     // setElapsedTime(0)
     console.log('타이머 일시정지')
   }
@@ -166,10 +171,21 @@ const LocationTracker = () => {
 
     if (!locationSubscription) {
       // 구독이 존재하는 경우 만들지 않음 (중복방지)
-      setDistanceTime(Date.now())
 
-      subscriptionRef.current = setTimeout(() => {
-        newSubscription = Location.watchPositionAsync(
+      // const startTime = Date.now();
+
+      //거리계산 시작시
+      const currentTime = Date.now()
+      const elapsedTime = currentTime - startTime
+
+      console.log(elapsedTime, 'elapsedTime')
+
+      let remainingTime = Math.max(0, 5000-elapsedTime - remainingTime)
+
+      console.log(remainingTime, 'remainingtime')
+
+      subscriptionRef = setTimeout(async () => {
+        newSubscription = await Location.watchPositionAsync(
           // watchPosition은 비동기 함수이고, 반환값은 _h,_i,_j(remove함수 포함 -> 제어함수들 포함)
           {
             accuracy: Location.Accuracy.High,
@@ -258,7 +274,7 @@ const LocationTracker = () => {
         // console.log('여기')
 
         if (countDownRef.current === 4) {
-          intervalRef.current = setInterval(() => {
+          intervalRef = setInterval(() => {
             setElapsedTime((prev) => prev + 1)
           }, 1000)
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
@@ -270,6 +286,7 @@ const LocationTracker = () => {
           const startTracking = { data: 'startTracking' }
 
           sendPositionToWebView(startTracking)
+          setStartTime(Date.now())
 
           // clearInterval(countdownInterval);
           // getLocationData()
@@ -310,11 +327,12 @@ const LocationTracker = () => {
   const stopTracking = () => {
     const stopTracking = { data: 'stopTracking' }
 
-    clearInterval(intervalRef.current)
+    clearInterval(intervalRef)
     setIsTracking(false)
     setElapsedTime(0)
     setDistance(0)
     sendPositionToWebView(stopTracking)
+    setIsPause(false)
 
     setWebViewKey((prevKey) => prevKey + 1)
 
@@ -323,11 +341,12 @@ const LocationTracker = () => {
 
   // status가 false일 경우에 실행
   const stopLocationTracking = () => {
-    clearTimeout(subscriptionRef.current)
-    subscriptionRef.current = null
-    console.log(subscriptionRef.current, 'subscription', locationSubscription)
-    if (locationSubscription && !subscriptionRef.current) {
-      locationSubscription._j.remove() // Location.clearWatch(newSubscription)
+    clearTimeout(subscriptionRef)
+    subscriptionRef = null
+    console.log(subscriptionRef, 'subscription', locationSubscription)
+    if (locationSubscription && !subscriptionRef) {
+      console.log('이게뭐야 살려줘')
+      locationSubscription.remove() // Location.clearWatch(newSubscription)
       setLocationSubscription(null)
       newSubscription = null
 
@@ -356,7 +375,7 @@ const LocationTracker = () => {
   const closeModal = () => {
     setModalCamera(false)
 
-    intervalRef.current = setInterval(() => {
+    intervalRef = setInterval(() => {
       setElapsedTime((prev) => prev + 1)
     }, 1000)
     calculateDistance()
@@ -394,19 +413,18 @@ const LocationTracker = () => {
 
     setIsPause(true)
     stopLocationTracking()
+
     pauseTimer()
   }
   const restartTracking = () => {
     //다시 시작 ,  시간
     setIsPause(false)
-    intervalRef.current = setInterval(() => {
+    intervalRef = setInterval(() => {
       setElapsedTime((prev) => prev + 1)
     }, 1000)
 
     // calculateDistance()
   }
-
-  console.log(updateTime, 'Update')
 
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
