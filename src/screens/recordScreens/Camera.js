@@ -29,6 +29,7 @@ const CameraScreen = ({ navigation }) => {
   // console.log(navigation.navigate('HomeMain'))
 
   useEffect(() => {
+    
     ;(async () => {
       const { status } = await Camera.requestPermissionsAsync()
       setHasPermission(status === 'granted')

@@ -65,9 +65,11 @@ const MyPage = () => {
   const handleIssueReport = () => {
     navigation.navigate('IssueReport')
   }
+
   const handlePostReport = () => {
     navigation.navigate('PostReport')
   }
+  
   const handleReportHistory = () => {
     navigation.navigate('ReportHistory')
   }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Text, View, TouchableHighlight, Alert, StyleSheet } from 'react-native'
 import { Stopwatch } from 'react-native-stopwatch-timer'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   start,
   stop,
@@ -12,13 +12,10 @@ import {
 const StopWatchAPI = ({ navigation }) => {
   const [isRunning, setIsRunning] = useState(null)
   const [resetStatus, setResetStatus] = useState(false)
+  const stop = (state) => state.stopwatch.isRunning
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (isRunning) {
-      dispatch(start())
-    }
-
     if (isRunning === false) {
       dispatch(stop())
       Alert.alert('기록종료', '기록을 종료하시겠습니까?', [
@@ -97,14 +94,16 @@ const StopWatchAPI = ({ navigation }) => {
 
 const options = {
   container: {
-    backgroundColor: '#000',
+    zIndex: 99,
+    // backgroundColor: '#000',
     padding: 5,
     borderRadius: 20,
     width: 220,
   },
   text: {
-    fontSize: 30,
-    color: '#FFF',
+    fontSize: 25,
+    color: '#371d1d',
+    fontWeight: 'bold',
     marginLeft: 10,
   },
 }

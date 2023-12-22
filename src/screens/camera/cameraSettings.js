@@ -32,7 +32,6 @@ const CameraSettings = ({ navigation, closeModal, takePictureHandler }) => {
     dispatch(setCameraOn(false))
   }
   const rotateCamera = () => {
-    console.log('카메라타입')
     dispatch(setCameraType(CameraType.front))
     if (cameraType === 'front') {
       dispatch(setCameraType(CameraType.back))

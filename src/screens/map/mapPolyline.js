@@ -38,6 +38,7 @@ import {
   reset,
   updateElapsedTime,
 } from '../../slices/All/Watchslice'
+import StopWatch from '../addons/Watch2'
 const LocationTracker = () => {
   const webViewRef = useRef()
   const intervalRef = useRef(null)
@@ -121,8 +122,8 @@ const LocationTracker = () => {
 
   const pauseTimer = () => {
     //pause하면 잠시 시간을 멈춘다.
+    dispatch(stop())
 
-    clearInterval(intervalRef.current)
     // setElapsedTime(0)
     console.log('타이머 일시정지')
   }
@@ -149,17 +150,7 @@ const LocationTracker = () => {
       latitude: location.coords.latitude - Math.random() * 0.001,
       longitude: location.coords.longitude - Math.random() * 0.001,
     }
-
-    // console.log('작동', path)
-
     setPath((prevPath) => [...prevPath, position])
-    // setPath([
-    //   { latitude: 36.374241, longitude: 127.32051 },
-    //   { latitude: 36.3742435, longitude: 127.3205796 },
-    // ])
-
-    // setPosition(locationData)
-
     sendPositionToWebView(position)
   }
 
@@ -263,9 +254,7 @@ const LocationTracker = () => {
         // console.log('여기')
 
         if (countDownRef.current === 4) {
-          intervalRef.current = setInterval(() => {
-            setElapsedTime((prev) => prev + 1)
-          }, 1000)
+         useDispatch(start())
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
           setIsTracking(true)
           countDownRef.current = -1
@@ -361,8 +350,9 @@ const LocationTracker = () => {
   }
 
   const closeModal = () => {
-    setModalCamera(false)
+    //만약 일시 정지 상태면 
 
+    setModalCamera(false)
     intervalRef.current = setInterval(() => {
       setElapsedTime((prev) => prev + 1)
     }, 1000)
@@ -449,27 +439,7 @@ const LocationTracker = () => {
       <Header3 title={'탕정면'}></Header3>
 
       {isTracking ? (
-        <View style={styles.timeTracking}>
-          <View style={styles.area}>
-            <Text style={styles.text}>
-              {Math.floor(elapsedTime / 3600)
-                ? String(Math.floor(elapsedTime / 3600)).padStart(1, '0') + ':'
-                : ''}
-              {String(Math.floor((elapsedTime % 3600) / 60)).padStart(2, '0')}:
-              {/* {String(Math.floor(elapsedTime / 10)).padStart(2, '0')} */}
-              {String(Math.floor(elapsedTime % 60)).padStart(2, '0')}
-            </Text>
-            <Text>시간</Text>
-          </View>
-          <View style={styles.area}>
-            <Text style={styles.text}>{distance}</Text>
-            <Text>거리(km)</Text>
-          </View>
-          <View style={styles.area}>
-            <Text style={styles.text}>0</Text>
-            <Text>걸음</Text>
-          </View>
-        </View>
+     <StopWatch></StopWatch>
       ) : (
         <></>
       )}
@@ -496,24 +466,6 @@ const LocationTracker = () => {
           ref={cameraRef}
           autoFocus={AutoFocus.on}
         >
-          {/* <View
-            style={{
-              // zIndex: 99,
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              // width: '100%',
-              // height: '50%',
-              top: 500,
-              backgroundColor: 'red',
-            }}
-          >
-            <Image
-              source={{ uri: cameraImage }}
-              style={{ width: 300, height: 300 }}
-            />
-          </View> */}
-
           <CameraSettings
             takePictureHandler={takePictureHandler}
             closeModal={closeModal}
