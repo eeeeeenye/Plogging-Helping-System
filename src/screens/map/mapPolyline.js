@@ -82,7 +82,6 @@ const LocationTracker = () => {
   const [countDown, setCountDown] = useState(false)
   const animatedValue = useRef(new Animated.Value(0)).current
 
-  useEffect(() => {})
   useEffect(() => {
     dispatch(toggleImageClick({ id: 1, clicked: true }))
 
@@ -253,8 +252,8 @@ const LocationTracker = () => {
 
         // console.log('여기')
 
-        if (countDownRef.current === 4) {
-         useDispatch(start())
+        if (countDownRef.current <= 4) {
+          useDispatch(start())
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
           setIsTracking(true)
           countDownRef.current = -1
@@ -350,7 +349,7 @@ const LocationTracker = () => {
   }
 
   const closeModal = () => {
-    //만약 일시 정지 상태면 
+    //만약 일시 정지 상태면
 
     setModalCamera(false)
     intervalRef.current = setInterval(() => {
@@ -439,12 +438,13 @@ const LocationTracker = () => {
       <Header3 title={'탕정면'}></Header3>
 
       {isTracking ? (
-     <StopWatch></StopWatch>
+        <StopWatch></StopWatch>
       ) : (
+        // <></>
         <></>
       )}
 
-      {/* 
+      {/*       
       <View
         style={{
           position: 'absolute',
@@ -456,7 +456,7 @@ const LocationTracker = () => {
         }}
       >
         <Text></Text>
-      </View> */}
+      </View>  */}
       {previewVisible ? <CameraPreview></CameraPreview> : ''}
 
       {cameraOn ? (

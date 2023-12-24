@@ -16,6 +16,8 @@ const StopWatch = ({ navigation }) => {
   //   const [isRunning, setIsRunning] = useState(null)
   const [resetStatus, setResetStatus] = useState(false)
   const watchStatus = (state) => state.stopwatch.isRunning
+  const elapsedTime = (state) => state.stopwatch.elapsedTime
+
   const dispatch = useDispatch()
 
   //timer시작
@@ -24,20 +26,20 @@ const StopWatch = ({ navigation }) => {
 
   //timer 종료
 
-//   useEffect(() => {
-//     //timer 시작
-//     if (watchStatus) {
-//       intervalRef.current = setInterval(() => {
-//         dispatch(updateElapsedTime((prev) => prev + 1))
-//       }, 1000)
-//     }
+  //   useEffect(() => {
+  //     //timer 시작
+  //     if (watchStatus) {
+  //       intervalRef.current = setInterval(() => {
+  //         dispatch(updateElapsedTime((prev) => prev + 1))
+  //       }, 1000)
+  //     }
 
-//     if (!watchStatus) {
-//       clearInterval(intervalRef.current)
+  //     if (!watchStatus) {
+  //       clearInterval(intervalRef.current)
 
-//       //
-//     }
-//   }, [watchStatus])
+  //       //
+  //     }
+  //   }, [watchStatus])
 
   //   useEffect(() => {
   //     if (resetStatus) {
