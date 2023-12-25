@@ -6,6 +6,7 @@ import {
   Image,
   Modal,
   Animated,
+  Alert,
 } from 'react-native'
 import { Text } from 'react-native-paper'
 import { WebView } from 'react-native-webview'
@@ -37,10 +38,11 @@ import {
   start,
   reset,
   updateElapsedTime,
+  setIsRunning,
 } from '../../slices/All/Watchslice'
 import StopWatch from '../addons/Watch2'
 const LocationTracker = () => {
-  const webViewRef = useRef()
+  const webViewRef = useRef(null)
   const intervalRef = useRef(null)
 
   const [startTime, setStartTime] = useState(0)
@@ -62,7 +64,6 @@ const LocationTracker = () => {
   // const [cameraOn, setCameraOn] = useState(false)
   const [remainingTime, setRemainingTime] = useState(5000) // 초기값으로 5초 설정
 
-  const [elapsedTime, setElapsedTime] = useState(0)
   const [isTracking, setIsTracking] = useState(false)
   const [locationSubscription, setLocationSubscription] = useState(null)
   const [distance, setDistance] = useState(0)
@@ -252,8 +253,8 @@ const LocationTracker = () => {
 
         // console.log('여기')
 
-        if (countDownRef.current <= 4) {
-          useDispatch(start())
+        if (countDownRef.current >= 4) {
+          dispatch(start())
           setCountDown(false) // 카운트 종료 후 버튼을 다시 활성화
           setIsTracking(true)
           countDownRef.current = -1
@@ -302,18 +303,30 @@ const LocationTracker = () => {
   }
 
   const stopTracking = () => {
-    const stopTracking = { data: 'stopTracking' }
+    const stop = { data: 'stopTracking' }
 
-    clearInterval(intervalRef.current)
-    setIsTracking(false)
-    setElapsedTime(0)
-    setDistance(0)
-    sendPositionToWebView(stopTracking)
-    setIsPause(false)
+    Alert.alert('기록종료', '기록을 종료하시겠습니까?', [
+      {
+        text: '예',
+        onPress: () => {
+          clearInterval(intervalRef.current)
+          setIsTracking(false)
+          dispatch(reset())
+          pauseTimer()
+          setDistance(0)
+          sendPositionToWebView(stop)
+          setIsPause(false)
 
-    setWebViewKey((prevKey) => prevKey + 1)
+          setWebViewKey((prevKey) => prevKey + 1)
 
-    stopLocationTracking()
+          stopLocationTracking()
+        },
+      },
+      {
+        text: '아니오',
+        onPress: () => {},
+      },
+    ])
   }
 
   // status가 false일 경우에 실행
@@ -349,13 +362,15 @@ const LocationTracker = () => {
   }
 
   const closeModal = () => {
-    //만약 일시 정지 상태면
+    //만약 일시 정지 상태면 그대로 일시정지가 아니면 실행
 
+    if (!isPause) {
+      setModalCamera(false)
+      dispatch(start())
+      calculateDistance()
+    }
     setModalCamera(false)
-    intervalRef.current = setInterval(() => {
-      setElapsedTime((prev) => prev + 1)
-    }, 1000)
-    calculateDistance()
+
     // startTracking()
   }
   const openCamera = () => {
@@ -398,13 +413,12 @@ const LocationTracker = () => {
     //다시 시작 ,  시간
     // useDispatch(start())
     setIsPause(false)
-    intervalRef.current = setInterval(() => {
-      setElapsedTime((prev) => prev + 1)
-    }, 1000)
+    dispatch(start())
 
     calculateDistance()
   }
 
+  console.log()
   const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
 
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}`

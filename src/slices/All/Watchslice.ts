@@ -24,7 +24,7 @@ const stopwatchSlice = createSlice({
       state.elapsedTime = 0
     },
     updateElapsedTime(state, action: PayloadAction<number>) {
-      state.elapsedTime = action.payload
+      state.elapsedTime = state.elapsedTime + action.payload
     },
   },
 })

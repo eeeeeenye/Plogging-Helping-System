@@ -15,8 +15,10 @@ const StopWatch = ({ navigation }) => {
 
   //   const [isRunning, setIsRunning] = useState(null)
   const [resetStatus, setResetStatus] = useState(false)
-  const watchStatus = (state) => state.stopwatch.isRunning
-  const elapsedTime = (state) => state.stopwatch.elapsedTime
+  const watchStatus = useSelector((state) => state.stopwatch.isRunning)
+  const elapsedTime = useSelector((state) => state.stopwatch.elapsedTime)
+  const distance = useSelector((state) => state.dist.distance)
+  console.log(elapsedTime)
 
   const dispatch = useDispatch()
 
@@ -26,20 +28,21 @@ const StopWatch = ({ navigation }) => {
 
   //timer 종료
 
-  //   useEffect(() => {
-  //     //timer 시작
-  //     if (watchStatus) {
-  //       intervalRef.current = setInterval(() => {
-  //         dispatch(updateElapsedTime((prev) => prev + 1))
-  //       }, 1000)
-  //     }
+  useEffect(() => {
+    //timer 시작
+    if (watchStatus) {
+      intervalRef.current = setInterval(() => {
+        dispatch(updateElapsedTime(1))
+      }, 1000)
+    }
 
-  //     if (!watchStatus) {
-  //       clearInterval(intervalRef.current)
+    if (!watchStatus) {
+      console.log('여기')
+      clearInterval(intervalRef.current)
 
-  //       //
-  //     }
-  //   }, [watchStatus])
+      //
+    }
+  }, [watchStatus])
 
   //   useEffect(() => {
   //     if (resetStatus) {
@@ -47,20 +50,7 @@ const StopWatch = ({ navigation }) => {
   //     }
   //   }, [resetStatus])
 
-  // Alert.alert('기록종료', '기록을 종료하시겠습니까?', [
-  //     {
-  //       text: '예',
-  //       onPress: () => {
-  //         navigation.navigate('Camera')
-  //       },
-  //     },
-  //     {
-  //       text: '아니오',
-  //       onPress: () => {
-  //         dispatch(stop())
-  //       },
-  //     },
-  //   ])
+
 
   return (
     <View style={styles.timeTracking}>
@@ -78,10 +68,6 @@ const StopWatch = ({ navigation }) => {
       <View style={styles.area}>
         <Text style={styles.text}>{distance}</Text>
         <Text>거리(km)</Text>
-      </View>
-      <View style={styles.area}>
-        <Text style={styles.text}>0</Text>
-        <Text>걸음</Text>
       </View>
     </View>
   )
