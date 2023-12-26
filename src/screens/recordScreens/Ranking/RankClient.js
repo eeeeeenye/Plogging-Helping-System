@@ -3,7 +3,7 @@ import Constans from 'expo-constants'
 import StatusManager from '../../../helpers/localStorage'
 
 export async function getClients() {
-  const ip = Constans.manifest.extra.Local_ip
+  const ip = Constans.expoConfig.extra.Local_ip
   const currentDate = new Date() // 오늘날짜 가져오기
 
   try {

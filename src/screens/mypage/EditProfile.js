@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 
 import {
   View,
@@ -8,6 +8,9 @@ import {
   ScrollView,
   Image,
   Button,
+  Pressable,
+  TouchableHighlight,
+  Animated,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Footer from '../../components/footer'
@@ -21,6 +24,8 @@ const EditProfile = () => {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [note, setNote] = useState('')
+  const [isPressed, setIsPressed] = useState(false)
+  const animationValue = useRef(new Animated.Value(0)).current
 
   const handleEditProfile = () => {
     // 프로필 수정 로직을 여기에 작성
@@ -28,16 +33,39 @@ const EditProfile = () => {
     //
   }
 
+  const handlePressIn = () => {
+    setIsPressed(true)
+
+    Animated.timing(animationValue, {
+      toValue: 1,
+      duration: 200, // 애니메이션 지속 시간 (밀리초)
+      useNativeDriver: false, // Native Driver를 사용하지 않음
+    }).start();
+  };
+
+  // const handlePressOut = () => {
+  //   Animated.timing(animationValue, {
+  //     toValue: 0,
+  //     duration: 200,
+  //     useNativeDriver: false,
+  //   }).start();
+    // 실행할 애니메이션 등을 추가할 수 있습니다.
+  // }
+
   const handleLogout = () => {
     dispatch(logout())
   }
 
+  const handleButtonCheck = () => {
+    alert('zmfflr')
+    setIsPressed(false)
+  }
   //글자 문제 해결 필요
   return (
     <View style={styles.container}>
-      <HeaderBackScroll2 title={'플로깅1'}>
+      <HeaderBackScroll2 title={'프로필 관리'}>
         <View style={styles.content}>
-          <View style={styles.imageContent}>
+          {/* <View style={styles.imageContent}>
             <Image
               source={require('../../assets/profile_photo.png')}
               style={styles.image}
@@ -50,34 +78,44 @@ const EditProfile = () => {
             </View>
 
             <Text style={styles.title}>{name}플로깅1</Text>
-          </View>
+          </View> */}
 
           <View style={styles.textInputContainer}>
-            <View style={styles.textInputContent}>
-              <Text style={styles.text}>닉네임:</Text>
-              <TextInput label="닉네임"></TextInput>
-            </View>
+            <Pressable
+              onPressIn={handlePressIn}
+              onPressOut={handleButtonCheck}
+              style={({ pressed }) => [
+                styles.button,
+                pressed && styles.buttonPressed,
+                // style={styles.textInputContent}
 
-            <View style={styles.textInputContent}>
-              <Text style={styles.text}>이메일:</Text>
-              <TextInput label="doridori@naver.com"></TextInput>
-            </View>
+                // animatedStyle,
+              ]}
+            >
+              <Text style={styles.text}>닉네임</Text>
+              <Text style={styles.text2}>도라에몽</Text>
+            </Pressable>
 
-            <View style={styles.textInputContent}>
-              <Text style={styles.text}>전화번호:</Text>
-              <TextInput label="010-xxxx-xxxx"></TextInput>
-            </View>
+            <Pressable style={styles.textInputContent}>
+              <Text style={styles.text}>이메일</Text>
+              <Text style={styles.text2}>doridori@naver.com</Text>
+            </Pressable>
 
-            <View style={styles.textInputContent}>
-              <Text style={styles.text}>한줄소개:</Text>
-              <TextInput label="안녕하세요"></TextInput>
-            </View>
+            <Pressable style={styles.textInputContent}>
+              <Text style={styles.text}>전화번호</Text>
+              <Text style={styles.text2}> 010-5898-5556</Text>
+            </Pressable>
+
+            <Pressable style={styles.textInputContent}>
+              <Text style={styles.text}>한줄소개</Text>
+              <Text style={styles.text2}>안녕하세요</Text>
+            </Pressable>
           </View>
-          <View style={styles.buttonContainer}>
+          {/* <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>프로필 수정</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </HeaderBackScroll2>
       <Footer></Footer>

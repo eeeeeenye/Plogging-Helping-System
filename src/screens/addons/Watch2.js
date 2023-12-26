@@ -22,12 +22,6 @@ const StopWatch = ({ navigation }) => {
 
   const dispatch = useDispatch()
 
-  //timer시작
-
-  //timer 일시중지
-
-  //timer 종료
-
   useEffect(() => {
     //timer 시작
     if (watchStatus) {
@@ -37,20 +31,9 @@ const StopWatch = ({ navigation }) => {
     }
 
     if (!watchStatus) {
-      console.log('여기')
       clearInterval(intervalRef.current)
-
-      //
     }
   }, [watchStatus])
-
-  //   useEffect(() => {
-  //     if (resetStatus) {
-  //       dispatch(reset())
-  //     }
-  //   }, [resetStatus])
-
-
 
   return (
     <View style={styles.timeTracking}>

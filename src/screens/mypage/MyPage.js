@@ -27,7 +27,7 @@ import StatusManager, { getUser } from '../../helpers/localStorage.js'
 import HeaderScroll from '../../components/HeaderScroll.js'
 import { useEffect } from 'react'
 const MyPage = () => {
-  let item = useSelector((state) => state.footer.FooterImages)
+  const item = useSelector((state) => state.footer.FooterImages)
   const navigation = useNavigation()
   const [condition, setCondition] = useState(false)
   // const navigation = useNavigation()
@@ -36,7 +36,7 @@ const MyPage = () => {
   const username = useSelector((state) => state.auth.user?.clientName)
   const email = useSelector((state) => state.auth.user?.email)
   const phone = useSelector((state) => state.auth.user?.phone)
-  const [note, setNote] = useState('잘부탁드립니다~~')
+
   const handleProfile = () => {
     navigation.navigate('Profile')
   }
@@ -69,7 +69,7 @@ const MyPage = () => {
   const handlePostReport = () => {
     navigation.navigate('PostReport')
   }
-  
+
   const handleReportHistory = () => {
     navigation.navigate('ReportHistory')
   }
@@ -96,7 +96,6 @@ const MyPage = () => {
   // }, [navigation])
 
   return (
-    // <Footer>
     <View style={styles.container}>
       <HeaderScroll title={'마이페이지'}>
         <View style={styles.content}>
@@ -109,7 +108,7 @@ const MyPage = () => {
                 style={styles.profileButton}
                 onPress={handleProfile}
               >
-                <Text style={styles.buttonText}>프로필 수정</Text>
+                <Text style={styles.buttonText}>프로필 관리</Text>
               </TouchableOpacity>
             </View>
           </View>

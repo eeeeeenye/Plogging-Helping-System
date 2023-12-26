@@ -32,7 +32,7 @@ export default function RegisterScreen({ navigation }) {
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(false)
   const [phone, setPhone] = useState({ value: '', error: '' })
-  const ip = Constants.manifest.extra.Local_ip
+  const ip = Constants.expoConfig.extra.Local_ip
   const [check, clientCheck] = useState(false)
   const dispatch = useDispatch()
 

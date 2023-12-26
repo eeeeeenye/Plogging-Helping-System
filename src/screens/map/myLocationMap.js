@@ -116,7 +116,7 @@ const MylocationMap = ({ navigation }) => {
   }
 
   // 카카오 맵 API를 사용하기 위한 설정값
-  const apiKey = Constants.manifest.extra.KAKAO_JAVASCRIPT_KEY
+  const apiKey = Constants.expoConfig.extra.KAKAO_JAVASCRIPT_KEY
   const url = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services`
   return (
     <View style={{ flex: 1 }}>

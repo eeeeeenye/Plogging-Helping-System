@@ -29,13 +29,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header_center: {
-    flex: 1,
-
+    flex: 2,
+    // backgroundColor:'red',
     alignItems: 'center',
   },
   header_center_text: {
     fontSize: 31,
     fontWeight: 400,
+  },
+  buttonPressed: {
+    backgroundColor: '#2980b9',
   },
 
   header_right: {

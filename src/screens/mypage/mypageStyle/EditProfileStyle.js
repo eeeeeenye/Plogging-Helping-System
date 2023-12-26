@@ -6,14 +6,17 @@ const { width, height } = Dimensions.get('window')
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
 
     marginBottom: 80,
-    marginTop: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 70,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    borderBottomColor: '#c1c1c1',
+    borderBottomWidth: 0.5,
   },
   imageContent: {
     // flex: 1,
@@ -53,19 +56,27 @@ const styles = StyleSheet.create({
   },
 
   textInputContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    padding: 20,
+    // alignItems: 'center',
     flex: 1,
     marginTop: 20,
     width: width * 0.6,
   },
   textInputContent: {
-    flexDirection: 'row',
+    // backgroundColor: 'red',
+
+    height: 80,
+    // flexDirection: 'column',
   },
 
   text: {
-    marginRight: 20,
-    top: 35,
+    fontSize: 18,
+  },
+  text2: {
+    marginTop: 5,
+    fontSize: 14,
+    color: 'gray',
   },
   buttonContainer: {
     // marginTop: 10,

@@ -72,14 +72,6 @@ export default function StartScreen({ navigation }) {
       >
         맵
       </Button>
-      <Button
-        mode="contained"
-        onPress={() => {
-          navigation.navigate('locationSetting')
-        }}
-      >
-        location
-      </Button>
     </Background2>
   )
 }
